@@ -5,6 +5,8 @@ package com.antondevs.apps.githubbrowser.data.entries;
  */
 public class UserEntry {
 
+    private int mId;
+
     private String mLoginName;
 
     private String mAvatarUrl;
@@ -15,6 +17,10 @@ public class UserEntry {
 
     private String mStarredUrl;
     private String mReposUrl;
+
+    public UserEntry(){
+
+    }
 
     public String getmLoginName() {
         return mLoginName;

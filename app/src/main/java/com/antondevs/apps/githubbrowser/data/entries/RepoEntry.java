@@ -6,6 +6,8 @@ package com.antondevs.apps.githubbrowser.data.entries;
 
 public class RepoEntry {
 
+    private int mId;
+
     private String mOwnerName;
     private String mRepoName;
 
@@ -17,6 +19,10 @@ public class RepoEntry {
 
     private int mForksCount;
     private int mStarCount;
+
+    public RepoEntry() {
+
+    }
 
     public String getmOwnerName() {
         return mOwnerName;
