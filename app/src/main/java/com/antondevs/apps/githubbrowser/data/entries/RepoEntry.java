@@ -15,8 +15,6 @@ public class RepoEntry {
     private String mOwnerAvatarUrl;
     private String mBranchesUrl;
 
-    private String mAvatarStoragePath;
-
     private int mForksCount;
     private int mStarCount;
 
@@ -62,14 +60,6 @@ public class RepoEntry {
 
     public void setmBranchesUrl(String mBranchesUrl) {
         this.mBranchesUrl = mBranchesUrl;
-    }
-
-    public String getmAvatarStoragePath() {
-        return mAvatarStoragePath;
-    }
-
-    public void setmAvatarStoragePath(String mAvatarStoragePath) {
-        this.mAvatarStoragePath = mAvatarStoragePath;
     }
 
     public int getmForksCount() {

@@ -13,8 +13,6 @@ public class UserEntry {
     private String mFollowersUrl;
     private String mFollowingUrl;
 
-    private String mAvatarStoragePath;
-
     private String mStarredUrl;
     private String mReposUrl;
 
@@ -52,14 +50,6 @@ public class UserEntry {
 
     public void setmFollowingUrl(String mFollowingUrl) {
         this.mFollowingUrl = mFollowingUrl;
-    }
-
-    public String getmAvatarStoragePath() {
-        return mAvatarStoragePath;
-    }
-
-    public void setmAvatarStoragePath(String mAvatarStoragePath) {
-        this.mAvatarStoragePath = mAvatarStoragePath;
     }
 
     public String getmStarredUrl() {
