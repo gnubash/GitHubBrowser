@@ -10,11 +10,6 @@ public class UserEntry {
     private String mLoginName;
 
     private String mAvatarUrl;
-    private String mFollowersUrl;
-    private String mFollowingUrl;
-
-    private String mStarredUrl;
-    private String mReposUrl;
 
     public UserEntry(){
 
@@ -35,36 +30,5 @@ public class UserEntry {
     public void setmAvatarUrl(String mAvatarUrl) {
         this.mAvatarUrl = mAvatarUrl;
     }
-
-    public String getmFollowersUrl() {
-        return mFollowersUrl;
-    }
-
-    public void setmFollowersUrl(String mFollowersUrl) {
-        this.mFollowersUrl = mFollowersUrl;
-    }
-
-    public String getmFollowingUrl() {
-        return mFollowingUrl;
-    }
-
-    public void setmFollowingUrl(String mFollowingUrl) {
-        this.mFollowingUrl = mFollowingUrl;
-    }
-
-    public String getmStarredUrl() {
-        return mStarredUrl;
-    }
-
-    public void setmStarredUrl(String mStarredUrl) {
-        this.mStarredUrl = mStarredUrl;
-    }
-
-    public String getmReposUrl() {
-        return mReposUrl;
-    }
-
-    public void setmReposUrl(String mReposUrl) {
-        this.mReposUrl = mReposUrl;
-    }
+    
 }
