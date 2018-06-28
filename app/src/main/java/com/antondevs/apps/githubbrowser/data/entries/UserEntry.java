@@ -9,7 +9,6 @@ public class UserEntry {
 
     private String mLoginName;
 
-    private String mAvatarUrl;
 
     public UserEntry(){
 
@@ -22,13 +21,6 @@ public class UserEntry {
     public void setmLoginName(String mLoginName) {
         this.mLoginName = mLoginName;
     }
-
-    public String getmAvatarUrl() {
-        return mAvatarUrl;
-    }
-
-    public void setmAvatarUrl(String mAvatarUrl) {
-        this.mAvatarUrl = mAvatarUrl;
-    }
     
+
 }
