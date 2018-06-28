@@ -1,12 +1,17 @@
 package com.antondevs.apps.githubbrowser.data.entries;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.util.List;
 
 /**
  * Created by Anton on 6/24/18.
  */
+@Entity(tableName = "user")
 public class UserEntry {
-
+    
+    @PrimaryKey(autoGenerate = true)
     private int mId;
 
     private String login;
