@@ -17,8 +17,13 @@ public class UserEntry {
     private List<String> mOwnedRepos;
     private List<String> mStarredRepos;
 
-    public UserEntry(){
-
+    public UserEntry(String mLoginName, int mFollowers, int mFollowing,
+                     List<String> mOwnedRepos, List<String> mStarredRepos) {
+        this.mLoginName = mLoginName;
+        this.mFollowers = mFollowers;
+        this.mFollowing = mFollowing;
+        this.mOwnedRepos = mOwnedRepos;
+        this.mStarredRepos = mStarredRepos;
     }
 
     public int getmId() {
