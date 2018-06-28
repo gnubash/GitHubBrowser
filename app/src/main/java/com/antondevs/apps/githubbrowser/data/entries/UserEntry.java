@@ -9,21 +9,13 @@ public class UserEntry {
 
     private int mId;
 
-    private String mLoginName;
+    private String login;
 
-    private int mFollowers;
-    private int mFollowing;
+    private int followers;
+    private int following;
 
-    private List<String> mOwnedRepos;
-    private List<String> mStarredRepos;
-
-    public UserEntry(String mLoginName, int mFollowers, int mFollowing,
-                     List<String> mOwnedRepos, List<String> mStarredRepos) {
-        this.mLoginName = mLoginName;
-        this.mFollowers = mFollowers;
-        this.mFollowing = mFollowing;
-        this.mOwnedRepos = mOwnedRepos;
-        this.mStarredRepos = mStarredRepos;
+    public UserEntry() {
+        
     }
 
     public int getmId() {
@@ -34,43 +26,27 @@ public class UserEntry {
         this.mId = mId;
     }
 
-    public String getmLoginName() {
-        return mLoginName;
+    public String getLogin() {
+        return login;
     }
 
-    public void setmLoginName(String mLoginName) {
-        this.mLoginName = mLoginName;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public int getmFollowers() {
-        return mFollowers;
+    public int getFollowers() {
+        return followers;
     }
 
-    public void setmFollowers(int mFollowers) {
-        this.mFollowers = mFollowers;
+    public void setFollowers(int followers) {
+        this.followers = followers;
     }
 
-    public int getmFollowing() {
-        return mFollowing;
+    public int getFollowing() {
+        return following;
     }
 
-    public void setmFollowing(int mFollowing) {
-        this.mFollowing = mFollowing;
-    }
-
-    public List<String> getmOwnedRepos() {
-        return mOwnedRepos;
-    }
-
-    public void setmOwnedRepos(List<String> mOwnedRepos) {
-        this.mOwnedRepos = mOwnedRepos;
-    }
-
-    public List<String> getmStarredRepos() {
-        return mStarredRepos;
-    }
-
-    public void setmStarredRepos(List<String> mStarredRepos) {
-        this.mStarredRepos = mStarredRepos;
+    public void setFollowing(int following) {
+        this.following = following;
     }
 }
