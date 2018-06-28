@@ -8,45 +8,45 @@ public class RepoEntry {
 
     private int mId;
 
-    private String mOwnerName;
-    private String mRepoName;
+    private String login;
+    private String name;
 
-    private int mForksCount;
-    private int mStarCount;
+    private int forks;
+    private int watchers;
 
     public RepoEntry() {
 
     }
 
-    public String getmOwnerName() {
-        return mOwnerName;
+    public String getLogin() {
+        return login;
     }
 
-    public void setmOwnerName(String mOwnerName) {
-        this.mOwnerName = mOwnerName;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public String getmRepoName() {
-        return mRepoName;
+    public String getName() {
+        return name;
     }
 
-    public void setmRepoName(String mRepoName) {
-        this.mRepoName = mRepoName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getmForksCount() {
-        return mForksCount;
+    public int getForks() {
+        return forks;
     }
 
-    public void setmForksCount(int mForksCount) {
-        this.mForksCount = mForksCount;
+    public void setForks(int forks) {
+        this.forks = forks;
     }
 
-    public int getmStarCount() {
-        return mStarCount;
+    public int getWatchers() {
+        return watchers;
     }
 
-    public void setmStarCount(int mStarCount) {
-        this.mStarCount = mStarCount;
+    public void setWatchers(int watchers) {
+        this.watchers = watchers;
     }
 }

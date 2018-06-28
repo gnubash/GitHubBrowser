@@ -15,7 +15,7 @@ public class UserEntry {
     private int following;
 
     public UserEntry() {
-        
+
     }
 
     public int getmId() {
