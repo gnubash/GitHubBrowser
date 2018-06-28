@@ -6,7 +6,7 @@ import android.arch.persistence.room.PrimaryKey;
 /**
  * Created by Anton on 6/24/18.
  */
-@Entity(tableName = "repo")
+@Entity(tableName = "repos")
 public class RepoEntry {
 
     @PrimaryKey(autoGenerate = true)
