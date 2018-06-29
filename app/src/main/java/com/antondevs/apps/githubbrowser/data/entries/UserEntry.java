@@ -3,8 +3,6 @@ package com.antondevs.apps.githubbrowser.data.entries;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.util.List;
-
 /**
  * Created by Anton on 6/24/18.
  */
@@ -12,7 +10,7 @@ import java.util.List;
 public class UserEntry {
 
     @PrimaryKey(autoGenerate = true)
-    private int mId;
+    private int id;
 
     private String login;
 
@@ -23,12 +21,12 @@ public class UserEntry {
 
     }
 
-    public int getmId() {
-        return mId;
+    public int getId() {
+        return id;
     }
 
-    public void setmId(int mId) {
-        this.mId = mId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getLogin() {

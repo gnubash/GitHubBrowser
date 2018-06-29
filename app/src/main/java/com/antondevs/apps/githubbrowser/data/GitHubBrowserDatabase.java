@@ -13,7 +13,7 @@ import com.antondevs.apps.githubbrowser.data.entries.UserEntry;
  * Created by Anton on 6/29/18.
  */
 @Database(entities = {UserEntry.class, RepoEntry.class}, version = 1, exportSchema = false)
-abstract class GitHubBrowserDatabase extends RoomDatabase {
+public abstract class GitHubBrowserDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = GitHubBrowserDatabase.class.getSimpleName();
     private static final String DATABASE_NAME = "github_browser";
@@ -21,7 +21,7 @@ abstract class GitHubBrowserDatabase extends RoomDatabase {
 
     private volatile static GitHubBrowserDatabase databaseInstance;
 
-    public GitHubBrowserDatabase getDatabaseInstance(Context context) {
+    public static GitHubBrowserDatabase getDatabaseInstance(Context context) {
         if (databaseInstance == null) {
             synchronized (LOCK) {
                 if (databaseInstance == null) {
