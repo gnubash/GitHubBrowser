@@ -8,7 +8,10 @@ public interface LoginContract {
     interface LoginPresenter {
 
         void authenticateUser(String username, String password);
+
         void loginWithStoredCredentials();
+
+        void destroyPresenter();
     }
 
     interface LoginView {

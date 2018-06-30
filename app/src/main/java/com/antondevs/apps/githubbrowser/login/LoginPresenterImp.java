@@ -11,6 +11,11 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
     private LoginContract.LoginView view;
     private MainInteractor interactor;
 
+    public LoginPresenterImp(LoginContract.LoginView view, MainInteractor interactor) {
+        this.view = view;
+        this.interactor = interactor;
+    }
+
     @Override
     public void loginWithStoredCredentials() {
         interactor.checkCredentials();
@@ -29,5 +34,11 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
     @Override
     public void onAuthenticationRequered() {
        view.requestAuthentication();
+    }
+
+    @Override
+    public void destroyPresenter() {
+        view = null;
+        interactor = null;
     }
 }
