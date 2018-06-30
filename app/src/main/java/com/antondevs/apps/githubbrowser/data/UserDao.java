@@ -13,12 +13,12 @@ import com.antondevs.apps.githubbrowser.data.entries.UserEntry;
  * Created by Anton on 6/28/18.
  */
 @Dao
-interface UserDao {
+public interface UserDao {
 
-    @Query("SELECT & FROM users WHERE login LIKE :user")
+    @Query("SELECT * FROM users WHERE login LIKE :user")
     UserEntry queryUser(String user);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUser(UserEntry userEntry);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)

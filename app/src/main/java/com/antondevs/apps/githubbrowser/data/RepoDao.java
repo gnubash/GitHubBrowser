@@ -13,7 +13,7 @@ import com.antondevs.apps.githubbrowser.data.entries.RepoEntry;
  * Created by Anton on 6/28/18.
  */
 @Dao
-interface RepoDao {
+public interface RepoDao {
 
     @Query("SELECT * FROM repos WHERE name LIKE :repoName")
     RepoEntry queryRepo(String repoName);

@@ -33,6 +33,11 @@ public abstract class GitHubBrowserDatabase extends RoomDatabase {
                 }
             }
         }
+        Log.d(LOG_TAG, "Returning database instance");
         return databaseInstance;
     }
+
+    public abstract UserDao userDao();
+
+    public abstract RepoDao repoDao();
 }
