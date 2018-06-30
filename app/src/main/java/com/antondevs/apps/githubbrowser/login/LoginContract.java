@@ -7,14 +7,15 @@ public interface LoginContract {
 
     interface LoginPresenter {
 
-        boolean shouldRequestAuthentication();
-
         void authenticateUser(String username, String password);
+        void loginWithStoredCredentials();
     }
 
     interface LoginView {
 
-        void onUserAuthenticated(String loginName);
+        void requestAuthentication();
+
+        void onUserAuthenticated();
 
         void onAuthenticationFailed(String errorMessage);
     }
