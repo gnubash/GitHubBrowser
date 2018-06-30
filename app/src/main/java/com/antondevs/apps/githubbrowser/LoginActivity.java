@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                 for (int i = 0; i < 10; i++) {
                     mAppDatabase.userDao().insertUser(DatabaseUtils.generateUser());
+                    mAppDatabase.repoDao().insertRepo(DatabaseUtils.generateRepor());
                 }
             }
         });
