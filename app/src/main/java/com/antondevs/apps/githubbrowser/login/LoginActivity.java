@@ -1,4 +1,4 @@
-package com.antondevs.apps.githubbrowser.ui;
+package com.antondevs.apps.githubbrowser.login;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
