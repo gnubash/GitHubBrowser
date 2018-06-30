@@ -3,5 +3,16 @@ package com.antondevs.apps.githubbrowser.data;
 /**
  * Created by Anton on 6/30/18.
  */
-public class MainInteractor {
+public interface MainInteractor {
+
+    void checkCredentials();
+
+    interface Listener {
+
+        void onUserAuthenticated();
+
+        void onAuthenticationRequered();
+
+    }
+
 }

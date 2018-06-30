@@ -7,7 +7,7 @@ public interface LoginContract {
 
     interface LoginPresenter {
 
-        void checkAuthentication();
+        boolean shouldRequestAuthentication();
 
         void authenticateUser(String username, String password);
     }
@@ -15,8 +15,6 @@ public interface LoginContract {
     interface LoginView {
 
         void onUserAuthenticated(String loginName);
-
-        void onRequestUserAuthentication();
 
         void onAuthenticationFailed(String errorMessage);
     }
