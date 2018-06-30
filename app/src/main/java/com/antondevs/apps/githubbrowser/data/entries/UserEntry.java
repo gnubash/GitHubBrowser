@@ -52,4 +52,9 @@ public class UserEntry {
     public void setFollowing(int following) {
         this.following = following;
     }
+
+    @Override
+    public String toString() {
+        return "id:" + id + " login:" + login + " followers:" + followers + " following:" + following;
+    }
 }

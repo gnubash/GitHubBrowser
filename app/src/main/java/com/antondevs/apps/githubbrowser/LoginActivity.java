@@ -9,6 +9,8 @@ import com.antondevs.apps.githubbrowser.data.entries.UserEntry;
 import com.antondevs.apps.githubbrowser.data.entries.RepoEntry;
 import com.antondevs.apps.githubbrowser.utilities.DatabaseUtils;
 
+import java.io.InterruptedIOException;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -29,6 +31,40 @@ public class LoginActivity extends AppCompatActivity {
 
         writeDataToDatabase();
 
+
+        Executor queryExecutor = Executors.newSingleThreadExecutor();
+        queryExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                // impose a wait
+                try {
+                    Thread.sleep(2000);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                final List<UserEntry> userList = mAppDatabase.userDao().queryAllUsers();
+                final List<RepoEntry> repoList = mAppDatabase.repoDao().queryAllRepos();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLoginActivityTextView.append("USERS:\n");
+                        for (UserEntry user : userList) {
+                            mLoginActivityTextView.append(user.toString());
+                            mLoginActivityTextView.append("\n\n");
+                        }
+
+                        mLoginActivityTextView.append("REPOS:\n");
+
+                        for (RepoEntry repo : repoList) {
+                            mLoginActivityTextView.append(repo.toString());
+                            mLoginActivityTextView.append("\n\n");
+                        }
+                    }
+                });
+            }
+        });
 
     }
 

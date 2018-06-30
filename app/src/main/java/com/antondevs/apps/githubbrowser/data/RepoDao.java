@@ -23,7 +23,7 @@ public interface RepoDao {
     @Query("SELECT * FROM repos WHERE name LIKE :repoName")
     RepoEntry queryRepo(String repoName);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRepo(RepoEntry repo);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)

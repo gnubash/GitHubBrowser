@@ -61,4 +61,9 @@ public class RepoEntry {
     public void setWatchers(int watchers) {
         this.watchers = watchers;
     }
+
+    @Override
+    public String toString() {
+        return "id:" + id + " login:" + login + " name:" + name + " forks:" + forks + " watchers:" + watchers;
+    }
 }
