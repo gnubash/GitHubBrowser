@@ -1,7 +1,9 @@
-package com.antondevs.apps.githubbrowser;
+package com.antondevs.apps.githubbrowser.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.antondevs.apps.githubbrowser.R;
 
 public class LoginActivity extends AppCompatActivity {
 
