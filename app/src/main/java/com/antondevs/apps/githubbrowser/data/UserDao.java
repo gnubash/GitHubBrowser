@@ -9,11 +9,16 @@ import android.arch.persistence.room.Update;
 
 import com.antondevs.apps.githubbrowser.data.entries.UserEntry;
 
+import java.util.List;
+
 /**
  * Created by Anton on 6/28/18.
  */
 @Dao
 public interface UserDao {
+
+    @Query(("SELECT * FROM users ORDER BY id"))
+    List<UserEntry> queryAllUsers();
 
     @Query("SELECT * FROM users WHERE login LIKE :user")
     UserEntry queryUser(String user);

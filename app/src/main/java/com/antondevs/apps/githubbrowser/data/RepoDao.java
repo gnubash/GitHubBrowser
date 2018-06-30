@@ -9,11 +9,16 @@ import android.arch.persistence.room.Update;
 
 import com.antondevs.apps.githubbrowser.data.entries.RepoEntry;
 
+import java.util.List;
+
 /**
  * Created by Anton on 6/28/18.
  */
 @Dao
 public interface RepoDao {
+
+    @Query("SELECT * FROM repos ORDER BY id")
+    List<RepoEntry> queryAllRepos();
 
     @Query("SELECT * FROM repos WHERE name LIKE :repoName")
     RepoEntry queryRepo(String repoName);
