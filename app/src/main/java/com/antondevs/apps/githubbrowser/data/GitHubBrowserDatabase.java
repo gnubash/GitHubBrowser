@@ -37,6 +37,10 @@ public abstract class GitHubBrowserDatabase extends RoomDatabase {
         return databaseInstance;
     }
 
+    public static void destroyDatabaseInstance() {
+        databaseInstance = null;
+    }
+
     public abstract UserDao userDao();
 
     public abstract RepoDao repoDao();
