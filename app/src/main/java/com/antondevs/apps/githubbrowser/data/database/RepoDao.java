@@ -1,4 +1,4 @@
-package com.antondevs.apps.githubbrowser.data;
+package com.antondevs.apps.githubbrowser.data.database;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
@@ -7,7 +7,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.antondevs.apps.githubbrowser.data.entries.UserEntry;
+import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
 
 import java.util.List;
 
@@ -15,20 +15,20 @@ import java.util.List;
  * Created by Anton on 6/28/18.
  */
 @Dao
-public interface UserDao {
+public interface RepoDao {
 
-    @Query(("SELECT * FROM users ORDER BY id"))
-    List<UserEntry> queryAllUsers();
+    @Query("SELECT * FROM repos ORDER BY id")
+    List<RepoEntry> queryAllRepos();
 
-    @Query("SELECT * FROM users WHERE login LIKE :user")
-    UserEntry queryUser(String user);
+    @Query("SELECT * FROM repos WHERE name LIKE :repoName")
+    RepoEntry queryRepo(String repoName);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertUser(UserEntry userEntry);
+    void insertRepo(RepoEntry repo);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateUser(UserEntry userEntry);
+    void updateRepo(RepoEntry repo);
 
     @Delete
-    void deleteUser(UserEntry userEntry);
+    void removeRepo(RepoEntry repo);
 }

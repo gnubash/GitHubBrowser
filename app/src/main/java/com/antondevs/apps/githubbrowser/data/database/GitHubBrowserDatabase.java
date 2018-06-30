@@ -1,13 +1,10 @@
-package com.antondevs.apps.githubbrowser.data;
+package com.antondevs.apps.githubbrowser.data.database;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.util.Log;
-
-import com.antondevs.apps.githubbrowser.data.entries.RepoEntry;
-import com.antondevs.apps.githubbrowser.data.entries.UserEntry;
 
 /**
  * Created by Anton on 6/29/18.

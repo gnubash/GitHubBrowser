@@ -1,7 +1,7 @@
 package com.antondevs.apps.githubbrowser.utilities;
 
-import com.antondevs.apps.githubbrowser.data.entries.RepoEntry;
-import com.antondevs.apps.githubbrowser.data.entries.UserEntry;
+import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
+import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 
 import java.util.List;
 import java.util.Random;
