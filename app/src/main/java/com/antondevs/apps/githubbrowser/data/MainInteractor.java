@@ -8,7 +8,7 @@ public interface MainInteractor {
     void checkCredentials();
     void performAuthentication(String username, String password);
 
-    interface Listener {
+    interface AuthenticationListener {
 
         void onUserAuthenticated();
 

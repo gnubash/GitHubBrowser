@@ -7,7 +7,7 @@ import com.antondevs.apps.githubbrowser.data.TestInteractorImp;
  * Created by Anton on 6/30/18.
  */
 public class LoginPresenterImp implements LoginContract.LoginPresenter,
-        MainInteractor.Listener {
+        MainInteractor.AuthenticationListener {
 
     private LoginContract.LoginView view;
     private MainInteractor interactor;

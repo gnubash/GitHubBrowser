@@ -1,15 +1,13 @@
 package com.antondevs.apps.githubbrowser.data;
 
-import com.antondevs.apps.githubbrowser.login.LoginContract;
-
 /**
  * Created by Anton on 6/30/18.
  */
 public class TestInteractorImp implements MainInteractor{
 
-    private MainInteractor.Listener callbackListener;
+    private AuthenticationListener callbackListener;
 
-    public TestInteractorImp(MainInteractor.Listener presenter) {
+    public TestInteractorImp(AuthenticationListener presenter) {
         callbackListener = presenter;
     }
 
