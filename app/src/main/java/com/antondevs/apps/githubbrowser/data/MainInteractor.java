@@ -5,8 +5,8 @@ package com.antondevs.apps.githubbrowser.data;
  */
 public interface MainInteractor {
 
-    void checkCredentials();
-    void performAuthentication(String username, String password);
+    void checkCredentials(AuthenticationListener listener);
+    void performAuthentication(String username, String password, AuthenticationListener listener);
 
     interface AuthenticationListener {
 

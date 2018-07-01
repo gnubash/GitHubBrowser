@@ -14,17 +14,17 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
 
     public LoginPresenterImp(LoginContract.LoginView view) {
         this.view = view;
-        this.interactor = new TestInteractorImp(this);
+        this.interactor = TestInteractorImp.getInstance();
     }
 
     @Override
     public void loginWithStoredCredentials() {
-        interactor.checkCredentials();
+        interactor.checkCredentials(this);
     }
 
     @Override
     public void authenticateUser(String username, String password) {
-        interactor.performAuthentication(username, password);
+        interactor.performAuthentication(username, password, this);
     }
 
     @Override
