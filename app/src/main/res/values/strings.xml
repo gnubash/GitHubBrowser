@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">GitHub Browser</string>
+
+    <!-- Login screen string values-->
+    <string name="login_screen_login_button_name">Login</string>
+    <string name="login_screen_error_message_text">Wrong username or password.\nPlease check your credentials.</string>
 </resources>
