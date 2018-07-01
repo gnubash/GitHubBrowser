@@ -20,6 +20,6 @@ public interface LoginContract {
 
         void onUserAuthenticated();
 
-        void onAuthenticationFailed(String errorMessage);
+        void displayErrorMessage();
     }
 }

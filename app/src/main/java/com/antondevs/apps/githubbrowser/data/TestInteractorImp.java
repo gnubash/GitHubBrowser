@@ -14,6 +14,6 @@ public class TestInteractorImp implements MainInteractor{
 
     @Override
     public void performAuthentication(String username, String password) {
-        callbackListener.onUserAuthenticated();
+        callbackListener.onAuthenticationFailed();
     }
 }

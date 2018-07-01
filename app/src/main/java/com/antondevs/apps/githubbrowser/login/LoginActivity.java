@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.antondevs.apps.githubbrowser.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,4 +14,18 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void requestAuthentication() {
+
+    }
+
+    @Override
+    public void onUserAuthenticated() {
+
+    }
+
+    @Override
+    public void displayErrorMessage() {
+
+    }
 }

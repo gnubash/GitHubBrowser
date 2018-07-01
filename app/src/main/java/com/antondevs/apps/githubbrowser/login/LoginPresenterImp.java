@@ -41,4 +41,9 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
         view = null;
         interactor = null;
     }
+
+    @Override
+    public void onAuthenticationFailed() {
+        view.displayErrorMessage();
+    }
 }

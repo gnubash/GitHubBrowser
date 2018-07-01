@@ -14,6 +14,8 @@ public interface MainInteractor {
 
         void onAuthenticationRequered();
 
+        void onAuthenticationFailed();
+
     }
 
 }
