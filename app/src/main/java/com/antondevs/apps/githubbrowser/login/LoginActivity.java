@@ -30,6 +30,15 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         errorMessage = findViewById(R.id.login_error_message_text_view);
 
         presenter = new LoginPresenterImp(this, new TestInteractorImp());
+
+        presenter.loginWithStoredCredentials();
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.authenticateUser("fakeuser", "fakepass");
+            }
+        });
     }
 
     @Override
@@ -51,5 +60,11 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         usernameEditText.setVisibility(View.VISIBLE);
         passwordEditText.setVisibility(View.VISIBLE);
         loginButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        presenter.destroyPresenter();
+        super.onDestroy();
     }
 }
