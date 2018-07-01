@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         loginButton = findViewById(R.id.login_button_login);
         errorMessage = findViewById(R.id.login_error_message_text_view);
 
-        presenter = new LoginPresenterImp(this, new TestInteractorImp());
+        presenter = new LoginPresenterImp(this);
 
         presenter.loginWithStoredCredentials();
 
