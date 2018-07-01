@@ -1,4 +1,4 @@
-package com.antondevs.apps.githubbrowser.login;
+package com.antondevs.apps.githubbrowser.ui.login;
 
 /**
  * Created by Anton on 6/30/18.

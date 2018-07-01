@@ -1,4 +1,4 @@
-package com.antondevs.apps.githubbrowser.login;
+package com.antondevs.apps.githubbrowser.ui.login;
 
 import com.antondevs.apps.githubbrowser.data.MainInteractor;
 import com.antondevs.apps.githubbrowser.data.TestInteractorImp;

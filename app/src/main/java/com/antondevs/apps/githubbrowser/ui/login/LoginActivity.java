@@ -1,4 +1,4 @@
-package com.antondevs.apps.githubbrowser.login;
+package com.antondevs.apps.githubbrowser.ui.login;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,7 +8,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.antondevs.apps.githubbrowser.R;
-import com.antondevs.apps.githubbrowser.data.TestInteractorImp;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView {
 
