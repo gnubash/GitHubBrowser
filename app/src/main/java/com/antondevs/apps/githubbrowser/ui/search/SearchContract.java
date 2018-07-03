@@ -20,6 +20,6 @@ public interface SearchContract {
     interface Presenter {
 
         void searchUser(String username);
-        
+
     }
 }
