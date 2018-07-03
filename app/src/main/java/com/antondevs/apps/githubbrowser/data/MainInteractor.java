@@ -14,6 +14,18 @@ public interface MainInteractor {
 
     void performAuthentication(String username, String password, AuthenticationListener listener);
 
+    void queryUser(UserListener listener, String loginName);
+
+    void queryUsers(SearchListener listener, String loginName);
+
+    void queryRepo(RepoListener listener, String repoName);
+
+    void queryFollowers(SearchListener listener, String loginName);
+
+    void queryFollowing(SearchListener listener, String loginName);
+
+
+
     interface AuthenticationListener {
 
         void onUserAuthenticated();

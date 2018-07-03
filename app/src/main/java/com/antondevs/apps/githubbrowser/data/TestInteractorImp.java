@@ -30,4 +30,29 @@ public class TestInteractorImp implements MainInteractor{
     public void performAuthentication(String username, String password, AuthenticationListener listener) {
         listener.onAuthenticationFailed();
     }
+
+    @Override
+    public void queryUser(UserListener listener, String loginName) {
+        
+    }
+
+    @Override
+    public void queryUsers(SearchListener listener, String loginName) {
+
+    }
+
+    @Override
+    public void queryRepo(RepoListener listener, String repoName) {
+
+    }
+
+    @Override
+    public void queryFollowers(SearchListener listener, String loginName) {
+
+    }
+
+    @Override
+    public void queryFollowing(SearchListener listener, String loginName) {
+
+    }
 }
