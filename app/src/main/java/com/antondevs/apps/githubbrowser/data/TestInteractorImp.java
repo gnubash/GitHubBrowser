@@ -33,7 +33,7 @@ public class TestInteractorImp implements MainInteractor{
 
     @Override
     public void queryUser(UserListener listener, String loginName) {
-        
+
     }
 
     @Override
