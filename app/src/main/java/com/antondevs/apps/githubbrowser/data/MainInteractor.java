@@ -24,7 +24,7 @@ public interface MainInteractor {
 
     void queryFollowing(SearchListener listener, String loginName);
 
-
+    void queryContributors(SearchListener listener, String repoName);
 
     interface AuthenticationListener {
 

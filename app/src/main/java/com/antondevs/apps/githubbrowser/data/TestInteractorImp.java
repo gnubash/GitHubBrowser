@@ -55,4 +55,9 @@ public class TestInteractorImp implements MainInteractor{
     public void queryFollowing(SearchListener listener, String loginName) {
 
     }
+
+    @Override
+    public void queryContributors(SearchListener listener, String repoName) {
+
+    }
 }
