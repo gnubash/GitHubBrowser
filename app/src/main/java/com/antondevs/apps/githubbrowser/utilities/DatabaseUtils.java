@@ -11,9 +11,12 @@ import java.util.Random;
  */
 public final class DatabaseUtils {
 
-    private static String[] names = {"mini", "roger", "dans", "helicopter", "restless", "george"};
+    private static String [] names = {"mini", "roger", "dans", "helicopter", "restless", "george"};
 
-    private static int[] integer_values = {23, 67, 2, 18, 45, 33, 29, 56, 100, 174, 99, 39};
+    private static String [] repoNames = {"android_timing", "android_app_bar", "rpi3 io", "stackable windows",
+            "custom tiles", "window like tiles", "drawable customs", "rpi io hat", "ohmyzsh"};
+
+    private static int [] integer_values = {23, 67, 2, 18, 45, 33, 29, 56, 100, 174, 99, 39};
 
     public static UserEntry generateUser() {
         UserEntry user = new UserEntry();
@@ -30,7 +33,7 @@ public final class DatabaseUtils {
         Random random = new Random();
 
         repo.setLogin(names[random.nextInt(names.length)]);
-        repo.setName(names[random.nextInt(names.length)]);
+        repo.setName(repoNames[random.nextInt(repoNames.length)]);
         repo.setForks(integer_values[random.nextInt(integer_values.length)]);
         repo.setWatchers(integer_values[random.nextInt(integer_values.length)]);
         return repo;
