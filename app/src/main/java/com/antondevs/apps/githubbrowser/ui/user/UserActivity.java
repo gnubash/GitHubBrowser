@@ -41,9 +41,11 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         if (intent != null) {
             String exra = intent.getStringExtra(LoginActivity.INTENT_EXTRA_KEY);
             userPresenter = new UserPresenterImp(exra, this);
+            userPresenter.loadPresenter();
         }
         else {
             userPresenter = new UserPresenterImp("demoText", this);
+            userPresenter.loadPresenter();
         }
     }
 
