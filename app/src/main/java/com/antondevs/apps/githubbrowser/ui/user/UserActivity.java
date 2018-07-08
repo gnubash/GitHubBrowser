@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.antondevs.apps.githubbrowser.R;
-import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
     }
 
     @Override
-    public void setReposList(List<RepoEntry> repoEntryList) {
+    public void setReposList(List<String> repoEntryList) {
 
     }
 }

@@ -1,7 +1,5 @@
 package com.antondevs.apps.githubbrowser.ui.user;
 
-import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
-
 import java.util.List;
 
 /**
@@ -17,7 +15,7 @@ public interface UserContract {
 
         void setFollowing(String followingNumber);
 
-        void setReposList(List<RepoEntry> repoEntryList);
+        void setReposList(List<String> repoEntryList);
     }
 
 
