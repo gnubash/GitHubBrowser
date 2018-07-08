@@ -1,5 +1,6 @@
 package com.antondevs.apps.githubbrowser.ui.login;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,8 +9,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView {
+
+    public static final String INTENT_EXTRA_KEY = "user_login_name";
 
     private EditText usernameEditText;
     private EditText passwordEditText;
@@ -35,7 +39,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.authenticateUser("fakeuser", "fakepass");
+                presenter.authenticateUser(usernameEditText.getText().toString().trim(),
+                        passwordEditText.getText().toString().trim());
             }
         });
     }
@@ -47,7 +52,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
     @Override
     public void onUserAuthenticated() {
-
+        Intent activityIntent = new Intent(this, UserActivity.class);
+        activityIntent.putExtra(INTENT_EXTRA_KEY, usernameEditText.getText().toString().trim());
+        startActivity(activityIntent);
     }
 
     @Override
