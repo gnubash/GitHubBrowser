@@ -21,7 +21,7 @@ public interface UserContract {
 
     interface UserPresenter {
 
-        void loadUser(String username);
+        void loadPresenter();
 
         void getFollowers(String username);
 
