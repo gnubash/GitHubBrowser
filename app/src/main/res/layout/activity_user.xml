@@ -27,23 +27,15 @@
 
     <Button
         android:id="@+id/user_followers_button"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        style="@style/UserFollowButtons"
         android:text="@string/followers_button_text"
-        android:textAllCaps="false"
-        android:layout_marginStart="16dp"
-        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@id/user_login_name_text_view"
         app:layout_constraintLeft_toRightOf="@id/user_image_view"/>
 
     <Button
         android:id="@+id/user_following_button"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        style="@style/UserFollowButtons"
         android:text="@string/following_button_text"
-        android:textAllCaps="false"
-        android:layout_marginStart="16dp"
-        android:textSize="12sp"
         app:layout_constraintTop_toBottomOf="@id/user_login_name_text_view"
         app:layout_constraintLeft_toRightOf="@id/user_followers_button"/>
 
@@ -76,4 +68,5 @@
 
 
     </android.support.design.widget.TabLayout>
+
 </android.support.constraint.ConstraintLayout>
