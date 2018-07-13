@@ -28,6 +28,8 @@ public interface RepoContract {
 
     interface Presenter {
 
-        void loadRepository(String name);
+        void loadPresenter(String name);
+
+        void starRepo();
     }
 }

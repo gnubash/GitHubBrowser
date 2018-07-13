@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.repo.RepoActivity"
+    android:padding="16dp">
+
+
+    <RelativeLayout
+        android:id="@+id/repo_owner_image_wrapper_view"
+        android:layout_width="100dp"
+        android:layout_height="132dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/repo_owner_image_view"
+            android:layout_width="88dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_android_white_48dp"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="bottom|center"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="DemoText" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/repo_commits_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/repos_commits"
+        android:layout_margin="8dp"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@id/repo_owner_image_wrapper_view"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/repo_branches_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/repos_branches"
+        app:layout_constraintLeft_toRightOf="@id/repo_owner_image_wrapper_view"
+        app:layout_constraintTop_toBottomOf="@+id/repo_commits_text_view"
+        android:layout_margin="8dp"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/repo_releases_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/repos_releases"
+        app:layout_constraintLeft_toRightOf="@id/repo_owner_image_wrapper_view"
+        app:layout_constraintTop_toBottomOf="@+id/repo_branches_text_view"
+        android:layout_margin="8dp"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/repo_contributors_button_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/repos_contributos"
+        app:layout_constraintLeft_toRightOf="@id/repo_owner_image_wrapper_view"
+        app:layout_constraintTop_toBottomOf="@+id/repo_releases_text_view"
+        android:layout_margin="8dp"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:textSize="14sp"
+        android:background="@android:color/darker_gray"/>
+
+    <TextView
+        android:id="@+id/repo_starred_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/repos_star"
+        app:layout_constraintLeft_toRightOf="@+id/repo_commits_text_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="8dp"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/repo_fork_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/repos_forks"
+        app:layout_constraintLeft_toRightOf="@+id/repo_branches_text_view"
+        app:layout_constraintTop_toBottomOf="@id/repo_starred_text_view"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="8dp"
+        android:textSize="14sp"/>
+
+
+</android.support.constraint.ConstraintLayout>
