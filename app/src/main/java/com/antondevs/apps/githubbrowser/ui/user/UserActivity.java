@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,8 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
     private TextView usernameTextView;
     private Button followersButton;
     private Button follwingButton;
+    private Button ownReposButton;
+    private Button starredReposButton;
     private RecyclerView reposRecyclerView;
     private UserContract.UserPresenter userPresenter;
     private RepoAdapter repoAdapter;
@@ -36,6 +39,8 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         usernameTextView = (TextView) findViewById(R.id.user_login_name_text_view);
         followersButton = (Button) findViewById(R.id.user_followers_button);
         follwingButton = (Button) findViewById(R.id.user_following_button);
+        ownReposButton = (Button) findViewById(R.id.user_owned_repos_btn);
+        starredReposButton = (Button) findViewById(R.id.user_starred_repos_btn);
         reposRecyclerView = (RecyclerView) findViewById(R.id.user_repos_recycler);
 
         reposRecyclerView.setHasFixedSize(true);
@@ -55,6 +60,20 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
             userPresenter = new UserPresenterImp("Something is wrong!", this);
             userPresenter.loadPresenter();
         }
+
+        ownReposButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userPresenter.getOwnedRepos();
+            }
+        });
+
+        starredReposButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userPresenter.getStarredRepos();
+            }
+        });
     }
 
     @Override

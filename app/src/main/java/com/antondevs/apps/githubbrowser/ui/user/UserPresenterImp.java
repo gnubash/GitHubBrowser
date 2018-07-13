@@ -23,7 +23,7 @@ public class UserPresenterImp implements UserContract.UserPresenter {
     @Override
     public void loadPresenter() {
         UserEntry user = DatabaseUtils.generateUser();
-        mView.setFollowers(String.valueOf(user.getFollowing()));
+        mView.setFollowers(String.valueOf(user.getFollowers()));
         mView.setFollowing(String.valueOf(user.getFollowing()));
         mView.setUserName(user.getLogin());
         mView.setReposList(convertRepoListToStringList());
@@ -41,16 +41,15 @@ public class UserPresenterImp implements UserContract.UserPresenter {
 
     @Override
     public void getOwnedRepos() {
-
+        mView.setReposList(convertRepoListToStringList());
     }
 
     @Override
     public void getStarredRepos() {
-
+        mView.setReposList(convertRepoListToStringList());
     }
 
     private ArrayList<String> convertRepoListToStringList() {
-        UserEntry testUser = DatabaseUtils.generateUser();
         ArrayList<RepoEntry> reposList = new ArrayList<>();
         //fill the list
         for (int i = 0; i < 20; i++) {
