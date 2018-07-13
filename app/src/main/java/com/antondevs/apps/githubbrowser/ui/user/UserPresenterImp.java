@@ -41,7 +41,7 @@ public class UserPresenterImp implements UserContract.UserPresenter {
 
     @Override
     public void getOwnedRepos() {
-        
+
     }
 
     @Override
