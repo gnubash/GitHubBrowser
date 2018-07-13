@@ -74,8 +74,15 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
     @Override
     public void setReposList(List<String> repoEntryList) {
-        repoAdapter = new RepoAdapter((ArrayList<String>) repoEntryList, this);
-        reposRecyclerView.setAdapter(repoAdapter);
+        if (repoAdapter == null) {
+            Log.d(LOGTAG, "setReposList() if statement. repoAdapter == null");
+            repoAdapter = new RepoAdapter((ArrayList<String>) repoEntryList, this);
+            reposRecyclerView.setAdapter(repoAdapter);
+        }
+        else {
+            repoAdapter.swapRepoList((ArrayList<String>) repoEntryList);
+        }
+
     }
 
     @Override

@@ -27,5 +27,9 @@ public interface UserContract {
 
         void getFollowing(String username);
 
+        void getOwnedRepos();
+
+        void getStarredRepos();
+
     }
 }

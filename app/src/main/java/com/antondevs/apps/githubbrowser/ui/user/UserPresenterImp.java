@@ -39,6 +39,16 @@ public class UserPresenterImp implements UserContract.UserPresenter {
 
     }
 
+    @Override
+    public void getOwnedRepos() {
+        
+    }
+
+    @Override
+    public void getStarredRepos() {
+
+    }
+
     private ArrayList<String> convertRepoListToStringList() {
         UserEntry testUser = DatabaseUtils.generateUser();
         ArrayList<RepoEntry> reposList = new ArrayList<>();

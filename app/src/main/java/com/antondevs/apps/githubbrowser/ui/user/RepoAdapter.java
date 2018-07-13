@@ -57,6 +57,10 @@ public class RepoAdapter extends RecyclerView.Adapter<RepoAdapter.ViewHolder> {
         return repoList.size();
     }
 
+    public void swapRepoList(ArrayList<String> newRepoList) {
+        repoList = newRepoList;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView itemTextView;
