@@ -23,10 +23,6 @@ public interface UserContract {
 
         void loadPresenter();
 
-        void getFollowers(String username);
-
-        void getFollowing(String username);
-
         void getOwnedRepos();
 
         void getStarredRepos();

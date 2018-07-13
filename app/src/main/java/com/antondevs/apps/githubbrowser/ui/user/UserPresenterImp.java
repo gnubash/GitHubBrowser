@@ -30,16 +30,6 @@ public class UserPresenterImp implements UserContract.UserPresenter {
     }
 
     @Override
-    public void getFollowers(String username) {
-
-    }
-
-    @Override
-    public void getFollowing(String username) {
-
-    }
-
-    @Override
     public void getOwnedRepos() {
         mView.setReposList(convertRepoListToStringList());
     }

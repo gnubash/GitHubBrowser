@@ -61,6 +61,21 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
             userPresenter.loadPresenter();
         }
 
+        followersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO Start UserSearch View with the user's login name but display those that follow him
+
+            }
+        });
+
+        follwingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO Start UserSearch View with the user's login name but display those that he follows
+            }
+        });
+
         ownReposButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
