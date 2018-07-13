@@ -5,8 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
@@ -14,7 +16,10 @@ import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserActivity extends AppCompatActivity implements UserContract.UserView {
+public class UserActivity extends AppCompatActivity implements UserContract.UserView,
+        RepoAdapter.RepoAdapterClickListener {
+
+    private static final String LOGTAG = UserActivity.class.getSimpleName();
 
     private TextView usernameTextView;
     private Button followersButton;
@@ -69,7 +74,13 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
     @Override
     public void setReposList(List<String> repoEntryList) {
-        repoAdapter = new RepoAdapter((ArrayList<String>) repoEntryList);
+        repoAdapter = new RepoAdapter((ArrayList<String>) repoEntryList, this);
         reposRecyclerView.setAdapter(repoAdapter);
+    }
+
+    @Override
+    public void onRepoItemClick(String itemName) {
+        Log.d(LOGTAG, "onRepoItemClick(String)" + itemName);
+        Toast.makeText(this, itemName, Toast.LENGTH_SHORT).show();
     }
 }
