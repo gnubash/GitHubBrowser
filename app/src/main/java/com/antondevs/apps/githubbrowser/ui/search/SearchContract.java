@@ -11,7 +11,7 @@ public interface SearchContract {
 
     interface View {
 
-        void setSearchResult(List<UserEntry> userList);
+        void setSearchResult(List<String> userList);
 
         void showNoResultsView();
 
@@ -19,7 +19,13 @@ public interface SearchContract {
 
     interface Presenter {
 
-        void searchUser(String username);
+        void searchUser(String userName);
+
+        void searchContributors(String repoName);
+
+        void searchFollowers(String userName);
+
+        void searchFollowing(String username);
 
     }
 }
