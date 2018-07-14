@@ -23,7 +23,6 @@ public interface RepoContract {
 
         void setFork(String forkNumber);
 
-        void setRepoName(String repoName);
     }
 
     interface Presenter {

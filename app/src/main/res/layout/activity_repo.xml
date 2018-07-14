@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.repo.RepoActivity">
 
-    <data>
-        <variable name="Repo" type="com.antondevs.apps.githubbrowser.databinding.RepoData"/>
-    </data>
+    <!--<data>-->
+        <!--<variable name="Repo" type="com.antondevs.apps.githubbrowser.databinding.RepoData"/>-->
+    <!--</data>-->
 
 <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
@@ -29,6 +29,7 @@
             android:layout_centerHorizontal="true"/>
 
         <TextView
+            android:id="@+id/repo_owner_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
