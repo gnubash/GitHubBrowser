@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.user.UserActivity" />
-        <activity android:name=".ui.repo.RepoActivity"></activity>
+        <activity android:name=".ui.repo.RepoActivity" />
+        <activity android:name=".ui.search.SearchActivity"></activity>
     </application>
 
 </manifest>

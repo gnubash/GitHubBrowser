@@ -12,7 +12,7 @@
     <string name="repositories_title">Repositories</string>
     <string name="user_owned_repos_button_title">Owned</string>
     <string name="user_starred_repos_button_title">Starred</string>
-    
+
     <!-- Repo screen view string values-->
     <string name="repos_commits">Commits: </string>
     <string name="repos_branches">Branches: </string>
