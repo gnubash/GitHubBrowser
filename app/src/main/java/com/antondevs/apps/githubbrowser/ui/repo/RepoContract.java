@@ -1,9 +1,5 @@
 package com.antondevs.apps.githubbrowser.ui.repo;
 
-import com.antondevs.apps.githubbrowser.data.database.UserEntry;
-
-import java.util.List;
-
 /**
  * Created by Anton on 7/3/18.
  */
@@ -27,7 +23,7 @@ public interface RepoContract {
 
     interface Presenter {
 
-        void loadPresenter(String name);
+        void loadPresenter();
 
         void starRepo();
     }

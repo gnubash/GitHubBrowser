@@ -3,6 +3,7 @@ package com.antondevs.apps.githubbrowser.ui.repo;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
         binding = DataBindingUtil.setContentView(this, R.layout.activity_repo);
 //        setContentView(R.layout.activity_repo);
 
+        Log.d(LOGTAG, "onCreate()");
 
         binding.repoContributorsButtonTextView.setOnClickListener(new View.OnClickListener() {
             @Override
