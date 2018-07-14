@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -131,5 +134,31 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         Intent repoActivityIntent = new Intent(this, RepoActivity.class);
         repoActivityIntent.putExtra(INTENT_EXTRA_REPO_NAME_KEY, itemName);
         startActivity(repoActivityIntent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_user_view, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+
+        switch (itemId) {
+            case R.id.menu_action_search:
+                // TODO Start Search View when this is selected
+                return true;
+            case R.id.menu_action_logout:
+                // TODO Should call presenter to logout(finish activity directly after setting logged out status
+                return true;
+            case R.id.menu_action_home:
+                // TODO Go to logged user
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

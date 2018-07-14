@@ -20,4 +20,10 @@
     <string name="repos_contributos">Contributors: </string>
     <string name="repos_star">Star: </string>
     <string name="repos_forks">Forks: </string>
+
+    <!-- Menu string values-->
+    <string name="menu_action_logout_title">Logout</string>
+    <string name="menu_action_search_title">Search</string>
+    <string name="menu_action_star_title">Star</string>
+    <string name="menu_action_home_title">Home</string>
 </resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <!-- TODO Handle duplicated menus. Either by using 1 Activity,
+    many Fragments or by inflating the base as sub-menu to the
+    two other menus in Java -->
+    <item
+        android:id="@+id/menu_action_home"
+        android:title="@string/menu_action_home_title"
+        app:showAsAction="never"
+        android:orderInCategory="80"/>
+
+    <item
+        android:id="@+id/menu_action_logout"
+        android:title="@string/menu_action_logout_title"
+        app:showAsAction="never"
+        android:orderInCategory="100"/>
+
+</menu>

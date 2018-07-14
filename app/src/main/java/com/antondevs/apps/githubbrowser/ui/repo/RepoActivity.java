@@ -4,6 +4,9 @@ import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -80,5 +83,32 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
     @Override
     public void setFork(String forkNumber) {
         binding.repoForkTextView.append(forkNumber);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_repo_view, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+
+        switch (itemId) {
+            case R.id.menu_action_star:
+                // TODO Star the current repository
+                return true;
+            case R.id.menu_action_logout:
+                // TODO Should call presenter to logout(finish activity directly after setting logged out status
+                return true;
+            case R.id.menu_action_home:
+                // TODO Go to logged user
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 }
