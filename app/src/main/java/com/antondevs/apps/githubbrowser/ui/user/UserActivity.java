@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
+import com.antondevs.apps.githubbrowser.ui.repo.RepoActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         RepoAdapter.RepoAdapterClickListener {
 
     private static final String LOGTAG = UserActivity.class.getSimpleName();
+
+    public static final String INTENT_EXTRA_REPO_NAME_KEY = "repo_name";
 
     private TextView usernameTextView;
     private Button followersButton;
@@ -35,6 +38,8 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+
+        Log.d(LOGTAG, "onCreate()");
 
         usernameTextView = (TextView) findViewById(R.id.user_login_name_text_view);
         followersButton = (Button) findViewById(R.id.user_followers_button);
@@ -123,5 +128,8 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
     public void onRepoItemClick(String itemName) {
         Log.d(LOGTAG, "onRepoItemClick(String)" + itemName);
         Toast.makeText(this, itemName, Toast.LENGTH_SHORT).show();
+        Intent repoActivityIntent = new Intent(this, RepoActivity.class);
+        repoActivityIntent.putExtra(INTENT_EXTRA_REPO_NAME_KEY, itemName);
+        startActivity(repoActivityIntent);
     }
 }

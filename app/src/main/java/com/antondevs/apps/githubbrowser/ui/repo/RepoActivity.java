@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.databinding.ActivityRepoBinding;
+import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 public class RepoActivity extends AppCompatActivity implements RepoContract.View {
 
@@ -26,6 +27,21 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
 //        setContentView(R.layout.activity_repo);
 
         Log.d(LOGTAG, "onCreate()");
+        String repoName = "";
+
+        if (getIntent() != null && getIntent().hasExtra(UserActivity.INTENT_EXTRA_REPO_NAME_KEY)) {
+            repoName = getIntent().getStringExtra(UserActivity.INTENT_EXTRA_REPO_NAME_KEY);
+            presenter = new RepoPresenterImp(repoName, this);
+        }
+        else {
+            throw new RuntimeException("RepoActivity must be started with IntentExtra.");
+        }
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(repoName);
+        }
+
+        presenter.loadPresenter();
 
         binding.repoContributorsButtonTextView.setOnClickListener(new View.OnClickListener() {
             @Override
