@@ -1,5 +1,6 @@
 package com.antondevs.apps.githubbrowser.ui.repo;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.databinding.ActivityRepoBinding;
+import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 public class RepoActivity extends AppCompatActivity implements RepoContract.View {
@@ -49,7 +51,9 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
         binding.repoContributorsButtonTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO Start new search for user contributors to this library
+                Intent searchContributorsIntent = new Intent(RepoActivity.this, SearchActivity.class);
+                searchContributorsIntent.putExtra(SearchActivity.EXTRA_SEARCH_REPO_CONTRIBUTORS, presenter.getRepoName());
+                startActivity(searchContributorsIntent);
             }
         });
 

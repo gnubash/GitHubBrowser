@@ -28,4 +28,9 @@ public class RepoPresenterImp implements RepoContract.Presenter {
     public void starRepo() {
         // TODO Should attempt to star the repo. If Manager says "failure" then maybe notify the View
     }
+
+    @Override
+    public String getRepoName() {
+        return repoName;
+    }
 }

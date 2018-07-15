@@ -26,5 +26,7 @@ public interface RepoContract {
         void loadPresenter();
 
         void starRepo();
+
+        String getRepoName();
     }
 }
