@@ -11,32 +11,32 @@ import java.util.ArrayList;
  */
 public class UserPresenterImp implements UserContract.UserPresenter {
 
-    private String mUserLoginName;
+    private String userLoginName;
 
-    private final UserContract.UserView mView;
+    private final UserContract.UserView view;
 
     public UserPresenterImp(String userLoginName, UserContract.UserView view) {
-        mUserLoginName = userLoginName;
-        mView = view;
+        this.userLoginName = userLoginName;
+        this.view = view;
     }
 
     @Override
     public void loadPresenter() {
         UserEntry user = DatabaseUtils.generateUser();
-        mView.setFollowers(String.valueOf(user.getFollowers()));
-        mView.setFollowing(String.valueOf(user.getFollowing()));
-        mView.setUserName(user.getLogin());
-        mView.setReposList(convertRepoListToStringList());
+        view.setFollowers(String.valueOf(user.getFollowers()));
+        view.setFollowing(String.valueOf(user.getFollowing()));
+        view.setUserName(user.getLogin());
+        view.setReposList(convertRepoListToStringList());
     }
 
     @Override
     public void getOwnedRepos() {
-        mView.setReposList(convertRepoListToStringList());
+        view.setReposList(convertRepoListToStringList());
     }
 
     @Override
     public void getStarredRepos() {
-        mView.setReposList(convertRepoListToStringList());
+        view.setReposList(convertRepoListToStringList());
     }
 
     private ArrayList<String> convertRepoListToStringList() {
@@ -52,5 +52,10 @@ public class UserPresenterImp implements UserContract.UserPresenter {
 
         return reposNames;
 
+    }
+
+    @Override
+    public String getUserLoginName() {
+        return userLoginName;
     }
 }

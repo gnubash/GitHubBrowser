@@ -27,5 +27,7 @@ public interface UserContract {
 
         void getStarredRepos();
 
+        String getUserLoginName();
+
     }
 }
