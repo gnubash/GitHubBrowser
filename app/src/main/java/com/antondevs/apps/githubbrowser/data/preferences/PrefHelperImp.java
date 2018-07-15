@@ -21,6 +21,7 @@ public class PrefHelperImp implements PrefHelper{
         this.sharedPreferences = sharedPreferences;
     }
 
+    // TODO Since the Manager instance is singleton this might not be necessary
     private static PrefHelperImp getPrefHelperInstance(SharedPreferences sharedPreferences) {
         if (uniqueInstance == null) {
             synchronized (PrefHelperImp.class) {
