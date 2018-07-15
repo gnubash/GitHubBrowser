@@ -28,6 +28,8 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     private RecyclerView usersRecyclerView;
 
+    private SearchContract.Presenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,9 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         usersRecyclerView.setLayoutManager(layoutManager);
+
+        presenter = new SearchPresenterImp(this);
+        checkIntent();
     }
 
     @Override
@@ -65,5 +70,18 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         Intent userActivityIntent = new Intent(this, UserActivity.class);
         userActivityIntent.putExtra(LoginActivity.INTENT_EXTRA_USER_LOGIN_KEY, itemName);
         startActivity(userActivityIntent);
+    }
+
+    private void checkIntent() {
+        Intent intent = getIntent();
+        if (intent.hasExtra(EXTRA_SEARCH_USER_FOLLOWERS)) {
+            presenter.searchFollowers(intent.getStringExtra(EXTRA_SEARCH_USER_FOLLOWERS));
+        }
+        else if (intent.hasExtra(EXTRA_SEARCH_USER_FOLLOWING)) {
+            presenter.searchFollowing(intent.getStringExtra(EXTRA_SEARCH_USER_FOLLOWING));
+        }
+        else if (intent.hasExtra(EXTRA_SEARCH_REPO_CONTRIBUTORS)) {
+            presenter.searchContributors(intent.getStringExtra(EXTRA_SEARCH_REPO_CONTRIBUTORS));
+        }
     }
 }
