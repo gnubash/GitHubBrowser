@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.repo.RepoActivity;
+import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,15 +73,20 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         followersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO Start UserSearch View with the user's login name but display those that follow him
-
+                // TODO Maybe obtain the User's login name from the view instead of calling presenter.
+                Intent followersIntentSearch = new Intent(UserActivity.this, SearchActivity.class);
+                followersIntentSearch.putExtra(SearchActivity.EXTRA_SEARCH_USER_FOLLOWERS, userPresenter.getUserLoginName());
+                startActivity(followersIntentSearch);
             }
         });
 
         follwingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO Start UserSearch View with the user's login name but display those that he follows
+                // TODO Find how to remove duplicated code in both OnClick methods.
+                Intent followingIntentSearch = new Intent(UserActivity.this, SearchActivity.class);
+                followingIntentSearch.putExtra(SearchActivity.EXTRA_SEARCH_USER_FOLLOWING, userPresenter.getUserLoginName());
+                startActivity(followingIntentSearch);
             }
         });
 
