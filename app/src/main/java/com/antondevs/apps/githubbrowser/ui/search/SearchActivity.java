@@ -1,5 +1,6 @@
 package com.antondevs.apps.githubbrowser.ui.search;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
+import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,10 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         UserSearchAdapter.UserSearchAdapterClickListener {
 
     private static final String LOGTAG = SearchActivity.class.getSimpleName();
+
+    public static final String EXTRA_SEARCH_REPO_CONTRIBUTORS = "repo_name_contributors";
+    public static final String EXTRA_SEARCH_USER_FOLLOWERS = "user_login_followers";
+    public static final String EXTRA_SEARCH_USER_FOLLOWING = "user_login_following";
 
     private UserSearchAdapter adapter;
 
@@ -55,5 +62,8 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     public void onUserItemCLick(String itemName) {
         Log.d(LOGTAG, "onUserItemCLick(String)" + itemName);
         Toast.makeText(this, itemName, Toast.LENGTH_SHORT).show();
+        Intent userActivityIntent = new Intent(this, UserActivity.class);
+        userActivityIntent.putExtra(LoginActivity.INTENT_EXTRA_USER_LOGIN_KEY, itemName);
+        startActivity(userActivityIntent);
     }
 }

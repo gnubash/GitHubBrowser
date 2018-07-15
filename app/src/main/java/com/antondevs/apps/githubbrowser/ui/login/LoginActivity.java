@@ -13,7 +13,7 @@ import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView {
 
-    public static final String INTENT_EXTRA_KEY = "user_login_name";
+    public static final String INTENT_EXTRA_USER_LOGIN_KEY = "user_login_name";
 
     private EditText usernameEditText;
     private EditText passwordEditText;
@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     @Override
     public void onUserAuthenticated() {
         Intent activityIntent = new Intent(this, UserActivity.class);
-        activityIntent.putExtra(INTENT_EXTRA_KEY, usernameEditText.getText().toString().trim());
+        activityIntent.putExtra(INTENT_EXTRA_USER_LOGIN_KEY, usernameEditText.getText().toString().trim());
         startActivity(activityIntent);
     }
 
