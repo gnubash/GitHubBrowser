@@ -14,6 +14,7 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
 
     public LoginPresenterImp(LoginContract.LoginView view) {
         this.view = view;
+        // TODO Try to not hold a reference to the Interactor(Manager) but just call it when necessary
         this.interactor = TestInteractorImp.getInstance();
     }
 
