@@ -13,7 +13,7 @@ import retrofit2.http.Query;
 /**
  * Created by Anton.
  */
-public interface RemoteService {
+public interface RemoteAPIService {
 
     @GET("users/{login_name}")
     Call<UserEntry> queryUser(@Path("login_name") String loginName);
