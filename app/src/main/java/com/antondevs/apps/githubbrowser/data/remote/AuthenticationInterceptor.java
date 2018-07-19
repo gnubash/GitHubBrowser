@@ -12,7 +12,7 @@ import okhttp3.Response;
  */
 public class AuthenticationInterceptor implements Interceptor {
 
-    private String credentials
+    private String credentials;
 
     public AuthenticationInterceptor(String username, String passowrd) {
         credentials = Credentials.basic(username, passowrd);
@@ -24,6 +24,7 @@ public class AuthenticationInterceptor implements Interceptor {
 
         Request authentication = request.newBuilder()
                 .addHeader("Authorization", credentials)
+                .build();
 
         return chain.proceed(authentication);
     }
