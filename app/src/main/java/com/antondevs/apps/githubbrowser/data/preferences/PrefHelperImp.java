@@ -17,21 +17,21 @@ public class PrefHelperImp implements PrefHelper{
 
     private static volatile PrefHelperImp uniqueInstance;
 
-    private PrefHelperImp(SharedPreferences sharedPreferences) {
+    public PrefHelperImp(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
 
     // TODO Since the Manager instance is singleton this might not be necessary
-    private static PrefHelperImp getPrefHelperInstance(SharedPreferences sharedPreferences) {
-        if (uniqueInstance == null) {
-            synchronized (PrefHelperImp.class) {
-                if (uniqueInstance == null) {
-                    uniqueInstance = new PrefHelperImp(sharedPreferences);
-                }
-            }
-        }
-        return uniqueInstance;
-    }
+//    private static PrefHelperImp getPrefHelperInstance(SharedPreferences sharedPreferences) {
+//        if (uniqueInstance == null) {
+//            synchronized (PrefHelperImp.class) {
+//                if (uniqueInstance == null) {
+//                    uniqueInstance = new PrefHelperImp(sharedPreferences);
+//                }
+//            }
+//        }
+//        return uniqueInstance;
+//    }
 
     @Override
     public void addUserCredentials(String username, String password) {
