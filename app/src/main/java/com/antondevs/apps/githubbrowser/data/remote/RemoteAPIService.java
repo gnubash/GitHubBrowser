@@ -15,6 +15,9 @@ import retrofit2.http.Query;
  */
 public interface RemoteAPIService {
 
+    @GET("users")
+    Call<UserEntry> loginUser();
+
     @GET("users/{login_name}")
     Call<UserEntry> queryUser(@Path("login_name") String loginName);
 
