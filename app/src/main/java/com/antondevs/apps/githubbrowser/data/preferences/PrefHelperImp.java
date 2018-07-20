@@ -48,4 +48,14 @@ public class PrefHelperImp implements PrefHelper{
     public void userAuthenticated(boolean status) {
         sharedPreferences.edit().putBoolean(KEY_IS_AUTHENTICATED, status).apply();
     }
+
+    @Override
+    public String getUsername() {
+        return sharedPreferences.getString(KEY_USER_LOGIN_NAME, "");
+    }
+
+    @Override
+    public String getSecret() {
+        return sharedPreferences.getString(KEY_USER_PASSWORD, "");
+    }
 }

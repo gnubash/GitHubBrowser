@@ -52,7 +52,7 @@ public class RemoteOperationsTest implements MainInteractor {
 
     @Override
     public void performAuthentication(String username, String password, AuthenticationListener listener) {
-        
+
     }
 
     @Override

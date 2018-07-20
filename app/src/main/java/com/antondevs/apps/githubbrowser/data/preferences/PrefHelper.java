@@ -10,4 +10,8 @@ public interface PrefHelper {
     boolean isAuthenticated();
 
     void userAuthenticated(boolean status);
+
+    String getUsername();
+
+    String getSecret();
 }
