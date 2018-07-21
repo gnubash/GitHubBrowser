@@ -1,20 +1,36 @@
 package com.antondevs.apps.githubbrowser.data;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
+import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 import com.antondevs.apps.githubbrowser.data.preferences.PrefHelper;
 import com.antondevs.apps.githubbrowser.data.preferences.PrefHelperImp;
+import com.antondevs.apps.githubbrowser.data.remote.APIService;
+import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 /**
  * Created by Anton.
  */
 public class RemoteOperationsTest implements MainInteractor {
 
-    private static volatile RemoteOperationsTest UNIQUE_INSTANCE = null;
+    private static final String LOGTAG = RemoteOperationsTest.class.getSimpleName();
+
+//    private static volatile RemoteOperationsTest UNIQUE_INSTANCE = null;
 
     private PrefHelper prefHelper;
+    private RemoteAPIService apiService;
 
-    private RemoteOperationsTest() {
+    public RemoteOperationsTest(SharedPreferences sharedPreferences) {
+        prefHelper = new PrefHelperImp(sharedPreferences);
+
+
     }
 
 //    public static RemoteOperationsTest getInstance() {
@@ -28,17 +44,17 @@ public class RemoteOperationsTest implements MainInteractor {
 //        return UNIQUE_INSTANCE;
 //    }
 
-    public static RemoteOperationsTest getInstance(SharedPreferences sharedPreferences) {
-        if (UNIQUE_INSTANCE == null) {
-            synchronized (RemoteOperationsTest.class) {
-                if (UNIQUE_INSTANCE == null) {
-                    UNIQUE_INSTANCE = new RemoteOperationsTest();
-                    UNIQUE_INSTANCE.prefHelper = new PrefHelperImp(sharedPreferences);
-                }
-            }
-        }
-        return UNIQUE_INSTANCE;
-    }
+//    public static RemoteOperationsTest getInstance(SharedPreferences sharedPreferences) {
+//        if (UNIQUE_INSTANCE == null) {
+//            synchronized (RemoteOperationsTest.class) {
+//                if (UNIQUE_INSTANCE == null) {
+//                    UNIQUE_INSTANCE = new RemoteOperationsTest();
+//                    UNIQUE_INSTANCE.prefHelper = new PrefHelperImp(sharedPreferences);
+//                }
+//            }
+//        }
+//        return UNIQUE_INSTANCE;
+//    }
 
     @Override
     public void checkCredentials(AuthenticationListener listener) {
@@ -51,8 +67,25 @@ public class RemoteOperationsTest implements MainInteractor {
     }
 
     @Override
-    public void performAuthentication(String username, String password, AuthenticationListener listener) {
+    public void performAuthentication(final String username, final String password, final AuthenticationListener listener) {
+        if (apiService == null) {
+            apiService = APIService.getService(username, password);
+        }
+        apiService.loginUser().enqueue(new Callback<UserEntry>() {
+            @Override
+            public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
+                Log.d(LOGTAG, "Request success onResponse()");
+                UserEntry user = response.body();
+                prefHelper.addUserCredentials(username, password);
+                listener.onUserAuthenticated();
+            }
 
+            @Override
+            public void onFailure(Call<UserEntry> call, Throwable t) {
+                Log.d(LOGTAG, "Request success onFailure()");
+                listener.onAuthenticationFailed();
+            }
+        });
     }
 
     @Override
