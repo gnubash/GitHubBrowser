@@ -69,7 +69,7 @@ public class RemoteOperationsTest implements MainInteractor {
     @Override
     public void performAuthentication(final String username, final String password, final AuthenticationListener listener) {
         if (apiService == null) {
-            apiService = APIService.getService(username, password);
+            apiService = APIService.getService();
         }
         apiService.loginUser().enqueue(new Callback<UserEntry>() {
             @Override
