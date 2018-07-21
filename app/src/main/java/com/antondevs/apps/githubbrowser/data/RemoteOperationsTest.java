@@ -74,9 +74,14 @@ public class RemoteOperationsTest implements MainInteractor {
         apiService.loginUser().enqueue(new Callback<UserEntry>() {
             @Override
             public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
+                if (response.code() == 401) {
+                    listener.onAuthenticationFailed();
+                    return;
+                }
                 Log.d(LOGTAG, "Request success onResponse()");
                 UserEntry user = response.body();
                 prefHelper.addUserCredentials(username, password);
+                prefHelper.userAuthenticated(true);
                 listener.onUserAuthenticated();
             }
 
