@@ -59,7 +59,7 @@ public class RemoteOperationsTest implements MainInteractor {
     @Override
     public void checkCredentials(AuthenticationListener listener) {
         if (prefHelper.isAuthenticated()) {
-            listener.onUserAuthenticated();
+            performAuthentication(prefHelper.getUsername(), prefHelper.getSecret(), listener);
         }
         else {
             listener.onAuthenticationRequered();
