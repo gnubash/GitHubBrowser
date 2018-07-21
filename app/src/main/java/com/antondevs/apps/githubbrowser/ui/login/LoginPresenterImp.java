@@ -12,10 +12,10 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
     private LoginContract.LoginView view;
     private MainInteractor interactor;
 
-    public LoginPresenterImp(LoginContract.LoginView view) {
+    public LoginPresenterImp(LoginContract.LoginView view, MainInteractor interactor) {
         this.view = view;
         // TODO Try to not hold a reference to the Interactor(Manager) but just call it when necessary
-        this.interactor = TestInteractorImp.getInstance();
+        this.interactor = interactor;
     }
 
     @Override

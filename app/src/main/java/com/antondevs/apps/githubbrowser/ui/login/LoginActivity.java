@@ -1,6 +1,8 @@
 package com.antondevs.apps.githubbrowser.ui.login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.antondevs.apps.githubbrowser.data.MainInteractor;
+import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView {
@@ -32,7 +36,11 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         loginButton = findViewById(R.id.login_button_login);
         errorMessage = findViewById(R.id.login_error_message_text_view);
 
-        presenter = new LoginPresenterImp(this);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        MainInteractor interactor = new RemoteOperationsTest(sharedPreferences);
+
+        presenter = new LoginPresenterImp(this, interactor);
 
         presenter.loginWithStoredCredentials();
 
