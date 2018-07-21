@@ -9,11 +9,15 @@ import com.antondevs.apps.githubbrowser.data.preferences.PrefHelperImp;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 
+import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
+import okio.Utf8;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Created by Anton.
@@ -71,7 +75,7 @@ public class RemoteOperationsTest implements MainInteractor {
         if (apiService == null) {
             apiService = APIService.getService();
         }
-        apiService.loginUser().enqueue(new Callback<UserEntry>() {
+        apiService.loginUser(Credentials.basic(username, password, UTF_8)).enqueue(new Callback<UserEntry>() {
             @Override
             public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
                 if (response.code() == 401) {
