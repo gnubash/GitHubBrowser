@@ -54,6 +54,11 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void requestAuthentication() {
         displayLoginViews();
     }
@@ -62,7 +67,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     public void onUserAuthenticated() {
         Intent activityIntent = new Intent(this, UserActivity.class);
         activityIntent.putExtra(INTENT_EXTRA_USER_LOGIN_KEY, usernameEditText.getText().toString().trim());
+        activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(activityIntent);
+        fileList();
     }
 
     @Override
