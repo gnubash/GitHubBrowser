@@ -9,13 +9,13 @@ import java.util.ArrayList;
 /**
  * Created by Anton on 7/8/18.
  */
-public class UserPresenterImp implements UserContract.UserPresenter {
+public class TestUserPresenterImp implements UserContract.UserPresenter {
 
     private String userLoginName;
 
     private final UserContract.UserView view;
 
-    public UserPresenterImp(String userLoginName, UserContract.UserView view) {
+    public TestUserPresenterImp(String userLoginName, UserContract.UserView view) {
         this.userLoginName = userLoginName;
         this.view = view;
     }
