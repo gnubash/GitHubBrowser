@@ -10,12 +10,9 @@ import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 
 import okhttp3.Credentials;
-import okhttp3.OkHttpClient;
-import okio.Utf8;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -26,8 +23,6 @@ public class RemoteOperationsTest implements MainInteractor {
 
     private static final String LOGTAG = RemoteOperationsTest.class.getSimpleName();
 
-//    private static volatile RemoteOperationsTest UNIQUE_INSTANCE = null;
-
     private PrefHelper prefHelper;
     private RemoteAPIService apiService;
 
@@ -36,29 +31,6 @@ public class RemoteOperationsTest implements MainInteractor {
 
 
     }
-
-//    public static RemoteOperationsTest getInstance() {
-//        if (UNIQUE_INSTANCE == null) {
-//            synchronized (RemoteOperationsTest.class) {
-//                if (UNIQUE_INSTANCE == null) {
-//                    UNIQUE_INSTANCE = new RemoteOperationsTest();
-//                }
-//            }
-//        }
-//        return UNIQUE_INSTANCE;
-//    }
-
-//    public static RemoteOperationsTest getInstance(SharedPreferences sharedPreferences) {
-//        if (UNIQUE_INSTANCE == null) {
-//            synchronized (RemoteOperationsTest.class) {
-//                if (UNIQUE_INSTANCE == null) {
-//                    UNIQUE_INSTANCE = new RemoteOperationsTest();
-//                    UNIQUE_INSTANCE.prefHelper = new PrefHelperImp(sharedPreferences);
-//                }
-//            }
-//        }
-//        return UNIQUE_INSTANCE;
-//    }
 
     @Override
     public void checkCredentials(AuthenticationListener listener) {
@@ -84,6 +56,7 @@ public class RemoteOperationsTest implements MainInteractor {
                 }
                 Log.d(LOGTAG, "Request success onResponse()");
                 UserEntry user = response.body();
+                Log.d(LOGTAG, user.toString());
                 prefHelper.addUserCredentials(username, password);
                 prefHelper.userAuthenticated(true);
                 listener.onUserAuthenticated();
