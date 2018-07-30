@@ -1,6 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.user;
 
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.antondevs.apps.githubbrowser.data.MainInteractor;
+import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.repo.RepoActivity;
 import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
@@ -59,15 +62,15 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         Intent intent = getIntent();
         if (intent != null) {
             String exra = intent.getStringExtra(LoginActivity.INTENT_EXTRA_USER_LOGIN_KEY);
-            userPresenter = new UserPresenterImp(exra, this);
+            MainInteractor storage = new RemoteOperationsTest(PreferenceManager.getDefaultSharedPreferences(this));
+            userPresenter = new UserPresenterImp(exra, this, storage);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setTitle(exra);
             }
             userPresenter.loadPresenter();
         }
         else {
-            userPresenter = new UserPresenterImp("Something is wrong!", this);
-            userPresenter.loadPresenter();
+            throw new RuntimeException("UserActivity must be started with IntentExtra");
         }
 
         followersButton.setOnClickListener(new View.OnClickListener() {
