@@ -1,5 +1,6 @@
 package com.antondevs.apps.githubbrowser.ui.user;
 
+import com.antondevs.apps.githubbrowser.data.MainInteractor;
 import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 import com.antondevs.apps.githubbrowser.utilities.DatabaseUtils;
@@ -9,24 +10,25 @@ import java.util.ArrayList;
 /**
  * Created by Anton on 7/8/18.
  */
-public class UserPresenterImp implements UserContract.UserPresenter {
+public class UserPresenterImp implements UserContract.UserPresenter, MainInteractor.UserListener {
 
     private String userLoginName;
 
     private final UserContract.UserView view;
 
-    public UserPresenterImp(String userLoginName, UserContract.UserView view) {
+    MainInteractor storage;
+
+    public UserPresenterImp(String userLoginName, UserContract.UserView view, MainInteractor storage) {
         this.userLoginName = userLoginName;
         this.view = view;
+        this.storage = storage;
     }
 
     @Override
     public void loadPresenter() {
-        UserEntry user = DatabaseUtils.generateUser();
-        view.setFollowers(String.valueOf(user.getFollowers()));
-        view.setFollowing(String.valueOf(user.getFollowing()));
-        view.setUserName(user.getLogin());
-        view.setReposList(convertRepoListToStringList());
+
+        storage.queryUser(this, userLoginName);
+
     }
 
     @Override
@@ -57,5 +59,19 @@ public class UserPresenterImp implements UserContract.UserPresenter {
     @Override
     public String getUserLoginName() {
         return userLoginName;
+    }
+
+    @Override
+    public void onUserLoaded(UserEntry userEntry) {
+
+        view.setFollowers(String.valueOf(userEntry.getFollowers()));
+        view.setFollowing(String.valueOf(userEntry.getFollowing()));
+        view.setUserName(userEntry.getLogin());
+        view.setReposList(convertRepoListToStringList());
+    }
+
+    @Override
+    public void onLoadFailed() {
+
     }
 }
