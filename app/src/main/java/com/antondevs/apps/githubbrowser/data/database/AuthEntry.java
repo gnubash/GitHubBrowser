@@ -14,22 +14,40 @@ public class AuthEntry {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    private Credentials authKey;
+    private String login;
+    private String pass;
 
-    public AuthEntry() {
-
+    public AuthEntry(String login, String pass) {
+        this.login = login;
+        this.pass = pass;
     }
 
-    public Credentials getAuthKey() {
-        return authKey;
+    public int getId() {
+        return id;
     }
 
-    public void setAuthKey(Credentials authKey) {
-        this.authKey = authKey;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 
     @Override
     public String toString() {
-        return authKey.toString();
+        return login + pass;
     }
 }

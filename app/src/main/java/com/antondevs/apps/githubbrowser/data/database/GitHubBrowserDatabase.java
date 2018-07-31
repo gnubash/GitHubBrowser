@@ -41,4 +41,6 @@ public abstract class GitHubBrowserDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 
     public abstract RepoDao repoDao();
+
+    public abstract AuthDao authDao();
 }
