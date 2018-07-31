@@ -3,6 +3,7 @@ package com.antondevs.apps.githubbrowser.data;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
@@ -23,8 +24,10 @@ public class RemoteOperationsTest implements MainInteractor {
 
     private RemoteAPIService apiService;
 
-    public RemoteOperationsTest() {
+    private GitHubBrowserDatabase database;
 
+    public RemoteOperationsTest(GitHubBrowserDatabase database) {
+        this.database = database;
     }
 
     @Override

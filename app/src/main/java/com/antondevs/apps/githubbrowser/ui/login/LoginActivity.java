@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.data.MainInteractor;
 import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
+import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView {
@@ -37,8 +38,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         errorMessage = findViewById(R.id.login_error_message_text_view);
 
 //        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
 
-        MainInteractor interactor = new RemoteOperationsTest();
+        MainInteractor interactor = new RemoteOperationsTest(database);
 
         presenter = new LoginPresenterImp(this, interactor);
 
