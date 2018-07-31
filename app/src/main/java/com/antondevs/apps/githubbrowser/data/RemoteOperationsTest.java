@@ -4,8 +4,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.database.UserEntry;
-import com.antondevs.apps.githubbrowser.data.preferences.PrefHelper;
-import com.antondevs.apps.githubbrowser.data.preferences.PrefHelperImp;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 
@@ -23,23 +21,20 @@ public class RemoteOperationsTest implements MainInteractor {
 
     private static final String LOGTAG = RemoteOperationsTest.class.getSimpleName();
 
-    private PrefHelper prefHelper;
     private RemoteAPIService apiService;
 
-    public RemoteOperationsTest(SharedPreferences sharedPreferences) {
-        prefHelper = new PrefHelperImp(sharedPreferences);
-
+    public RemoteOperationsTest() {
 
     }
 
     @Override
     public void checkCredentials(AuthenticationListener listener) {
-        if (prefHelper.isAuthenticated()) {
-            performAuthentication(prefHelper.getUsername(), prefHelper.getSecret(), listener);
-        }
-        else {
-            listener.onAuthenticationRequered();
-        }
+//        if (prefHelper.isAuthenticated()) {
+//            performAuthentication(prefHelper.getUsername(), prefHelper.getSecret(), listener);
+//        }
+//        else {
+//            listener.onAuthenticationRequered();
+//        }
     }
 
     @Override
@@ -57,8 +52,8 @@ public class RemoteOperationsTest implements MainInteractor {
                 Log.d(LOGTAG, "Request success onResponse()");
                 UserEntry user = response.body();
                 Log.d(LOGTAG, user.toString());
-                prefHelper.addUserCredentials(username, password);
-                prefHelper.userAuthenticated(true);
+//                prefHelper.addUserCredentials(username, password);
+//                prefHelper.userAuthenticated(true);
                 listener.onUserAuthenticated();
             }
 

@@ -36,9 +36,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         loginButton = findViewById(R.id.login_button_login);
         errorMessage = findViewById(R.id.login_error_message_text_view);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        MainInteractor interactor = new RemoteOperationsTest(sharedPreferences);
+        MainInteractor interactor = new RemoteOperationsTest();
 
         presenter = new LoginPresenterImp(this, interactor);
 
