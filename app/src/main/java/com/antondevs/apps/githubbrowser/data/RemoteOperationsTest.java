@@ -8,6 +8,9 @@ import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import okhttp3.Credentials;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,16 +38,25 @@ public class RemoteOperationsTest implements MainStorage {
     @Override
     public void checkCredentials(AuthenticationListener listener) {
 
-        if (database.authDao().getNumberOfStoredCredentials() > 0) {
-            String name = database.authDao().getAuth().getLogin();
-            String secret = database.authDao().getAuth().getPass();
-            basicCredentials = Credentials.basic(name, secret, UTF_8);
-            listener.onUserAuthenticated();
-        }
-
-        else {
-            listener.onAuthenticationRequered();
-        }
+//        final int result;
+//        Executor executor = Executors.newSingleThreadExecutor();
+//        executor.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                result = database.authDao().getNumberOfStoredCredentials();
+//            }
+//        });
+//
+//        if (database.authDao().getNumberOfStoredCredentials() > 0) {
+//            String name = database.authDao().getAuth().getLogin();
+//            String secret = database.authDao().getAuth().getPass();
+//            basicCredentials = Credentials.basic(name, secret, UTF_8);
+//            listener.onUserAuthenticated();
+//        }
+//
+//        else {
+//            listener.onAuthenticationRequered();
+//        }
     }
 
     @Override
@@ -63,8 +75,15 @@ public class RemoteOperationsTest implements MainStorage {
                 Log.d(LOGTAG, "Request success onResponse()");
                 UserEntry user = response.body();
                 Log.d(LOGTAG, user.toString());
-                AuthEntry authEntry = new AuthEntry(username, password);
-                database.authDao().insertAuth(authEntry);
+                final AuthEntry authEntry = new AuthEntry(username, password);
+//                Executor executor = Executors.newSingleThreadExecutor();
+//                executor.execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        database.authDao().insertAuth(authEntry);
+//                    }
+//                });
+
                 Log.d(LOGTAG, authEntry.toString());
                 listener.onUserAuthenticated();
             }
