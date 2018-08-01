@@ -9,7 +9,7 @@ import android.util.Log;
 /**
  * Created by Anton on 6/29/18.
  */
-@Database(entities = {UserEntry.class, RepoEntry.class}, version = 1, exportSchema = false)
+@Database(entities = {UserEntry.class, RepoEntry.class, AuthEntry.class}, version = 1, exportSchema = false)
 public abstract class GitHubBrowserDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = GitHubBrowserDatabase.class.getSimpleName();

@@ -9,21 +9,21 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
         MainStorage.AuthenticationListener {
 
     private LoginContract.LoginView view;
-    private MainStorage interactor;
+    private MainStorage storage;
 
-    public LoginPresenterImp(LoginContract.LoginView view, MainStorage interactor) {
+    public LoginPresenterImp(LoginContract.LoginView view, MainStorage storage) {
         this.view = view;
-        this.interactor = interactor;
+        this.storage = storage;
     }
 
     @Override
     public void loginWithStoredCredentials() {
-        interactor.checkCredentials(this);
+        storage.checkCredentials(this);
     }
 
     @Override
     public void authenticateUser(String username, String password) {
-        interactor.performAuthentication(username, password, this);
+        storage.performAuthentication(username, password, this);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
     @Override
     public void destroyPresenter() {
         view = null;
-        interactor = null;
+        storage = null;
     }
 
     @Override
