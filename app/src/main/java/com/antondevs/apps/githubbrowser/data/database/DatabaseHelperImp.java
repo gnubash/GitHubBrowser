@@ -1,15 +1,24 @@
 package com.antondevs.apps.githubbrowser.data.database;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * Created by Anton.
  */
 public class DatabaseHelperImp implements DatabaseHelper {
 
+    private static final String LOGTAG = DatabaseHelperImp.class.getSimpleName();
+
+    private Executor databaseExecutor;
+
+    public DatabaseHelperImp() {
+
+    }
+
     @Override
     public void writeAuthnetication(AuthEntry authEntry) {
-        
+
     }
 
     @Override
