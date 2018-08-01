@@ -1,6 +1,6 @@
 package com.antondevs.apps.githubbrowser.ui.user;
 
-import com.antondevs.apps.githubbrowser.data.MainInteractor;
+import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 import com.antondevs.apps.githubbrowser.utilities.DatabaseUtils;
@@ -10,15 +10,15 @@ import java.util.ArrayList;
 /**
  * Created by Anton on 7/8/18.
  */
-public class UserPresenterImp implements UserContract.UserPresenter, MainInteractor.UserListener {
+public class UserPresenterImp implements UserContract.UserPresenter, MainStorage.UserListener {
 
     private String userLoginName;
 
     private final UserContract.UserView view;
 
-    MainInteractor storage;
+    MainStorage storage;
 
-    public UserPresenterImp(String userLoginName, UserContract.UserView view, MainInteractor storage) {
+    public UserPresenterImp(String userLoginName, UserContract.UserView view, MainStorage storage) {
         this.userLoginName = userLoginName;
         this.view = view;
         this.storage = storage;

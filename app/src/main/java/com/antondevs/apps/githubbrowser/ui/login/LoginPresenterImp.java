@@ -1,18 +1,17 @@
 package com.antondevs.apps.githubbrowser.ui.login;
 
-import com.antondevs.apps.githubbrowser.data.MainInteractor;
-import com.antondevs.apps.githubbrowser.data.TestInteractorImp;
+import com.antondevs.apps.githubbrowser.data.MainStorage;
 
 /**
  * Created by Anton on 6/30/18.
  */
 public class LoginPresenterImp implements LoginContract.LoginPresenter,
-        MainInteractor.AuthenticationListener {
+        MainStorage.AuthenticationListener {
 
     private LoginContract.LoginView view;
-    private MainInteractor interactor;
+    private MainStorage interactor;
 
-    public LoginPresenterImp(LoginContract.LoginView view, MainInteractor interactor) {
+    public LoginPresenterImp(LoginContract.LoginView view, MainStorage interactor) {
         this.view = view;
         this.interactor = interactor;
     }

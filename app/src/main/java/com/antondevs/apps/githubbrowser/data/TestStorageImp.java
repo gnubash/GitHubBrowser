@@ -3,18 +3,18 @@ package com.antondevs.apps.githubbrowser.data;
 /**
  * Created by Anton on 6/30/18.
  */
-public class TestInteractorImp implements MainInteractor{
+public class TestStorageImp implements MainStorage {
 
-    private static volatile TestInteractorImp UNIQUE_INSTANCE = null;
+    private static volatile TestStorageImp UNIQUE_INSTANCE = null;
 
-    private TestInteractorImp() {
+    private TestStorageImp() {
     }
 
-    public static TestInteractorImp getInstance() {
+    public static TestStorageImp getInstance() {
         if (UNIQUE_INSTANCE == null) {
-            synchronized (TestInteractorImp.class) {
+            synchronized (TestStorageImp.class) {
                 if (UNIQUE_INSTANCE == null) {
-                    UNIQUE_INSTANCE = new TestInteractorImp();
+                    UNIQUE_INSTANCE = new TestStorageImp();
                 }
             }
         }

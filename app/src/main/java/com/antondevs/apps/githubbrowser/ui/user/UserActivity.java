@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
-import com.antondevs.apps.githubbrowser.data.MainInteractor;
+import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.repo.RepoActivity;
@@ -62,7 +62,7 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         Intent intent = getIntent();
         if (intent != null) {
             String exra = intent.getStringExtra(LoginActivity.INTENT_EXTRA_USER_LOGIN_KEY);
-            MainInteractor storage = new RemoteOperationsTest(PreferenceManager.getDefaultSharedPreferences(this));
+            MainStorage storage = new RemoteOperationsTest(PreferenceManager.getDefaultSharedPreferences(this));
             userPresenter = new UserPresenterImp(exra, this, storage);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setTitle(exra);

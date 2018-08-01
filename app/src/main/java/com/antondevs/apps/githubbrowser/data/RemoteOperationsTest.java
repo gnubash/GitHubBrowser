@@ -1,6 +1,5 @@
 package com.antondevs.apps.githubbrowser.data;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
@@ -18,7 +17,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * Created by Anton.
  */
-public class RemoteOperationsTest implements MainInteractor {
+public class RemoteOperationsTest implements MainStorage {
 
     private static final String LOGTAG = RemoteOperationsTest.class.getSimpleName();
 
