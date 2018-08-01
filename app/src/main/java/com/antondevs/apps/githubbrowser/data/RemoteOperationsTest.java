@@ -25,26 +25,34 @@ public class RemoteOperationsTest implements MainStorage {
 
     private GitHubBrowserDatabase database;
 
+    private String basicCredentials;
+
     public RemoteOperationsTest(GitHubBrowserDatabase database) {
         this.database = database;
     }
 
     @Override
     public void checkCredentials(AuthenticationListener listener) {
-//        if (prefHelper.isAuthenticated()) {
-//            performAuthentication(prefHelper.getUsername(), prefHelper.getSecret(), listener);
-//        }
-//        else {
-//            listener.onAuthenticationRequered();
-//        }
+
+        if (database.authDao().getNumberOfStoredCredentials() > 0) {
+            String name = database.authDao().getAuth().getLogin();
+            String secret = database.authDao().getAuth().getPass();
+            basicCredentials = Credentials.basic(name, secret, UTF_8);
+            listener.onUserAuthenticated();
+        }
+
+        else {
+            listener.onAuthenticationRequered();
+        }
     }
 
     @Override
     public void performAuthentication(final String username, final String password, final AuthenticationListener listener) {
+        basicCredentials = Credentials.basic(username, password, UTF_8);
         if (apiService == null) {
             apiService = APIService.getService();
         }
-        apiService.loginUser(Credentials.basic(username, password, UTF_8)).enqueue(new Callback<UserEntry>() {
+        apiService.loginUser(basicCredentials).enqueue(new Callback<UserEntry>() {
             @Override
             public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
                 if (response.code() == 401) {
@@ -54,8 +62,7 @@ public class RemoteOperationsTest implements MainStorage {
                 Log.d(LOGTAG, "Request success onResponse()");
                 UserEntry user = response.body();
                 Log.d(LOGTAG, user.toString());
-//                prefHelper.addUserCredentials(username, password);
-//                prefHelper.userAuthenticated(true);
+
                 listener.onUserAuthenticated();
             }
 

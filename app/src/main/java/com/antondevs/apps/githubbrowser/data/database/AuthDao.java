@@ -13,6 +13,9 @@ import java.util.List;
 @Dao
 public interface AuthDao {
 
+    @Query("SELECT * FROM auth")
+    AuthEntry getAuth();
+
     @Query("SELECT Count(*) FROM auth")
     int getNumberOfStoredCredentials();
 
