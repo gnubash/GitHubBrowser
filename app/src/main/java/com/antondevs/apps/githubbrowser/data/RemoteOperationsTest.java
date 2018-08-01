@@ -38,25 +38,6 @@ public class RemoteOperationsTest implements MainStorage {
     @Override
     public void checkCredentials(AuthenticationListener listener) {
 
-//        final int result;
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                result = database.authDao().getNumberOfStoredCredentials();
-//            }
-//        });
-//
-//        if (database.authDao().getNumberOfStoredCredentials() > 0) {
-//            String name = database.authDao().getAuth().getLogin();
-//            String secret = database.authDao().getAuth().getPass();
-//            basicCredentials = Credentials.basic(name, secret, UTF_8);
-//            listener.onUserAuthenticated();
-//        }
-//
-//        else {
-//            listener.onAuthenticationRequered();
-//        }
     }
 
     @Override
@@ -75,14 +56,7 @@ public class RemoteOperationsTest implements MainStorage {
                 Log.d(LOGTAG, "Request success onResponse()");
                 UserEntry user = response.body();
                 Log.d(LOGTAG, user.toString());
-                final AuthEntry authEntry = new AuthEntry(username, password);
-//                Executor executor = Executors.newSingleThreadExecutor();
-//                executor.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        database.authDao().insertAuth(authEntry);
-//                    }
-//                });
+                AuthEntry authEntry = new AuthEntry(username, password);
 
                 Log.d(LOGTAG, authEntry.toString());
                 listener.onUserAuthenticated();
