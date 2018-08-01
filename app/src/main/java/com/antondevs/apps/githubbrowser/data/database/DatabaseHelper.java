@@ -7,15 +7,11 @@ import java.util.List;
  */
 public interface DatabaseHelper {
 
-    List<UserEntry> getContributors(String repoName);
+    void writeAuthnetication(AuthEntry authEntry);
 
-    List<RepoEntry> getUserStarredRepos(String userName);
+    boolean isAuthenticated();
 
-    List<RepoEntry> getUserOwnedRepos(String username);
-
-    List<UserEntry> getFollowers(String username);
-
-    List<UserEntry> getFollowing(String username);
+    AuthEntry getAuthentication();
 
     UserEntry getUser(String username);
 
@@ -25,5 +21,5 @@ public interface DatabaseHelper {
 
     void writeRepo(RepoEntry repo);
 
-    UserEntry searchByName(String username);
+    List<UserEntry> searchByName(String username);
 }
