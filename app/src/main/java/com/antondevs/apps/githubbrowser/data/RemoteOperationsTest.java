@@ -2,6 +2,7 @@ package com.antondevs.apps.githubbrowser.data;
 
 import android.util.Log;
 
+import com.antondevs.apps.githubbrowser.data.database.AuthEntry;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
@@ -62,7 +63,9 @@ public class RemoteOperationsTest implements MainStorage {
                 Log.d(LOGTAG, "Request success onResponse()");
                 UserEntry user = response.body();
                 Log.d(LOGTAG, user.toString());
-
+                AuthEntry authEntry = new AuthEntry(username, password);
+                database.authDao().insertAuth(authEntry);
+                Log.d(LOGTAG, authEntry.toString());
                 listener.onUserAuthenticated();
             }
 
