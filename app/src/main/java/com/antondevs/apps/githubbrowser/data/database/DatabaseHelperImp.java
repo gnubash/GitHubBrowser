@@ -26,8 +26,13 @@ public class DatabaseHelperImp implements DatabaseHelper {
     }
 
     @Override
-    public void writeAuthnetication(AuthEntry authEntry) {
-
+    public void writeAuthnetication(final AuthEntry authEntry) {
+        databaseExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                database.authDao().insertAuth(authEntry);
+            }
+        });
     }
 
     @Override
@@ -77,8 +82,13 @@ public class DatabaseHelperImp implements DatabaseHelper {
     }
 
     @Override
-    public void writeUser(UserEntry user) {
-
+    public void writeUser(final UserEntry user) {
+        databaseExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                database.userDao().insertUser(user);
+            }
+        });
     }
 
     @Override
