@@ -39,7 +39,8 @@ public class RemoteOperationsTest implements MainStorage {
     @Override
     public void checkCredentials(AuthenticationListener listener) {
         if (databaseHelper.getStoredAuth() != 1) {
-            databaseHelper.clearStoredAuth();
+            Log.d(LOGTAG, "databaseHelper.getStoredAuth() = " + databaseHelper.getStoredAuth());
+//            databaseHelper.clearStoredAuth();
             listener.onAuthenticationRequered();
         }
         else {

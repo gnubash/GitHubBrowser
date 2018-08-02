@@ -47,7 +47,7 @@ public class DatabaseHelperImp implements DatabaseHelper {
         catch (InterruptedException | ExecutionException e) {
             Log.d(LOGTAG, "Exception occurred while Future.get() in getStoredAuth()");
         }
-
+        Log.d(LOGTAG, "tempNumber = " + tempNumber);
         return tempNumber;
     }
 
