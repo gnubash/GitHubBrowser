@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
+import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
+import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
@@ -38,7 +40,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 //        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
 
-        MainStorage interactor = new RemoteOperationsTest(database);
+        DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
+
+        MainStorage interactor = new RemoteOperationsTest(databaseHelper);
 
         presenter = new LoginPresenterImp(this, interactor);
 
