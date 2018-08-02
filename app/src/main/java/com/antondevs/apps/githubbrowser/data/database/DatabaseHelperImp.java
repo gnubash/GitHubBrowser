@@ -57,6 +57,16 @@ public class DatabaseHelperImp implements DatabaseHelper {
     }
 
     @Override
+    public void clearStoredAuth() {
+        databaseExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                database.authDao().getAuth();
+            }
+        });
+    }
+
+    @Override
     public UserEntry getUser(String username) {
         return null;
     }

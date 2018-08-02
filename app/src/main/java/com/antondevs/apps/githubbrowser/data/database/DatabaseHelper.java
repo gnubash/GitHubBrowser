@@ -13,6 +13,8 @@ public interface DatabaseHelper {
 
     AuthEntry getAuthentication();
 
+    void clearStoredAuth();
+
     UserEntry getUser(String username);
 
     RepoEntry getRepo(String repoName);
