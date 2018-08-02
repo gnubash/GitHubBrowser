@@ -10,6 +10,8 @@ import android.arch.persistence.room.PrimaryKey;
 public class UserEntry {
 
     @PrimaryKey(autoGenerate = true)
+    private int users_id;
+
     private int id;
 
     private String login;
@@ -19,6 +21,14 @@ public class UserEntry {
 
     public UserEntry() {
 
+    }
+
+    public int getUsers_id() {
+        return users_id;
+    }
+
+    public void setUsers_id(int users_id) {
+        this.users_id = users_id;
     }
 
     public int getId() {

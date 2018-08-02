@@ -17,7 +17,7 @@ import java.util.List;
 @Dao
 public interface RepoDao {
 
-    @Query("SELECT * FROM repos ORDER BY id")
+    @Query("SELECT * FROM repos ORDER BY repos_id")
     List<RepoEntry> queryAllRepos();
 
     @Query("SELECT * FROM repos WHERE name LIKE :repoName")

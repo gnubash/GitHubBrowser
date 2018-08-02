@@ -10,6 +10,7 @@ import android.arch.persistence.room.PrimaryKey;
 public class RepoEntry {
 
     @PrimaryKey(autoGenerate = true)
+    private int repos_id;
     private int id;
 
     private String login;
@@ -20,6 +21,14 @@ public class RepoEntry {
 
     public RepoEntry() {
 
+    }
+
+    public int getRepos_id() {
+        return repos_id;
+    }
+
+    public void setRepos_id(int repos_id) {
+        this.repos_id = repos_id;
     }
 
     public int getId() {
