@@ -12,7 +12,7 @@ import okhttp3.Credentials;
 public class AuthEntry {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int auth_id;
 
     private String login;
     private String pass;
@@ -23,11 +23,11 @@ public class AuthEntry {
     }
 
     public int getId() {
-        return id;
+        return auth_id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.auth_id = id;
     }
 
     public String getLogin() {
@@ -48,6 +48,6 @@ public class AuthEntry {
 
     @Override
     public String toString() {
-        return id + login + pass;
+        return auth_id + login + pass;
     }
 }
