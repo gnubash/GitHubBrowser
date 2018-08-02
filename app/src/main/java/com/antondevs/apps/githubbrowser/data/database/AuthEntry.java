@@ -22,6 +22,14 @@ public class AuthEntry {
         this.pass = pass;
     }
 
+    public int getAuth_id() {
+        return auth_id;
+    }
+
+    public void setAuth_id(int auth_id) {
+        this.auth_id = auth_id;
+    }
+
     public int getId() {
         return auth_id;
     }

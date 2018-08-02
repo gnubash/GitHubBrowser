@@ -66,6 +66,10 @@ public class RemoteOperationsTest implements MainStorage {
                 AuthEntry authEntry = new AuthEntry(username, password);
 
                 Log.d(LOGTAG, authEntry.toString());
+
+                databaseHelper.writeAuthnetication(authEntry);
+                databaseHelper.writeUser(user);
+
                 listener.onUserAuthenticated();
             }
 
