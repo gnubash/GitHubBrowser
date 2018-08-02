@@ -30,6 +30,7 @@ public class DatabaseHelperImp implements DatabaseHelper {
         databaseExecutor.submit(new Runnable() {
             @Override
             public void run() {
+                Log.d(LOGTAG, "writeAuthnetication = " + authEntry.toString());
                 database.authDao().insertAuth(authEntry);
             }
         });
@@ -41,6 +42,7 @@ public class DatabaseHelperImp implements DatabaseHelper {
         Future<Integer> storedCredentials = databaseExecutor.submit(new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
+                Log.d(LOGTAG, "Future.storedCredentials.call()");
                 return database.authDao().getNumberOfStoredCredentials();
             }
         });
@@ -86,6 +88,7 @@ public class DatabaseHelperImp implements DatabaseHelper {
         databaseExecutor.submit(new Runnable() {
             @Override
             public void run() {
+                Log.d(LOGTAG, "writeUser = " + user.toString());
                 database.userDao().insertUser(user);
             }
         });
