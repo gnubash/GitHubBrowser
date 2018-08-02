@@ -3,20 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_action_search"
+        android:auth_id="@+auth_id/menu_action_search"
         android:title="@string/menu_action_search_title"
         app:showAsAction="ifRoom"
         android:icon="@drawable/search_white_24"
         android:orderInCategory="10"/>
 
     <item
-        android:id="@+id/menu_action_home"
+        android:auth_id="@+auth_id/menu_action_home"
         android:title="@string/menu_action_home_title"
         app:showAsAction="never"
         android:orderInCategory="80"/>
 
     <item
-        android:id="@+id/menu_action_logout"
+        android:auth_id="@+auth_id/menu_action_logout"
         android:title="@string/menu_action_logout_title"
         app:showAsAction="never"
         android:orderInCategory="100"/>

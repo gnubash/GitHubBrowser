@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/item_view_repo_tv"
+        android:auth_id="@+auth_id/item_view_repo_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="demo_repo_name"

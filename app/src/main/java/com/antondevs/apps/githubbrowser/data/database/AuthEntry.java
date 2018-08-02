@@ -3,8 +3,6 @@ package com.antondevs.apps.githubbrowser.data.database;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import okhttp3.Credentials;
-
 /**
  * Created by Anton.
  */
@@ -12,7 +10,7 @@ import okhttp3.Credentials;
 public class AuthEntry {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int auth_id;
 
     private String login;
     private String pass;
@@ -22,12 +20,12 @@ public class AuthEntry {
         this.pass = pass;
     }
 
-    public int getId() {
-        return id;
+    public int getAuth_id() {
+        return auth_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setAuth_id(int auth_id) {
+        this.auth_id = auth_id;
     }
 
     public String getLogin() {
@@ -48,6 +46,6 @@ public class AuthEntry {
 
     @Override
     public String toString() {
-        return id + login + pass;
+        return auth_id + login + pass;
     }
 }

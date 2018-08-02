@@ -13,10 +13,10 @@
         android:layout_marginBottom="32dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/login_username_edit_text"/>
+        app:layout_constraintBottom_toTopOf="@auth_id/login_username_edit_text"/>
 
     <EditText
-        android:id="@+id/login_username_edit_text"
+        android:auth_id="@+auth_id/login_username_edit_text"
         android:visibility="invisible"
         android:layout_width="252dp"
         android:layout_height="41dp"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/login_password_edit_text"
+        android:auth_id="@+auth_id/login_password_edit_text"
         android:visibility="invisible"
         android:layout_width="252dp"
         android:layout_height="41dp"
@@ -34,29 +34,29 @@
         android:inputType="textPassword"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/login_username_edit_text" />
+        app:layout_constraintTop_toBottomOf="@auth_id/login_username_edit_text" />
 
     <Button
-        android:id="@+id/login_button_login"
+        android:auth_id="@+auth_id/login_button_login"
         android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/login_screen_login_button_name"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/login_password_edit_text"
+        app:layout_constraintTop_toBottomOf="@auth_id/login_password_edit_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
     <TextView
-        android:id="@+id/login_error_message_text_view"
+        android:auth_id="@+auth_id/login_error_message_text_view"
         android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:textColor="@color/errorMessageColor"
         android:text="@string/login_screen_error_message_text"
-        app:layout_constraintTop_toBottomOf="@id/login_button_login"
+        app:layout_constraintTop_toBottomOf="@auth_id/login_button_login"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 

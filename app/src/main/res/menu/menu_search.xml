@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_action_search_search_screen"
+        android:auth_id="@+auth_id/menu_action_search_search_screen"
         android:title="@string/menu_action_search_title"
         app:showAsAction="ifRoom"
         android:icon="@drawable/search_white_24"
@@ -11,13 +11,13 @@
         app:actionViewClass="android.support.v7.widget.SearchView"/>
 
     <item
-        android:id="@+id/menu_action_home_search_screen"
+        android:auth_id="@+auth_id/menu_action_home_search_screen"
         android:title="@string/menu_action_home_title"
         app:showAsAction="never"
         android:orderInCategory="80"/>
 
     <item
-        android:id="@+id/menu_action_logout_search_screen"
+        android:auth_id="@+auth_id/menu_action_logout_search_screen"
         android:title="@string/menu_action_logout_title"
         app:showAsAction="never"
         android:orderInCategory="100"/>

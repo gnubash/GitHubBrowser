@@ -7,7 +7,7 @@
     tools:context=".ui.search.SearchActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/search_user_recycler_view"
+        android:auth_id="@+auth_id/search_user_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"

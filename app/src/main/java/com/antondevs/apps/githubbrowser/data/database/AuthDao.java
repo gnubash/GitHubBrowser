@@ -1,12 +1,9 @@
 package com.antondevs.apps.githubbrowser.data.database;
 
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
-
-import java.util.List;
 
 /**
  * Created by Anton.
@@ -14,7 +11,7 @@ import java.util.List;
 @Dao
 public interface AuthDao {
 
-    @Query("SELECT * FROM auth WHERE id = 1")
+    @Query("SELECT * FROM auth WHERE auth_id = 1")
     AuthEntry getAuth();
 
     @Query("SELECT Count(*) FROM auth")
