@@ -3,6 +3,7 @@ package com.antondevs.apps.githubbrowser.data;
 import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.database.AuthEntry;
+import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
@@ -27,12 +28,12 @@ public class RemoteOperationsTest implements MainStorage {
 
     private RemoteAPIService apiService;
 
-    private GitHubBrowserDatabase database;
+    private DatabaseHelper databaseHelper;
 
     private String basicCredentials;
 
-    public RemoteOperationsTest(GitHubBrowserDatabase database) {
-        this.database = database;
+    public RemoteOperationsTest(DatabaseHelper databaseHelper) {
+        this.databaseHelper = databaseHelper;
     }
 
     @Override
