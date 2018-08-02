@@ -7,13 +7,13 @@
     many Fragments or by inflating the base as sub-menu to the
     two other menus in Java -->
     <item
-        android:auth_id="@+auth_id/menu_action_home"
+        android:id="@+id/menu_action_home"
         android:title="@string/menu_action_home_title"
         app:showAsAction="never"
         android:orderInCategory="80"/>
 
     <item
-        android:auth_id="@+auth_id/menu_action_logout"
+        android:id="@+id/menu_action_logout"
         android:title="@string/menu_action_logout_title"
         app:showAsAction="never"
         android:orderInCategory="100"/>

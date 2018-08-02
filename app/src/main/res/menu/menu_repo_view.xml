@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:auth_id="@+auth_id/menu_action_star"
+        android:id="@+id/menu_action_star"
         app:showAsAction="ifRoom"
         android:title="@string/menu_action_star_title"
         android:icon="@drawable/stars_white_24"/>
 
     <item
-        android:auth_id="@+auth_id/menu_action_home"
+        android:id="@+id/menu_action_home"
         android:title="@string/menu_action_home_title"
         app:showAsAction="never"
         android:orderInCategory="80"/>
 
     <item
-        android:auth_id="@+auth_id/menu_action_logout"
+        android:id="@+id/menu_action_logout"
         android:title="@string/menu_action_logout_title"
         app:showAsAction="never"
         android:orderInCategory="100"/>

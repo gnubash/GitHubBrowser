@@ -14,7 +14,7 @@
     android:padding="16dp">
 
     <RelativeLayout
-        android:auth_id="@+auth_id/repo_owner_image_wrapper_view"
+        android:id="@+id/repo_owner_image_wrapper_view"
         android:layout_width="100dp"
         android:layout_height="132dp"
         android:background="@android:color/darker_gray"
@@ -22,14 +22,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:auth_id="@+auth_id/repo_owner_image_view"
+            android:id="@+id/repo_owner_image_view"
             android:layout_width="88dp"
             android:layout_height="100dp"
             android:src="@drawable/ic_android_white_48dp"
             android:layout_centerHorizontal="true"/>
 
         <TextView
-            android:auth_id="@+auth_id/repo_owner_name_text_view"
+            android:id="@+id/repo_owner_name_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -42,42 +42,42 @@
     </RelativeLayout>
 
     <TextView
-        android:auth_id="@+auth_id/repo_commits_text_view"
+        android:id="@+id/repo_commits_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/repos_commits"
         android:layout_margin="8dp"
         android:textSize="14sp"
-        app:layout_constraintLeft_toRightOf="@auth_id/repo_owner_image_wrapper_view"
+        app:layout_constraintLeft_toRightOf="@id/repo_owner_image_wrapper_view"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:auth_id="@+auth_id/repo_branches_text_view"
+        android:id="@+id/repo_branches_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/repos_branches"
-        app:layout_constraintLeft_toRightOf="@auth_id/repo_owner_image_wrapper_view"
-        app:layout_constraintTop_toBottomOf="@+auth_id/repo_commits_text_view"
+        app:layout_constraintLeft_toRightOf="@id/repo_owner_image_wrapper_view"
+        app:layout_constraintTop_toBottomOf="@+id/repo_commits_text_view"
         android:layout_margin="8dp"
         android:textSize="14sp"/>
 
     <TextView
-        android:auth_id="@+auth_id/repo_releases_text_view"
+        android:id="@+id/repo_releases_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/repos_releases"
-        app:layout_constraintLeft_toRightOf="@auth_id/repo_owner_image_wrapper_view"
-        app:layout_constraintTop_toBottomOf="@+auth_id/repo_branches_text_view"
+        app:layout_constraintLeft_toRightOf="@id/repo_owner_image_wrapper_view"
+        app:layout_constraintTop_toBottomOf="@+id/repo_branches_text_view"
         android:layout_margin="8dp"
         android:textSize="14sp"/>
 
     <TextView
-        android:auth_id="@+auth_id/repo_contributors_button_text_view"
+        android:id="@+id/repo_contributors_button_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/repos_contributos"
-        app:layout_constraintLeft_toRightOf="@auth_id/repo_owner_image_wrapper_view"
-        app:layout_constraintTop_toBottomOf="@+auth_id/repo_releases_text_view"
+        app:layout_constraintLeft_toRightOf="@id/repo_owner_image_wrapper_view"
+        app:layout_constraintTop_toBottomOf="@+id/repo_releases_text_view"
         android:layout_margin="8dp"
         android:paddingBottom="4dp"
         android:paddingTop="4dp"
@@ -86,23 +86,23 @@
         android:background="@android:color/darker_gray"/>
 
     <TextView
-        android:auth_id="@+auth_id/repo_starred_text_view"
+        android:id="@+id/repo_starred_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/repos_star"
-        app:layout_constraintLeft_toRightOf="@+auth_id/repo_commits_text_view"
+        app:layout_constraintLeft_toRightOf="@+id/repo_commits_text_view"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="8dp"
         android:textSize="14sp"/>
 
     <TextView
-        android:auth_id="@+auth_id/repo_fork_text_view"
+        android:id="@+id/repo_fork_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/repos_forks"
-        app:layout_constraintLeft_toRightOf="@+auth_id/repo_branches_text_view"
-        app:layout_constraintTop_toBottomOf="@auth_id/repo_starred_text_view"
+        app:layout_constraintLeft_toRightOf="@+id/repo_branches_text_view"
+        app:layout_constraintTop_toBottomOf="@id/repo_starred_text_view"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="8dp"
         android:textSize="14sp"/>
