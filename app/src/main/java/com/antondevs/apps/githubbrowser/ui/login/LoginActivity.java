@@ -3,6 +3,7 @@ package com.antondevs.apps.githubbrowser.ui.login;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,8 @@ import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView {
 
+    private static final String LOGTAG = LoginActivity.class.getSimpleName();
+
     public static final String INTENT_EXTRA_USER_LOGIN_KEY = "user_login_name";
 
     private EditText usernameEditText;
@@ -31,6 +34,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Log.d(LOGTAG, "onCreate()");
 
         usernameEditText = findViewById(R.id.login_username_edit_text);
         passwordEditText = findViewById(R.id.login_password_edit_text);
