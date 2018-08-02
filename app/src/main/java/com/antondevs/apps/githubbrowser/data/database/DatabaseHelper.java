@@ -9,7 +9,7 @@ public interface DatabaseHelper {
 
     void writeAuthnetication(AuthEntry authEntry);
 
-    boolean isAuthenticated();
+    int getStoredAuth();
 
     AuthEntry getAuthentication();
 

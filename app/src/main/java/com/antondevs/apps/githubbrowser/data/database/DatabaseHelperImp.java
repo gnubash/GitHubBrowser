@@ -1,7 +1,13 @@
 package com.antondevs.apps.githubbrowser.data.database;
 
+import android.util.Log;
+
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by Anton.
@@ -10,9 +16,12 @@ public class DatabaseHelperImp implements DatabaseHelper {
 
     private static final String LOGTAG = DatabaseHelperImp.class.getSimpleName();
 
-    private Executor databaseExecutor;
+    private static ExecutorService databaseExecutor = Executors.newSingleThreadExecutor();
 
-    public DatabaseHelperImp() {
+    private GitHubBrowserDatabase database;
+
+    public DatabaseHelperImp(GitHubBrowserDatabase database) {
+        this.database = database;
 
     }
 
@@ -22,8 +31,24 @@ public class DatabaseHelperImp implements DatabaseHelper {
     }
 
     @Override
-    public boolean isAuthenticated() {
-        return false;
+    public int getStoredAuth() {
+
+        Future<Integer> storedCredentials = databaseExecutor.submit(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return database.authDao().getNumberOfStoredCredentials();
+            }
+        });
+
+        int tempNumber = 0;
+        try {
+            tempNumber = storedCredentials.get();
+        }
+        catch (InterruptedException | ExecutionException e) {
+            Log.d(LOGTAG, "Exception occurred while Future.get() in getStoredAuth()");
+        }
+
+        return tempNumber;
     }
 
     @Override
