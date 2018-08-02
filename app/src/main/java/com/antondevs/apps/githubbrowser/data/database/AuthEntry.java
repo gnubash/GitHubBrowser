@@ -48,6 +48,6 @@ public class AuthEntry {
 
     @Override
     public String toString() {
-        return login + pass;
+        return id + login + pass;
     }
 }
