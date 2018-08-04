@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
@@ -44,7 +43,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        usersRecyclerView = (RecyclerView) findViewById(R.id.search_user_recycler_view);
+        usersRecyclerView = findViewById(R.id.search_user_recycler_view);
         usersRecyclerView.setHasFixedSize(true);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);

@@ -2,7 +2,6 @@ package com.antondevs.apps.githubbrowser.ui.user;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,8 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
@@ -22,7 +19,6 @@ import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
-import com.antondevs.apps.githubbrowser.databinding.ActivityRepoBinding;
 import com.antondevs.apps.githubbrowser.databinding.ActivityUserBinding;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.repo.RepoActivity;

@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.databinding.ActivityRepoBinding;
@@ -29,7 +28,6 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_repo);
-//        setContentView(R.layout.activity_repo);
 
         Log.d(LOGTAG, "onCreate()");
         String repoName = "";
