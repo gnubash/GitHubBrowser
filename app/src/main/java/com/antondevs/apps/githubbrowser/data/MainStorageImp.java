@@ -8,6 +8,8 @@ import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 
+import java.io.IOException;
+
 import okhttp3.Credentials;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,7 +59,7 @@ public class MainStorageImp implements MainStorage {
                     listener.onAuthenticationFailed();
                     return;
                 }
-                Log.d(LOGTAG, "Request success onResponse()");
+                Log.d(LOGTAG, "Request loginUser().onResponse()");
                 UserEntry user = response.body();
                 Log.d(LOGTAG, user.toString());
                 AuthEntry authEntry = new AuthEntry(username, password);
@@ -72,7 +74,10 @@ public class MainStorageImp implements MainStorage {
 
             @Override
             public void onFailure(Call<UserEntry> call, Throwable t) {
-                Log.d(LOGTAG, "Request success onFailure()");
+                if (t instanceof IOException) {
+                    Log.d(LOGTAG, "Request loginUser().onFailure() 't instanceof IOException'");
+                }
+                Log.d(LOGTAG, "Request loginUser().onFailure()");
                 listener.onAuthenticationFailed();
             }
         });
