@@ -34,6 +34,8 @@ public interface MainStorage {
 
         void onAuthenticationFailed();
 
+        void onNetworkConnectionFailure();
+
     }
 
     interface SearchListener {

@@ -73,19 +73,29 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     }
 
     @Override
-    public void displayErrorMessage() {
-        binding.loginErrorMessageTextView.setVisibility(View.VISIBLE);
+    public void displayAuthErrorMsg() {
+        displayError(getString(R.string.login_screen_error_message_text));
     }
 
-    private void displayLoginViews() {
-        binding.loginUsernameEditText.setVisibility(View.VISIBLE);
-        binding.loginPasswordEditText.setVisibility(View.VISIBLE);
-        binding.loginButtonLogin.setVisibility(View.VISIBLE);
+    @Override
+    public void displayNetworkErrorMsg() {
+        displayError(getString(R.string.login_screen_error_msg_network_issue));
     }
 
     @Override
     protected void onDestroy() {
         presenter.destroyPresenter();
         super.onDestroy();
+    }
+
+    private void displayError(String message) {
+        binding.loginErrorMessageTextView.setVisibility(View.VISIBLE);
+        binding.loginErrorMessageTextView.setText(message);
+    }
+
+    private void displayLoginViews() {
+        binding.loginUsernameEditText.setVisibility(View.VISIBLE);
+        binding.loginPasswordEditText.setVisibility(View.VISIBLE);
+        binding.loginButtonLogin.setVisibility(View.VISIBLE);
     }
 }

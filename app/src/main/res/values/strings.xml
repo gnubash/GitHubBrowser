@@ -4,6 +4,7 @@
     <!-- Login screen string values-->
     <string name="login_screen_login_button_name">Login</string>
     <string name="login_screen_error_message_text">Wrong username or password.\nPlease check your credentials.</string>
+    <string name="login_screen_error_msg_network_issue">Cannot connect.\nPlease check your network connection</string>
 
     <!-- User screen view string values -->
     <string name="followers_button_text">Followers: </string>

@@ -44,6 +44,11 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
 
     @Override
     public void onAuthenticationFailed() {
-        view.displayErrorMessage();
+        view.displayAuthErrorMsg();
+    }
+
+    @Override
+    public void onNetworkConnectionFailure() {
+        view.displayNetworkErrorMsg();
     }
 }

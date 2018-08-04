@@ -20,6 +20,8 @@ public interface LoginContract {
 
         void onUserAuthenticated();
 
-        void displayErrorMessage();
+        void displayAuthErrorMsg();
+
+        void displayNetworkErrorMsg();
     }
 }

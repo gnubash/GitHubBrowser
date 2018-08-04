@@ -76,6 +76,8 @@ public class MainStorageImp implements MainStorage {
             public void onFailure(Call<UserEntry> call, Throwable t) {
                 if (t instanceof IOException) {
                     Log.d(LOGTAG, "Request loginUser().onFailure() 't instanceof IOException'");
+                    listener.onNetworkConnectionFailure();
+                    return;
                 }
                 Log.d(LOGTAG, "Request loginUser().onFailure()");
                 listener.onAuthenticationFailed();
