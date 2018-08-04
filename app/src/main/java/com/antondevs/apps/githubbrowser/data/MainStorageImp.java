@@ -4,13 +4,9 @@ import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.database.AuthEntry;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
-import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import okhttp3.Credentials;
 import retrofit2.Call;
@@ -22,9 +18,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * Created by Anton.
  */
-public class RemoteOperationsTest implements MainStorage {
+public class MainStorageImp implements MainStorage {
 
-    private static final String LOGTAG = RemoteOperationsTest.class.getSimpleName();
+    private static final String LOGTAG = MainStorageImp.class.getSimpleName();
 
     private RemoteAPIService apiService;
 
@@ -32,7 +28,7 @@ public class RemoteOperationsTest implements MainStorage {
 
     private String basicCredentials;
 
-    public RemoteOperationsTest(DatabaseHelper databaseHelper) {
+    public MainStorageImp(DatabaseHelper databaseHelper) {
         this.databaseHelper = databaseHelper;
     }
 

@@ -9,7 +9,7 @@ import android.view.View;
 
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.data.MainStorage;
-import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
+import com.antondevs.apps.githubbrowser.data.MainStorageImp;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
@@ -38,9 +38,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
         DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
 
-        MainStorage interactor = new RemoteOperationsTest(databaseHelper);
+        MainStorage storage = new MainStorageImp(databaseHelper);
 
-        presenter = new LoginPresenterImp(this, interactor);
+        presenter = new LoginPresenterImp(this, storage);
 
         presenter.loginWithStoredCredentials();
 

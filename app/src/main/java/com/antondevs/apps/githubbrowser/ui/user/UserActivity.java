@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.data.MainStorage;
-import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
+import com.antondevs.apps.githubbrowser.data.MainStorageImp;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
@@ -59,7 +59,7 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
             GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
             DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
 
-            MainStorage storage = new RemoteOperationsTest(databaseHelper);
+            MainStorage storage = new MainStorageImp(databaseHelper);
 
             userPresenter = new UserPresenterImp(exra, this, storage);
             if (getSupportActionBar() != null) {
