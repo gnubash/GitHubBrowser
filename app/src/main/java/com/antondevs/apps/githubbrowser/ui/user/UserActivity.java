@@ -1,6 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.user;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
+import com.antondevs.apps.githubbrowser.databinding.ActivityRepoBinding;
+import com.antondevs.apps.githubbrowser.databinding.ActivityUserBinding;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.repo.RepoActivity;
 import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
@@ -35,32 +38,23 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
     public static final String INTENT_EXTRA_REPO_NAME_KEY = "repo_name";
 
-    private TextView usernameTextView;
-    private Button followersButton;
-    private Button follwingButton;
-    private Button ownReposButton;
-    private Button starredReposButton;
-    private RecyclerView reposRecyclerView;
+    private ActivityUserBinding binding;
+
     private UserContract.UserPresenter userPresenter;
     private RepoAdapter repoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_user);
 
         Log.d(LOGTAG, "onCreate()");
 
-        usernameTextView = (TextView) findViewById(R.id.user_login_name_text_view);
-        followersButton = (Button) findViewById(R.id.user_followers_button);
-        follwingButton = (Button) findViewById(R.id.user_following_button);
-        ownReposButton = (Button) findViewById(R.id.user_owned_repos_btn);
-        starredReposButton = (Button) findViewById(R.id.user_starred_repos_btn);
-        reposRecyclerView = (RecyclerView) findViewById(R.id.user_repos_recycler);
 
-        reposRecyclerView.setHasFixedSize(true);
+        binding.userReposRecycler.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        reposRecyclerView.setLayoutManager(layoutManager);
+        binding.userReposRecycler.setLayoutManager(layoutManager);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -81,34 +75,32 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
             throw new RuntimeException("UserActivity must be started with IntentExtra");
         }
 
-        followersButton.setOnClickListener(new View.OnClickListener() {
+        binding.userFollowersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO Maybe obtain the User's login name from the view instead of calling presenter.
                 Intent followersIntentSearch = new Intent(UserActivity.this, SearchActivity.class);
                 followersIntentSearch.putExtra(SearchActivity.EXTRA_SEARCH_USER_FOLLOWERS, userPresenter.getUserLoginName());
                 startActivity(followersIntentSearch);
             }
         });
 
-        follwingButton.setOnClickListener(new View.OnClickListener() {
+        binding.userFollowingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO Find how to remove duplicated code in both OnClick methods.
                 Intent followingIntentSearch = new Intent(UserActivity.this, SearchActivity.class);
                 followingIntentSearch.putExtra(SearchActivity.EXTRA_SEARCH_USER_FOLLOWING, userPresenter.getUserLoginName());
                 startActivity(followingIntentSearch);
             }
         });
 
-        ownReposButton.setOnClickListener(new View.OnClickListener() {
+        binding.userOwnedReposBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 userPresenter.getOwnedRepos();
             }
         });
 
-        starredReposButton.setOnClickListener(new View.OnClickListener() {
+        binding.userStarredReposBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 userPresenter.getStarredRepos();
@@ -118,17 +110,17 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
     @Override
     public void setUserName(String name) {
-        usernameTextView.setText(name);
+        binding.userLoginNameTextView.setText(name);
     }
 
     @Override
     public void setFollowers(String followersNumber) {
-        followersButton.append(followersNumber);
+        binding.userFollowersButton.append(followersNumber);
     }
 
     @Override
     public void setFollowing(String followingNumber) {
-        follwingButton.append(followingNumber);
+        binding.userFollowingButton.append(followingNumber);
     }
 
     @Override
@@ -136,7 +128,7 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         if (repoAdapter == null) {
             Log.d(LOGTAG, "setReposList() if statement. repoAdapter == null");
             repoAdapter = new RepoAdapter((ArrayList<String>) repoEntryList, this);
-            reposRecyclerView.setAdapter(repoAdapter);
+            binding.userReposRecycler.setAdapter(repoAdapter);
         }
         else {
             repoAdapter.swapRepoList((ArrayList<String>) repoEntryList);
