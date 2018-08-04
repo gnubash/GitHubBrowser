@@ -1,6 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.login;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.antondevs.apps.githubbrowser.data.RemoteOperationsTest;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
+import com.antondevs.apps.githubbrowser.databinding.ActivityLoginBinding;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.LoginView {
@@ -23,26 +25,18 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
     public static final String INTENT_EXTRA_USER_LOGIN_KEY = "user_login_name";
 
-    private EditText usernameEditText;
-    private EditText passwordEditText;
-    private Button loginButton;
-    private TextView errorMessage;
+    private ActivityLoginBinding binding;
 
     private LoginContract.LoginPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
 
         Log.d(LOGTAG, "onCreate()");
 
-        usernameEditText = findViewById(R.id.login_username_edit_text);
-        passwordEditText = findViewById(R.id.login_password_edit_text);
-        loginButton = findViewById(R.id.login_button_login);
-        errorMessage = findViewById(R.id.login_error_message_text_view);
-
-//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
 
         DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
@@ -53,11 +47,11 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
         presenter.loginWithStoredCredentials();
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        binding.loginButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.authenticateUser(usernameEditText.getText().toString().trim(),
-                        passwordEditText.getText().toString().trim());
+                presenter.authenticateUser(binding.loginUsernameEditText.getText().toString().trim(),
+                        binding.loginPasswordEditText.getText().toString().trim());
             }
         });
     }
@@ -75,7 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     @Override
     public void onUserAuthenticated() {
         Intent activityIntent = new Intent(this, UserActivity.class);
-        activityIntent.putExtra(INTENT_EXTRA_USER_LOGIN_KEY, usernameEditText.getText().toString().trim());
+        activityIntent.putExtra(INTENT_EXTRA_USER_LOGIN_KEY, binding.loginUsernameEditText.getText().toString().trim());
         activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(activityIntent);
         finish();
@@ -83,13 +77,13 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
     @Override
     public void displayErrorMessage() {
-        errorMessage.setVisibility(View.VISIBLE);
+        binding.loginErrorMessageTextView.setVisibility(View.VISIBLE);
     }
 
     private void displayLoginViews() {
-        usernameEditText.setVisibility(View.VISIBLE);
-        passwordEditText.setVisibility(View.VISIBLE);
-        loginButton.setVisibility(View.VISIBLE);
+        binding.loginUsernameEditText.setVisibility(View.VISIBLE);
+        binding.loginPasswordEditText.setVisibility(View.VISIBLE);
+        binding.loginButtonLogin.setVisibility(View.VISIBLE);
     }
 
     @Override
