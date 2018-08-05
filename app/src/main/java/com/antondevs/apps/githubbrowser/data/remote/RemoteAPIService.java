@@ -20,29 +20,36 @@ public interface RemoteAPIService {
     Call<UserEntry> loginUser(@Header("Authorization") String authKey);
 
     @GET("users/{login_name}")
-    Call<UserEntry> queryUser(@Path("login_name") String loginName);
+    Call<UserEntry> queryUser(@Header("Authorization") String authKey,
+                              @Path("login_name") String loginName);
 
     @GET("users/{login_name}/repos")
-    Call <List<RepoEntry>> queryUserOwnedRepos(@Path("login_name") String loginName);
+    Call <List<RepoEntry>> queryUserOwnedRepos(@Header("Authorization") String authKey,
+                                               @Path("login_name") String loginName);
 
     //Starred
     @GET("users/{login_name}/starred")
-    Call<List<RepoEntry>> queryUserStarredRepos(@Path("login_name") String loginName);
+    Call<List<RepoEntry>> queryUserStarredRepos(@Header("Authorization") String authKey,
+                                                @Path("login_name") String loginName);
 
     // Followers
     @GET("users/{login_name}/followers")
-    Call<List<UserEntry>> queryUserFollowers(@Path("login_name") String login_name);
+    Call<List<UserEntry>> queryUserFollowers(@Header("Authorization") String authKey,
+                                             @Path("login_name") String login_name);
 
     // Following
     @GET("users/{login_name}/following")
-    Call<List<UserEntry>> queryUserFollowing(@Path("login_name") String login_name);
+    Call<List<UserEntry>> queryUserFollowing(@Header("Authorization") String authKey,
+                                             @Path("login_name") String login_name);
 
     // Search
     @GET("search/users")
-    Call<List<UserEntry>> searchUsers(@Query("login_name") String login_name);
+    Call<List<UserEntry>> searchUsers(@Header("Authorization") String authKey,
+                                      @Query("login_name") String login_name);
 
     // Repo Contributors
     @GET("repos/{login_name}/{repo_name}/contributors")
-    Call<List<UserEntry>> queryRepoContributors(@Path("login_name") String login_name,
+    Call<List<UserEntry>> queryRepoContributors(@Header("Authorization") String authKey,
+                                                @Path("login_name") String login_name,
                                                 @Path("repo_name") String repo_name);
 }
