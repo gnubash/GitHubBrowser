@@ -67,7 +67,7 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
         view.setFollowers(String.valueOf(userEntry.getFollowers()));
         view.setFollowing(String.valueOf(userEntry.getFollowing()));
         view.setUserName(userEntry.getLogin());
-        view.setReposList(convertRepoListToStringList());
+        view.setReposList(userEntry.getOwnedRepos());
     }
 
     @Override
