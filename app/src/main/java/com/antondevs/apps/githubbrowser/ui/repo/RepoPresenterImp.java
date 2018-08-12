@@ -21,12 +21,12 @@ public class RepoPresenterImp implements RepoContract.Presenter {
 
     @Override
     public void loadPresenter() {
-        // TODO Set some fake data for testing purposes
+
     }
 
     @Override
     public void starRepo() {
-        // TODO Should attempt to star the repo. If Manager says "failure" then maybe notify the View
+
     }
 
     @Override

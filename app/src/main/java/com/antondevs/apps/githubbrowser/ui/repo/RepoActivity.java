@@ -100,13 +100,13 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
 
         switch (itemId) {
             case R.id.menu_action_star:
-                // TODO Star the current repository
+                //  Star the current repository
                 return true;
             case R.id.menu_action_logout:
-                // TODO Should call presenter to logout(finish activity directly after setting logged out status
+                //  Should call presenter to logout(finish activity directly after setting logged out status
                 return true;
             case R.id.menu_action_home:
-                // TODO Go to logged user
+                //  Go to logged user
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

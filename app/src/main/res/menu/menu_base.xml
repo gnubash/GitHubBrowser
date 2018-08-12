@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <!-- TODO Handle duplicated menus. Either by using 1 Activity,
+    <!--  Handle duplicated menus. Either by using 1 Activity,
     many Fragments or by inflating the base as sub-menu to the
     two other menus in Java -->
     <item
