@@ -42,7 +42,7 @@ public class DatabaseHelperImp implements DatabaseHelper {
         Future<Integer> storedCredentials = databaseExecutor.submit(new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
-                Log.d(LOGTAG, "Future.storedCredentials.call()");
+                Log.d(LOGTAG, "Future.getStoredAuth().call()");
                 return database.authDao().getNumberOfStoredCredentials();
             }
         });
@@ -60,7 +60,25 @@ public class DatabaseHelperImp implements DatabaseHelper {
 
     @Override
     public AuthEntry getAuthentication() {
-        return null;
+
+        Future<AuthEntry> authEntryFuture = databaseExecutor.submit(new Callable<AuthEntry>() {
+            @Override
+            public AuthEntry call() throws Exception {
+                Log.d(LOGTAG, "Future.getAuthentication().call()");
+                return database.authDao().getAuth();
+            }
+        });
+
+        AuthEntry entry = null;
+        try {
+            entry = authEntryFuture.get();
+            Log.d(LOGTAG, "entry = " + entry);
+        }
+        catch (InterruptedException | ExecutionException e) {
+            Log.d(LOGTAG, "Exception occurred while Future.get() in getAuthentication()");
+        }
+        Log.d(LOGTAG, "entry = " + entry);
+        return entry;
     }
 
     @Override
@@ -74,8 +92,23 @@ public class DatabaseHelperImp implements DatabaseHelper {
     }
 
     @Override
-    public UserEntry getUser(String username) {
-        return null;
+    public UserEntry getUser(final String username) {
+
+        Future<UserEntry> userEntryFuture = databaseExecutor.submit(new Callable<UserEntry>() {
+            @Override
+            public UserEntry call() throws Exception {
+                Log.d(LOGTAG, "Future.getUser().call()");
+                return database.userDao().queryUser(username);
+            }
+        });
+        UserEntry user = null;
+        try {
+            user = userEntryFuture.get();
+        }
+        catch (InterruptedException | ExecutionException e) {
+            Log.d(LOGTAG, "Exception occurred while Future.get() in getUser()");
+        }
+        return user;
     }
 
     @Override
