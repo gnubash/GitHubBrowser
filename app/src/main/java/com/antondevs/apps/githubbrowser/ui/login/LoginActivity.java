@@ -38,7 +38,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
         DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
 
-        MainStorage storage = new MainStorageImp(databaseHelper);
+        MainStorage storage = MainStorageImp.getInstance();
+
+        storage.setDatabaseHelper(databaseHelper);
 
         presenter = new LoginPresenterImp(this, storage);
 
@@ -66,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     @Override
     public void onUserAuthenticated() {
         Intent activityIntent = new Intent(this, UserActivity.class);
-        activityIntent.putExtra(INTENT_EXTRA_USER_LOGIN_KEY, binding.loginUsernameEditText.getText().toString().trim());
+        activityIntent.putExtra(INTENT_EXTRA_USER_LOGIN_KEY, presenter.getLogedUsername());
         activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(activityIntent);
         finish();

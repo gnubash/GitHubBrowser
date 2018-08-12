@@ -59,7 +59,8 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
             GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
             DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
 
-            MainStorage storage = new MainStorageImp(databaseHelper);
+            MainStorage storage = MainStorageImp.getInstance();
+            storage.setDatabaseHelper(databaseHelper);
 
             userPresenter = new UserPresenterImp(exra, this, storage);
             if (getSupportActionBar() != null) {

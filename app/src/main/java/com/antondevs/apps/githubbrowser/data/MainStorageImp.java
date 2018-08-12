@@ -24,15 +24,35 @@ public class MainStorageImp implements MainStorage {
 
     private static final String LOGTAG = MainStorageImp.class.getSimpleName();
 
+    private static final MainStorage mainStorageUniqueInstance = new MainStorageImp();
+
     private RemoteAPIService apiService;
 
     private DatabaseHelper databaseHelper;
 
     private String basicCredentials;
 
-    public MainStorageImp(DatabaseHelper databaseHelper) {
-        this.databaseHelper = databaseHelper;
+    private MainStorageImp() {
         apiService = APIService.getService();
+    }
+
+//    public MainStorageImp(DatabaseHelper databaseHelper) {
+//        this.databaseHelper = databaseHelper;
+//        apiService = APIService.getService();
+//    }
+
+    public static MainStorage getInstance() {
+        return mainStorageUniqueInstance;
+    }
+
+    @Override
+    public String getLoggedUser() {
+        return databaseHelper.getAuthentication().getLogin();
+    }
+
+    @Override
+    public void setDatabaseHelper(DatabaseHelper databaseHelper) {
+        this.databaseHelper = databaseHelper;
     }
 
     @Override

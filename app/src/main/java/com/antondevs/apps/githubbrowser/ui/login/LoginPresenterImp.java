@@ -27,19 +27,24 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
     }
 
     @Override
+    public void destroyPresenter() {
+        view = null;
+        storage = null;
+    }
+
+    @Override
+    public String getLogedUsername() {
+        return storage.getLoggedUser();
+    }
+
+    @Override
     public void onUserAuthenticated() {
         view.onUserAuthenticated();
     }
 
     @Override
     public void onAuthenticationRequered() {
-       view.requestAuthentication();
-    }
-
-    @Override
-    public void destroyPresenter() {
-        view = null;
-        storage = null;
+        view.requestAuthentication();
     }
 
     @Override

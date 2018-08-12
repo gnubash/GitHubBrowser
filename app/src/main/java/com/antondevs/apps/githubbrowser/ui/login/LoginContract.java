@@ -5,15 +5,6 @@ package com.antondevs.apps.githubbrowser.ui.login;
  */
 public interface LoginContract {
 
-    interface LoginPresenter {
-
-        void authenticateUser(String username, String password);
-
-        void loginWithStoredCredentials();
-
-        void destroyPresenter();
-    }
-
     interface LoginView {
 
         void requestAuthentication();
@@ -23,5 +14,16 @@ public interface LoginContract {
         void displayAuthErrorMsg();
 
         void displayNetworkErrorMsg();
+    }
+
+    interface LoginPresenter {
+
+        void authenticateUser(String username, String password);
+
+        void loginWithStoredCredentials();
+
+        void destroyPresenter();
+
+        String getLogedUsername();
     }
 }

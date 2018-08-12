@@ -1,5 +1,6 @@
 package com.antondevs.apps.githubbrowser.data;
 
+import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.UserEntry;
 
@@ -9,6 +10,10 @@ import java.util.List;
  * Created by Anton on 6/30/18.
  */
 public interface MainStorage {
+
+    String getLoggedUser();
+
+    void setDatabaseHelper(DatabaseHelper databaseHelper);
 
     void checkCredentials(AuthenticationListener listener);
 
