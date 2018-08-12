@@ -1,5 +1,7 @@
 package com.antondevs.apps.githubbrowser.data.database.model;
 
+import android.arch.persistence.room.TypeConverter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
  */
 public class ReposListConverter {
 
+    @TypeConverter
     public static List<String> getListFromString(String reposList) {
         List<String> repos;
 
@@ -19,6 +22,7 @@ public class ReposListConverter {
         return repos;
     }
 
+    @TypeConverter
     public static String getStringFromRepoList(List<String> reposList) {
         StringBuilder reposAsString = new StringBuilder();
 
