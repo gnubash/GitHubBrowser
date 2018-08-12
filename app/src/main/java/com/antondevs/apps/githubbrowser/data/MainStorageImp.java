@@ -2,9 +2,9 @@ package com.antondevs.apps.githubbrowser.data;
 
 import android.util.Log;
 
-import com.antondevs.apps.githubbrowser.data.database.AuthEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.AuthEntry;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
-import com.antondevs.apps.githubbrowser.data.database.UserEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 

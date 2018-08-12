@@ -2,6 +2,10 @@ package com.antondevs.apps.githubbrowser.data.database;
 
 import android.util.Log;
 
+import com.antondevs.apps.githubbrowser.data.database.model.AuthEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;

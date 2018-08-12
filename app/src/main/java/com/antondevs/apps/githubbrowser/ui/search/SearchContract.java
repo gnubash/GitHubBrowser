@@ -1,7 +1,5 @@
 package com.antondevs.apps.githubbrowser.ui.search;
 
-import com.antondevs.apps.githubbrowser.data.database.UserEntry;
-
 import java.util.List;
 
 /**

@@ -1,8 +1,8 @@
 package com.antondevs.apps.githubbrowser.data;
 
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
-import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
-import com.antondevs.apps.githubbrowser.data.database.UserEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
 import java.util.List;
 

@@ -6,6 +6,13 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.util.Log;
 
+import com.antondevs.apps.githubbrowser.data.database.model.AuthDao;
+import com.antondevs.apps.githubbrowser.data.database.model.AuthEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.RepoDao;
+import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.UserDao;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
+
 /**
  * Created by Anton on 6/29/18.
  */

@@ -1,7 +1,6 @@
 package com.antondevs.apps.githubbrowser.ui.search;
 
-import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
-import com.antondevs.apps.githubbrowser.data.database.UserEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.utilities.DatabaseUtils;
 
 import java.util.ArrayList;

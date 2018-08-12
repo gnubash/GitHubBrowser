@@ -1,4 +1,4 @@
-package com.antondevs.apps.githubbrowser.data.database;
+package com.antondevs.apps.githubbrowser.data.database.model;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;

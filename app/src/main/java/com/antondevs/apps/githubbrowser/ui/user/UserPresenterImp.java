@@ -1,8 +1,8 @@
 package com.antondevs.apps.githubbrowser.ui.user;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
-import com.antondevs.apps.githubbrowser.data.database.RepoEntry;
-import com.antondevs.apps.githubbrowser.data.database.UserEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.utilities.DatabaseUtils;
 
 import java.util.ArrayList;

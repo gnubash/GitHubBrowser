@@ -1,5 +1,9 @@
 package com.antondevs.apps.githubbrowser.data.database;
 
+import com.antondevs.apps.githubbrowser.data.database.model.AuthEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
+
 import java.util.List;
 
 /**
