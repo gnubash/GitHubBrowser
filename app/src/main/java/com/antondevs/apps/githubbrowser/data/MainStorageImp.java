@@ -1,6 +1,5 @@
 package com.antondevs.apps.githubbrowser.data;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.database.AuthEntry;
@@ -40,7 +39,6 @@ public class MainStorageImp implements MainStorage {
     public void checkCredentials(AuthenticationListener listener) {
         if (databaseHelper.getStoredAuth() != 1) {
             Log.d(LOGTAG, "databaseHelper.getStoredAuth() = " + databaseHelper.getStoredAuth());
-//            databaseHelper.clearStoredAuth();
             listener.onAuthenticationRequered();
         }
         else {
