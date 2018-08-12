@@ -1,5 +1,6 @@
 package com.antondevs.apps.githubbrowser.data;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.database.AuthEntry;
@@ -32,6 +33,7 @@ public class MainStorageImp implements MainStorage {
 
     public MainStorageImp(DatabaseHelper databaseHelper) {
         this.databaseHelper = databaseHelper;
+        apiService = APIService.getService();
     }
 
     @Override
@@ -49,9 +51,7 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void performAuthentication(final String username, final String password, final AuthenticationListener listener) {
         basicCredentials = Credentials.basic(username, password, UTF_8);
-        if (apiService == null) {
-            apiService = APIService.getService();
-        }
+        
         apiService.queryUser(basicCredentials, username).enqueue(new Callback<UserEntry>() {
             @Override
             public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
