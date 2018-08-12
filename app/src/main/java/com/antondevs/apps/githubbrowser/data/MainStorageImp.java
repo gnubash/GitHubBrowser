@@ -52,14 +52,14 @@ public class MainStorageImp implements MainStorage {
         if (apiService == null) {
             apiService = APIService.getService();
         }
-        apiService.loginUser(basicCredentials).enqueue(new Callback<UserEntry>() {
+        apiService.queryUser(basicCredentials, username).enqueue(new Callback<UserEntry>() {
             @Override
             public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
                 if (response.code() == 401) {
                     listener.onAuthenticationFailed();
                     return;
                 }
-                Log.d(LOGTAG, "Request loginUser().onResponse()");
+                Log.d(LOGTAG, "Request performAuthentication().onResponse()");
                 UserEntry user = response.body();
                 Log.d(LOGTAG, user.toString());
                 AuthEntry authEntry = new AuthEntry(username, password);
@@ -75,19 +75,46 @@ public class MainStorageImp implements MainStorage {
             @Override
             public void onFailure(Call<UserEntry> call, Throwable t) {
                 if (t instanceof IOException) {
-                    Log.d(LOGTAG, "Request loginUser().onFailure() 't instanceof IOException'");
+                    Log.d(LOGTAG, "Request performAuthentication().onFailure() 't instanceof IOException'");
                     listener.onNetworkConnectionFailure();
                     return;
                 }
-                Log.d(LOGTAG, "Request loginUser().onFailure()");
+                Log.d(LOGTAG, "Request performAuthentication().onFailure()");
                 listener.onAuthenticationFailed();
             }
         });
     }
 
     @Override
-    public void queryUser(UserListener listener, String loginName) {
+    public void queryUser(final UserListener listener, String loginName) {
+        if (databaseHelper.getUser(loginName) != null) {
+            listener.onUserLoaded(databaseHelper.getUser(loginName));
+        }
+        else {
+            apiService.queryUser(basicCredentials, loginName).enqueue(new Callback<UserEntry>() {
+                @Override
+                public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
+                    if (response.code() == 401) {
+                        listener.onLoadFailed();
+                        return;
+                    }
+                    Log.d(LOGTAG, "Request queryUser().onResponse()");
+                    UserEntry user = response.body();
+                    Log.d(LOGTAG, user.toString());
 
+                    databaseHelper.writeUser(user);
+
+                    listener.onUserLoaded(user);
+                }
+
+                @Override
+                public void onFailure(Call<UserEntry> call, Throwable t) {
+
+                    Log.d(LOGTAG, "Request queryUser.onFailure()");
+                    listener.onLoadFailed();
+                }
+            });
+        }
     }
 
     @Override
