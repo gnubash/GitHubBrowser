@@ -2,6 +2,9 @@ package com.antondevs.apps.githubbrowser.data.database.model;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import java.util.List;
 
 /**
  * Created by Anton on 6/24/18.
@@ -18,6 +21,11 @@ public class UserEntry {
 
     private int followers;
     private int following;
+
+    @TypeConverters(ReposListConverter.class)
+    private List<String> ownedRepos;
+    @TypeConverters(ReposListConverter.class)
+    private List<String> starredRepos;
 
     public UserEntry() {
 
@@ -61,6 +69,22 @@ public class UserEntry {
 
     public void setFollowing(int following) {
         this.following = following;
+    }
+
+    public List<String> getOwnedRepos() {
+        return ownedRepos;
+    }
+
+    public void setOwnedRepos(List<String> ownedRepos) {
+        this.ownedRepos = ownedRepos;
+    }
+
+    public List<String> getStarredRepos() {
+        return starredRepos;
+    }
+
+    public void setStarredRepos(List<String> starredRepos) {
+        this.starredRepos = starredRepos;
     }
 
     @Override
