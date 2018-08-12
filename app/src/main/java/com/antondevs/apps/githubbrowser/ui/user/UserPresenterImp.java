@@ -33,12 +33,12 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
 
     @Override
     public void getOwnedRepos() {
-        view.setReposList(convertRepoListToStringList());
+
     }
 
     @Override
     public void getStarredRepos() {
-        view.setReposList(convertRepoListToStringList());
+
     }
 
     private ArrayList<String> convertRepoListToStringList() {
@@ -72,6 +72,6 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
 
     @Override
     public void onLoadFailed() {
-
+        
     }
 }
