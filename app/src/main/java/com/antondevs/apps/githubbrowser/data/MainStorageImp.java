@@ -44,6 +44,8 @@ public class MainStorageImp implements MainStorage {
             listener.onAuthenticationRequered();
         }
         else {
+            AuthEntry entry = databaseHelper.getAuthentication();
+            basicCredentials = Credentials.basic(entry.getLogin(), entry.getPass(), UTF_8);
             listener.onUserAuthenticated();
         }
     }

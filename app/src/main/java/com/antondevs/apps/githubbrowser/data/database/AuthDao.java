@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface AuthDao {
 
-    @Query("SELECT * FROM auth WHERE auth_id = 1")
+    @Query("SELECT * FROM auth WHERE auth_id = 0")
     AuthEntry getAuth();
 
     @Query("SELECT Count(*) FROM auth")
