@@ -4,11 +4,14 @@ import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.database.model.AuthEntry;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
+import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Credentials;
 import retrofit2.Call;
@@ -106,35 +109,33 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryUser(final UserListener listener, String loginName) {
-        if (databaseHelper.getUser(loginName) != null) {
-            listener.onUserLoaded(databaseHelper.getUser(loginName));
-        }
-        else {
-            apiService.queryUser(basicCredentials, loginName).enqueue(new Callback<UserEntry>() {
-                @Override
-                public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
-                    if (response.code() == 401) {
-                        listener.onLoadFailed();
-                        return;
-                    }
-                    Log.d(LOGTAG, "Request queryUser().onResponse()");
-                    UserEntry user = response.body();
-                    Log.d(LOGTAG, user.toString());
+    public void queryUser(final UserListener listener, final String loginName) {
 
-                    databaseHelper.writeUser(user);
-
-                    listener.onUserLoaded(user);
-                }
-
-                @Override
-                public void onFailure(Call<UserEntry> call, Throwable t) {
-
-                    Log.d(LOGTAG, "Request queryUser.onFailure()");
+        apiService.queryUser(basicCredentials, loginName).enqueue(new Callback<UserEntry>() {
+            @Override
+            public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
+                if (response.code() == 401) {
                     listener.onLoadFailed();
+                    return;
+
                 }
-            });
-        }
+                Log.d(LOGTAG, "Request queryUser().queryUser().onResponse()");
+                UserEntry user = response.body();
+                Log.d(LOGTAG, user.toString());
+
+                getUserOwned(listener, user);
+
+            }
+
+            @Override
+            public void onFailure(Call<UserEntry> call, Throwable t) {
+
+                Log.d(LOGTAG, "Request queryUser().queryUser().onFailure()");
+                listener.onLoadFailed();
+            }
+
+        });
+
     }
 
     @Override
@@ -160,5 +161,53 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void queryContributors(SearchListener listener, String repoName) {
 
+    }
+
+    private void getUserOwned(final UserListener listener, final UserEntry userEntry) {
+        String loginName = userEntry.getLogin();
+        apiService.queryUserOwnedRepos(basicCredentials, loginName).enqueue(new Callback<List<RepoEntry>>() {
+            @Override
+            public void onResponse(Call<List<RepoEntry>> call, Response<List<RepoEntry>> response) {
+                Log.d(LOGTAG, "Request getUserOwned().queryUserOwnedRepos().onResponse()");
+                List<RepoEntry> listOfRepos = response.body();
+                ArrayList<String> repoNames = new ArrayList<>();
+
+                for (RepoEntry r : listOfRepos) {
+                    repoNames.add(r.getName());
+                }
+                userEntry.setOwnedRepos(repoNames);
+                getUserStarred(listener, userEntry);
+            }
+
+            @Override
+            public void onFailure(Call<List<RepoEntry>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getUserStarred(final UserListener listener, final UserEntry userEntry) {
+        String loginName = userEntry.getLogin();
+        apiService.queryUserStarredRepos(basicCredentials, loginName).enqueue(new Callback<List<RepoEntry>>() {
+            @Override
+            public void onResponse(Call<List<RepoEntry>> call, Response<List<RepoEntry>> response) {
+                Log.d(LOGTAG, "Request getUserStarred().queryUserStarredRepos().onResponse()");
+                List<RepoEntry> listOfRepos = response.body();
+                ArrayList<String> repoNames = new ArrayList<>();
+
+                for (RepoEntry r : listOfRepos) {
+                    repoNames.add(r.getName());
+                }
+                userEntry.setStarredRepos(repoNames);
+                databaseHelper.writeUser(userEntry);
+                listener.onUserLoaded(userEntry);
+
+            }
+
+            @Override
+            public void onFailure(Call<List<RepoEntry>> call, Throwable t) {
+
+            }
+        });
     }
 }
