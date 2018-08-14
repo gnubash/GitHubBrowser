@@ -17,7 +17,7 @@ public class ReposListConverter {
 
         String [] arrayOfStrings = reposList.split(",");
 
-        repos = Arrays.asList(arrayOfStrings);
+        repos = new ArrayList<>(Arrays.asList(arrayOfStrings));
 
         return repos;
     }

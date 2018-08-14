@@ -35,6 +35,8 @@ public class MainStorageImp implements MainStorage {
 
     private String basicCredentials;
 
+    private UserEntry currentUser;
+
     private MainStorageImp() {
         apiService = APIService.getService();
     }
@@ -67,6 +69,7 @@ public class MainStorageImp implements MainStorage {
         else {
             AuthEntry entry = databaseHelper.getAuthentication();
             basicCredentials = Credentials.basic(entry.getLogin(), entry.getPass(), UTF_8);
+            currentUser = databaseHelper.getUser(entry.getLogin());
             listener.onUserAuthenticated();
         }
     }
@@ -90,9 +93,10 @@ public class MainStorageImp implements MainStorage {
                 Log.d(LOGTAG, authEntry.toString());
 
                 databaseHelper.writeAuthnetication(authEntry);
-                databaseHelper.writeUser(user);
+//                databaseHelper.writeUser(user);
+                queryUser(listener, user.getLogin());
 
-                listener.onUserAuthenticated();
+//                listener.onUserAuthenticated();
             }
 
             @Override
@@ -110,6 +114,10 @@ public class MainStorageImp implements MainStorage {
 
     @Override
     public void queryUser(final UserListener listener, final String loginName) {
+        if (currentUser != null && currentUser.getLogin().equals(loginName)) {
+            listener.onUserLoaded(currentUser);
+            return;
+        }
 
         apiService.queryUser(basicCredentials, loginName).enqueue(new Callback<UserEntry>() {
             @Override
@@ -124,6 +132,8 @@ public class MainStorageImp implements MainStorage {
                 Log.d(LOGTAG, user.toString());
 
                 getUserOwned(listener, user);
+//                listener.onUserLoaded(currentUser);
+
 
             }
 
@@ -163,20 +173,21 @@ public class MainStorageImp implements MainStorage {
 
     }
 
-    private void getUserOwned(final UserListener listener, final UserEntry userEntry) {
+    private void getUserOwned(final UserListener listener,final UserEntry userEntry) {
         String loginName = userEntry.getLogin();
         apiService.queryUserOwnedRepos(basicCredentials, loginName).enqueue(new Callback<List<RepoEntry>>() {
             @Override
             public void onResponse(Call<List<RepoEntry>> call, Response<List<RepoEntry>> response) {
                 Log.d(LOGTAG, "Request getUserOwned().queryUserOwnedRepos().onResponse()");
                 List<RepoEntry> listOfRepos = response.body();
-                ArrayList<String> repoNames = new ArrayList<>();
+                List<String> repoNames = new ArrayList<>();
 
                 for (RepoEntry r : listOfRepos) {
                     repoNames.add(r.getName());
                 }
                 userEntry.setOwnedRepos(repoNames);
                 getUserStarred(listener, userEntry);
+
             }
 
             @Override
@@ -193,14 +204,16 @@ public class MainStorageImp implements MainStorage {
             public void onResponse(Call<List<RepoEntry>> call, Response<List<RepoEntry>> response) {
                 Log.d(LOGTAG, "Request getUserStarred().queryUserStarredRepos().onResponse()");
                 List<RepoEntry> listOfRepos = response.body();
-                ArrayList<String> repoNames = new ArrayList<>();
+                List<String> repoNames = new ArrayList<>();
 
                 for (RepoEntry r : listOfRepos) {
                     repoNames.add(r.getName());
                 }
                 userEntry.setStarredRepos(repoNames);
                 databaseHelper.writeUser(userEntry);
-                listener.onUserLoaded(userEntry);
+                currentUser = userEntry;
+//                listener.onUserLoaded(userEntry);
+                notifyUserListener(listener);
 
             }
 
@@ -209,5 +222,15 @@ public class MainStorageImp implements MainStorage {
 
             }
         });
+    }
+
+    private void notifyUserListener(UserListener listener) {
+        if (listener instanceof AuthenticationListener) {
+            AuthenticationListener authenticationListener = (AuthenticationListener) listener;
+            authenticationListener.onUserAuthenticated();
+        }
+        else {
+            listener.onUserLoaded(currentUser);
+        }
     }
 }

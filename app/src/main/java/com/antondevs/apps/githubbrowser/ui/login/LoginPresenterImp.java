@@ -1,6 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.login;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
 /**
  * Created by Anton on 6/30/18.
@@ -30,6 +31,16 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
     public void destroyPresenter() {
         view = null;
         storage = null;
+    }
+
+    @Override
+    public void onUserLoaded(UserEntry userEntry) {
+
+    }
+
+    @Override
+    public void onLoadFailed() {
+
     }
 
     @Override
