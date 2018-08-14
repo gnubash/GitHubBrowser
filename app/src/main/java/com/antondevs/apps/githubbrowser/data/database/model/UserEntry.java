@@ -89,6 +89,18 @@ public class UserEntry {
 
     @Override
     public String toString() {
-        return "id:" + id + " login:" + login + " followers:" + followers + " following:" + following;
+
+        StringBuilder asString = new StringBuilder();
+        String separator = " ";
+        asString.append(id).append(separator)
+                .append(login).append(separator)
+                .append(followers).append(separator)
+                .append(following);
+
+        if (ownedRepos != null) {
+            asString.append(separator).append(ownedRepos.toString());
+        }
+
+        return asString.toString();
     }
 }
