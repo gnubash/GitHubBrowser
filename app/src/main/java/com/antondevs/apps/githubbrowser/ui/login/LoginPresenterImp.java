@@ -24,6 +24,7 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
 
     @Override
     public void authenticateUser(String username, String password) {
+        view.showLoading();
         storage.performAuthentication(username, password, this);
     }
 
@@ -60,11 +61,11 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
 
     @Override
     public void onAuthenticationFailed() {
-        view.displayAuthErrorMsg();
+        view.showAuthErrorMsg();
     }
 
     @Override
     public void onNetworkConnectionFailure() {
-        view.displayNetworkErrorMsg();
+        view.showNetworkErrorMsg();
     }
 }

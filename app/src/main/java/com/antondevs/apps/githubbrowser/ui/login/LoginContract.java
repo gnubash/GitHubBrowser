@@ -11,9 +11,11 @@ public interface LoginContract {
 
         void onUserAuthenticated();
 
-        void displayAuthErrorMsg();
+        void showAuthErrorMsg();
 
-        void displayNetworkErrorMsg();
+        void showNetworkErrorMsg();
+
+        void showLoading();
     }
 
     interface LoginPresenter {

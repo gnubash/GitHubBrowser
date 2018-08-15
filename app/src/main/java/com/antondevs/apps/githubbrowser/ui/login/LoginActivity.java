@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
     @Override
     public void requestAuthentication() {
-        displayLoginViews();
+        showLoginViews();
     }
 
     @Override
@@ -75,13 +75,22 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     }
 
     @Override
-    public void displayAuthErrorMsg() {
-        displayError(getString(R.string.login_screen_error_message_text));
+    public void showAuthErrorMsg() {
+        showError(getString(R.string.login_screen_error_message_text));
     }
 
     @Override
-    public void displayNetworkErrorMsg() {
-        displayError(getString(R.string.login_screen_error_msg_network_issue));
+    public void showNetworkErrorMsg() {
+        showError(getString(R.string.login_screen_error_msg_network_issue));
+    }
+
+    @Override
+    public void showLoading() {
+        binding.loginProgressBar.setVisibility(View.VISIBLE);
+        binding.loginErrorMessageTextView.setVisibility(View.INVISIBLE);
+        binding.loginUsernameEditText.setVisibility(View.INVISIBLE);
+        binding.loginPasswordEditText.setVisibility(View.INVISIBLE);
+        binding.loginButtonLogin.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -90,14 +99,24 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         super.onDestroy();
     }
 
-    private void displayError(String message) {
+    private void showError(String message) {
+        showLoginViews();
         binding.loginErrorMessageTextView.setVisibility(View.VISIBLE);
         binding.loginErrorMessageTextView.setText(message);
     }
 
-    private void displayLoginViews() {
+    private void showLoginViews() {
+        binding.loginProgressBar.setVisibility(View.INVISIBLE);
         binding.loginUsernameEditText.setVisibility(View.VISIBLE);
         binding.loginPasswordEditText.setVisibility(View.VISIBLE);
         binding.loginButtonLogin.setVisibility(View.VISIBLE);
     }
+
+    private void hideLoginViews() {
+        binding.loginProgressBar.setVisibility(View.INVISIBLE);
+        binding.loginUsernameEditText.setVisibility(View.VISIBLE);
+        binding.loginPasswordEditText.setVisibility(View.VISIBLE);
+        binding.loginButtonLogin.setVisibility(View.VISIBLE);
+    }
+
 }
