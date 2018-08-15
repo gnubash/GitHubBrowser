@@ -93,10 +93,9 @@ public class MainStorageImp implements MainStorage {
                 Log.d(LOGTAG, authEntry.toString());
 
                 databaseHelper.writeAuthnetication(authEntry);
-//                databaseHelper.writeUser(user);
-                queryUser(listener, user.getLogin());
 
-//                listener.onUserAuthenticated();
+                getUserOwned(listener, user);
+
             }
 
             @Override
@@ -132,7 +131,6 @@ public class MainStorageImp implements MainStorage {
                 Log.d(LOGTAG, user.toString());
 
                 getUserOwned(listener, user);
-//                listener.onUserLoaded(currentUser);
 
 
             }
@@ -212,7 +210,6 @@ public class MainStorageImp implements MainStorage {
                 userEntry.setStarredRepos(repoNames);
                 databaseHelper.writeUser(userEntry);
                 currentUser = userEntry;
-//                listener.onUserLoaded(userEntry);
                 notifyUserListener(listener);
 
             }
