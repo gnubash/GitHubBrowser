@@ -11,6 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.antondevs.apps.githubbrowser.data.MainStorage;
+import com.antondevs.apps.githubbrowser.data.MainStorageImp;
+import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
+import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
+import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.databinding.ActivityRepoBinding;
 import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
@@ -34,7 +39,13 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
 
         if (getIntent() != null && getIntent().hasExtra(UserActivity.INTENT_EXTRA_REPO_NAME_KEY)) {
             repoName = getIntent().getStringExtra(UserActivity.INTENT_EXTRA_REPO_NAME_KEY);
-            presenter = new RepoPresenterImp(repoName, this);
+
+            GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
+            DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
+            MainStorage storage = MainStorageImp.getInstance();
+            storage.setDatabaseHelper(databaseHelper);
+
+            presenter = new RepoPresenterImp(repoName, this, storage);
         }
         else {
             throw new RuntimeException("RepoActivity must be started with IntentExtra.");
