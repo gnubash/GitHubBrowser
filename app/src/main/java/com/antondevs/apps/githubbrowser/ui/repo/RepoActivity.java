@@ -69,8 +69,15 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
     }
 
     @Override
-    public void setOwner(String ownerName) {
+    public void setOwnerName(String ownerName) {
         binding.repoOwnerNameTextView.setText(ownerName);
+    }
+
+    @Override
+    public void setRepoName(String repoName) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(repoName);
+        }
     }
 
     @Override

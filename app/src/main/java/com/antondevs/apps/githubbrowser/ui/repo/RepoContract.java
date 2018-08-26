@@ -7,7 +7,9 @@ public interface RepoContract {
 
     interface View {
 
-        void setOwner(String ownerName);
+        void setOwnerName(String ownerName);
+
+        void setRepoName(String repoName);
 
         void setCommits(String commitsNumber);
 
