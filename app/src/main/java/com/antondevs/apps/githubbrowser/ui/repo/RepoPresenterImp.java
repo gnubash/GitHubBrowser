@@ -3,11 +3,12 @@ package com.antondevs.apps.githubbrowser.ui.repo;
 import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
+import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 
 /**
  * Created by Anton.
  */
-public class RepoPresenterImp implements RepoContract.Presenter {
+public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.RepoListener {
 
     private static final String LOGTAG = RepoPresenterImp.class.getSimpleName();
 
@@ -26,7 +27,7 @@ public class RepoPresenterImp implements RepoContract.Presenter {
 
     @Override
     public void loadPresenter() {
-
+        storage.queryRepo(this, repoName);
     }
 
     @Override
@@ -37,5 +38,15 @@ public class RepoPresenterImp implements RepoContract.Presenter {
     @Override
     public String getRepoName() {
         return repoName;
+    }
+
+    @Override
+    public void onRepoLoaded(RepoEntry repoEntry) {
+
+    }
+
+    @Override
+    public void onLoadFailed() {
+
     }
 }
