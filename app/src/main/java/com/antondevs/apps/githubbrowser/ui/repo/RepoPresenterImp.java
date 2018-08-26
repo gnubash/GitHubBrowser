@@ -42,7 +42,10 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
 
     @Override
     public void onRepoLoaded(RepoEntry repoEntry) {
-
+        view.setOwnerName(repoEntry.getLogin());
+        view.setRepoName(repoEntry.getName());
+        view.setFork(String.valueOf(repoEntry.getForks()));
+        view.setStar(String.valueOf(repoEntry.getWatchers()));
     }
 
     @Override
