@@ -16,15 +16,23 @@ import retrofit2.http.Query;
  */
 public interface RemoteAPIService {
 
+    // User
     @GET("users/{login_name}")
     Call<UserEntry> queryUser(@Header("Authorization") String authKey,
                               @Path("login_name") String loginName);
 
+    // Repo
+    @GET("repos/{login_name}/{repo_name}")
+    Call<RepoEntry> queryRepo(@Header("Authorization") String authKey,
+                                                @Path("login_name") String login_name,
+                                                @Path("repo_name") String repo_name);
+
+    // User owned
     @GET("users/{login_name}/repos")
     Call <List<RepoEntry>> queryUserOwnedRepos(@Header("Authorization") String authKey,
                                                @Path("login_name") String loginName);
 
-    //Starred
+    //User starred
     @GET("users/{login_name}/starred")
     Call<List<RepoEntry>> queryUserStarredRepos(@Header("Authorization") String authKey,
                                                 @Path("login_name") String loginName);
