@@ -14,6 +14,8 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
 
     private String userLoginName;
 
+    private UserEntry currentUserEntry;
+
     private final UserContract.UserView view;
 
     MainStorage storage;
@@ -33,12 +35,12 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
 
     @Override
     public void getOwnedRepos() {
-
+        view.setReposList(currentUserEntry.getOwnedRepos());
     }
 
     @Override
     public void getStarredRepos() {
-
+        view.setReposList(currentUserEntry.getStarredRepos());
     }
 
     private ArrayList<String> convertRepoListToStringList() {
@@ -58,11 +60,13 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
 
     @Override
     public String getUserLoginName() {
-        return userLoginName;
+        return currentUserEntry.getLogin();
     }
 
     @Override
     public void onUserLoaded(UserEntry userEntry) {
+
+        currentUserEntry = userEntry;
 
         view.setFollowers(String.valueOf(userEntry.getFollowers()));
         view.setFollowing(String.valueOf(userEntry.getFollowing()));
