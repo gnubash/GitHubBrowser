@@ -43,21 +43,6 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
         view.setReposList(currentUserEntry.getStarredRepos());
     }
 
-    private ArrayList<String> convertRepoListToStringList() {
-        ArrayList<RepoEntry> reposList = new ArrayList<>();
-        //fill the list
-        for (int i = 0; i < 20; i++) {
-            reposList.add(DatabaseUtils.generateRepor());
-        }
-        ArrayList<String> reposNames = new ArrayList<>();
-        for (RepoEntry repo : reposList) {
-            reposNames.add(repo.getName());
-        }
-
-        return reposNames;
-
-    }
-
     @Override
     public String getUserLoginName() {
         return currentUserEntry.getLogin();
