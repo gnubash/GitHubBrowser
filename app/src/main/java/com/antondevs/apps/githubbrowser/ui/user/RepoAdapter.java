@@ -54,6 +54,7 @@ public class RepoAdapter extends RecyclerView.Adapter<RepoAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
+        Log.d(LOGTAG, "getItemCount: " + repoList.size());
         return repoList.size();
     }
 

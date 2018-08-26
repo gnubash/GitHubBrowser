@@ -100,6 +100,9 @@ public class UserEntry {
         if (ownedRepos != null) {
             asString.append(separator).append(ownedRepos.toString());
         }
+        if (starredRepos != null) {
+            asString.append(separator).append(starredRepos.toString());
+        }
 
         return asString.toString();
     }

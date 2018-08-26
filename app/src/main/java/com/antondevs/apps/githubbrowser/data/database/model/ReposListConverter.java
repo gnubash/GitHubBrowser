@@ -13,12 +13,16 @@ public class ReposListConverter {
 
     @TypeConverter
     public static List<String> getListFromString(String reposList) {
-        List<String> repos;
+        List<String> repos = new ArrayList<>();
+        if (reposList != null && !reposList.equals("")) {
+//            List<String> repos;
 
-        String [] arrayOfStrings = reposList.split(",");
+            String[] arrayOfStrings = reposList.split(",");
 
-        repos = new ArrayList<>(Arrays.asList(arrayOfStrings));
+            repos = new ArrayList<>(Arrays.asList(arrayOfStrings));
 
+//            return repos;
+        }
         return repos;
     }
 
