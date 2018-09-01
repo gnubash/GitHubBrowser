@@ -11,10 +11,9 @@ public class RepoEntry {
 
     @PrimaryKey(autoGenerate = true)
     private int repos_id;
-    private int id;
+    private long id;
 
-    private String login;
-    private String name;
+    private String full_name;
 
     private int forks;
     private int watchers;
@@ -31,28 +30,20 @@ public class RepoEntry {
         this.repos_id = repos_id;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
     public String getName() {
-        return name;
+        return full_name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String full_name) {
+        this.full_name = full_name;
     }
 
     public int getForks() {
@@ -73,6 +64,6 @@ public class RepoEntry {
 
     @Override
     public String toString() {
-        return "id:" + id + " login:" + login + " name:" + name + " forks:" + forks + " watchers:" + watchers;
+        return "id:" + id + " full_name:" + full_name + " forks:" + forks + " watchers:" + watchers;
     }
 }
