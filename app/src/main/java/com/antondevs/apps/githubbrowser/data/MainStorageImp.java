@@ -8,6 +8,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
+import com.antondevs.apps.githubbrowser.utilities.Constants;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -159,6 +160,25 @@ public class MainStorageImp implements MainStorage {
     public void queryRepo(final RepoListener listener, String repoFullName) {
 
         listener.onRepoLoaded(currentUserRepos.get(repoFullName));
+
+        apiService.queryRepoContributors(basicCredentials, repoFullName, 1, Constants.RESULTS_PER_PAGE)
+                .enqueue(new Callback<List<UserEntry>>() {
+                    @Override
+                    public void onResponse(Call<List<UserEntry>> call, Response<List<UserEntry>> response) {
+                        if (response.body() != null && !response.body().isEmpty()) {
+                            List<UserEntry> contributors = response.body();
+                            Log.d(LOGTAG, "queryRepoContributors() count(per_page) = " + contributors.size());
+                            Log.d(LOGTAG, "response.headers().get(\"Link\") " + response.headers().get("Link"));
+                            Log.d(LOGTAG, "response.headers().values(\"Link\") = " +
+                                    response.headers().values("Link"));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<UserEntry>> call, Throwable t) {
+
+                    }
+                });
 
     }
 
