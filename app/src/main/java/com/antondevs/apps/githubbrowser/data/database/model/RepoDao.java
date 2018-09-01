@@ -18,7 +18,7 @@ public interface RepoDao {
     @Query("SELECT * FROM repos ORDER BY repos_id")
     List<RepoEntry> queryAllRepos();
 
-    @Query("SELECT * FROM repos WHERE name LIKE :repoName")
+    @Query("SELECT * FROM repos WHERE full_name LIKE :repoName")
     RepoEntry queryRepo(String repoName);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -24,7 +24,7 @@ public interface RemoteAPIService {
     // Repo
     @GET("repos/{full_name}")
     Call<RepoEntry> queryRepo(@Header("Authorization") String authKey,
-                                                @Path("full_name") String full_name);
+                                                @Path(value = "full_name", encoded = true) String full_name);
 
     // User owned
     @GET("users/{login_name}/repos")

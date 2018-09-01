@@ -32,8 +32,7 @@ public final class DatabaseUtils {
         RepoEntry repo = new RepoEntry();
         Random random = new Random();
 
-        repo.setLogin(names[random.nextInt(names.length)]);
-        repo.setName(repoNames[random.nextInt(repoNames.length)]);
+        repo.setFull_name(repoNames[random.nextInt(repoNames.length)]);
         repo.setForks(integer_values[random.nextInt(integer_values.length)]);
         repo.setWatchers(integer_values[random.nextInt(integer_values.length)]);
         return repo;
