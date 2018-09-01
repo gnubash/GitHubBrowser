@@ -151,8 +151,8 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryRepo(final RepoListener listener, String repoName) {
-        apiService.queryRepo(basicCredentials, currentUser.getLogin(), repoName).enqueue(new Callback<RepoEntry>() {
+    public void queryRepo(final RepoListener listener, String repoFullName) {
+        apiService.queryRepo(basicCredentials, repoFullName).enqueue(new Callback<RepoEntry>() {
             @Override
             public void onResponse(Call<RepoEntry> call, Response<RepoEntry> response) {
                 Log.d(LOGTAG, "Request queryRepo().onResponse()");

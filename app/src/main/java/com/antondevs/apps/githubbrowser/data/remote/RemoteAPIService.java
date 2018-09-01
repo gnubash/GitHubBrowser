@@ -22,10 +22,9 @@ public interface RemoteAPIService {
                               @Path("login_name") String loginName);
 
     // Repo
-    @GET("repos/{login_name}/{repo_name}")
+    @GET("repos/{full_name}")
     Call<RepoEntry> queryRepo(@Header("Authorization") String authKey,
-                                                @Path("login_name") String login_name,
-                                                @Path("repo_name") String repo_name);
+                                                @Path("full_name") String full_name);
 
     // User owned
     @GET("users/{login_name}/repos")
@@ -53,8 +52,7 @@ public interface RemoteAPIService {
                                       @Query("login_name") String login_name);
 
     // Repo Contributors
-    @GET("repos/{login_name}/{repo_name}/contributors")
+    @GET("repos/{full_name}/contributors")
     Call<List<UserEntry>> queryRepoContributors(@Header("Authorization") String authKey,
-                                                @Path("login_name") String login_name,
-                                                @Path("repo_name") String repo_name);
+                                                @Path("full_name") String full_name);
 }
