@@ -161,25 +161,6 @@ public class MainStorageImp implements MainStorage {
 
         listener.onRepoLoaded(currentUserRepos.get(repoFullName));
 
-        apiService.queryRepoContributors(basicCredentials, repoFullName, 1, Constants.RESULTS_PER_PAGE)
-                .enqueue(new Callback<List<UserEntry>>() {
-                    @Override
-                    public void onResponse(Call<List<UserEntry>> call, Response<List<UserEntry>> response) {
-                        if (response.body() != null && !response.body().isEmpty()) {
-                            List<UserEntry> contributors = response.body();
-                            Log.d(LOGTAG, "queryRepoContributors() count(per_page) = " + contributors.size());
-                            Log.d(LOGTAG, "response.headers().get(\"Link\") " + response.headers().get("Link"));
-                            Log.d(LOGTAG, "response.headers().values(\"Link\") = " +
-                                    response.headers().values("Link"));
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<UserEntry>> call, Throwable t) {
-
-                    }
-                });
-
     }
 
     @Override
@@ -257,5 +238,18 @@ public class MainStorageImp implements MainStorage {
         else {
             listener.onUserLoaded(currentUser);
         }
+    }
+
+    private int getPagesCountFromLinkHeader(String linkHeader) {
+
+        int startIndexForSearch = linkHeader.indexOf("next");
+
+        String searchCriteria = "page=";
+
+        int start = linkHeader.indexOf(searchCriteria, startIndexForSearch);
+        int end = linkHeader.indexOf('&', startIndexForSearch);
+        String substring = linkHeader.substring(start + searchCriteria.length(), end);
+        Log.d(LOGTAG, "getPagesCountFromLinkHeader() substring = " + substring);
+        return Integer.valueOf(substring);
     }
 }
