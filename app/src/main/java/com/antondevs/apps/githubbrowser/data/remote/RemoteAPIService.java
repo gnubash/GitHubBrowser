@@ -54,5 +54,5 @@ public interface RemoteAPIService {
     // Repo Contributors
     @GET("repos/{full_name}/contributors")
     Call<List<UserEntry>> queryRepoContributors(@Header("Authorization") String authKey,
-                                                @Path("full_name") String full_name);
+                                                @Path(value = "full_name", encoded = true) String full_name);
 }

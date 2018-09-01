@@ -11,7 +11,9 @@ import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Credentials;
 import retrofit2.Call;
@@ -37,8 +39,13 @@ public class MainStorageImp implements MainStorage {
 
     private UserEntry currentUser;
 
+    private Map<String, RepoEntry> currentUserOwnedRepos;
+    private Map<String, RepoEntry> currentUserStarredRepos;
+
     private MainStorageImp() {
         apiService = APIService.getService();
+        currentUserOwnedRepos = new HashMap<>();
+        currentUserStarredRepos = new HashMap<>();
     }
 
 //    public MainStorageImp(DatabaseHelper databaseHelper) {
@@ -152,20 +159,10 @@ public class MainStorageImp implements MainStorage {
 
     @Override
     public void queryRepo(final RepoListener listener, String repoFullName) {
-        apiService.queryRepo(basicCredentials, repoFullName).enqueue(new Callback<RepoEntry>() {
-            @Override
-            public void onResponse(Call<RepoEntry> call, Response<RepoEntry> response) {
-                Log.d(LOGTAG, "Request queryRepo().onResponse()");
-                RepoEntry repoEntry = response.body();
-                Log.d(LOGTAG, repoEntry.toString());
-                listener.onRepoLoaded(repoEntry);
-            }
 
-            @Override
-            public void onFailure(Call<RepoEntry> call, Throwable t) {
-                listener.onLoadFailed();
-            }
-        });
+        if (currentUserOwnedRepos.containsKey(repoFullName)) listener.onRepoLoaded(currentUserOwnedRepos.get(repoFullName));
+        else listener.onRepoLoaded(currentUserStarredRepos.get(repoFullName));
+
     }
 
     @Override
@@ -194,6 +191,7 @@ public class MainStorageImp implements MainStorage {
 
                 for (RepoEntry r : listOfRepos) {
                     repoNames.add(r.getFull_name());
+                    currentUserOwnedRepos.put(r.getFull_name(), r);
                 }
                 userEntry.setOwnedRepos(repoNames);
                 getUserStarred(listener, userEntry);
@@ -218,6 +216,7 @@ public class MainStorageImp implements MainStorage {
 
                 for (RepoEntry r : listOfRepos) {
                     repoNames.add(r.getFull_name());
+                    currentUserStarredRepos.put(r.getFull_name(), r);
                 }
                 userEntry.setStarredRepos(repoNames);
                 databaseHelper.writeUser(userEntry);
