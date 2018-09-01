@@ -15,6 +15,11 @@ public class RepoEntry {
 
     private String full_name;
 
+    private int commits_count;
+    private int branches_count;
+    private int releases_count;
+    private int contributors_count;
+
     private int forks;
     private int watchers;
 
@@ -46,6 +51,38 @@ public class RepoEntry {
         this.full_name = full_name;
     }
 
+    public int getCommits_count() {
+        return commits_count;
+    }
+
+    public void setCommits_count(int commits_count) {
+        this.commits_count = commits_count;
+    }
+
+    public int getBranches_count() {
+        return branches_count;
+    }
+
+    public void setBranches_count(int branches_count) {
+        this.branches_count = branches_count;
+    }
+
+    public int getReleases_count() {
+        return releases_count;
+    }
+
+    public void setReleases_count(int releases_count) {
+        this.releases_count = releases_count;
+    }
+
+    public int getContributors_count() {
+        return contributors_count;
+    }
+
+    public void setContributors_count(int contributors_count) {
+        this.contributors_count = contributors_count;
+    }
+
     public int getForks() {
         return forks;
     }
@@ -64,6 +101,18 @@ public class RepoEntry {
 
     @Override
     public String toString() {
-        return "id:" + id + " full_name:" + full_name + " forks:" + forks + " watchers:" + watchers;
+        StringBuilder asString = new StringBuilder();
+        String separator = " ";
+        
+        asString.append(id).append(separator)
+                .append(full_name).append(separator)
+                .append(commits_count).append(separator)
+                .append(branches_count).append(separator)
+                .append(releases_count).append(separator)
+                .append(contributors_count).append(separator)
+                .append(forks).append(separator)
+                .append(watchers);
+
+        return asString.toString();
     }
 }
