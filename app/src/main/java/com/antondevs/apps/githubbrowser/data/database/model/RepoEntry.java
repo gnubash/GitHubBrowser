@@ -38,11 +38,11 @@ public class RepoEntry {
         this.id = id;
     }
 
-    public String getName() {
+    public String getFull_name() {
         return full_name;
     }
 
-    public void setName(String full_name) {
+    public void setFull_name(String full_name) {
         this.full_name = full_name;
     }
 
