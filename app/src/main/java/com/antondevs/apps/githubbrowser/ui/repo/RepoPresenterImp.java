@@ -42,8 +42,9 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
 
     @Override
     public void onRepoLoaded(RepoEntry repoEntry) {
-        view.setOwnerName(repoEntry.getLogin());
-        view.setRepoName(repoEntry.getName());
+        String [] repoOwnerAndName = repoEntry.getFull_name().split("/");
+        view.setOwnerName(repoOwnerAndName[0]);
+        view.setRepoName(repoOwnerAndName[1]);
         view.setFork(String.valueOf(repoEntry.getForks()));
         view.setStar(String.valueOf(repoEntry.getWatchers()));
     }
@@ -52,4 +53,5 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
     public void onLoadFailed() {
 
     }
+
 }

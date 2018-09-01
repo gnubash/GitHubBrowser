@@ -193,7 +193,7 @@ public class MainStorageImp implements MainStorage {
                 List<String> repoNames = new ArrayList<>();
 
                 for (RepoEntry r : listOfRepos) {
-                    repoNames.add(r.getName());
+                    repoNames.add(r.getFull_name());
                 }
                 userEntry.setOwnedRepos(repoNames);
                 getUserStarred(listener, userEntry);
@@ -217,7 +217,7 @@ public class MainStorageImp implements MainStorage {
                 List<String> repoNames = new ArrayList<>();
 
                 for (RepoEntry r : listOfRepos) {
-                    repoNames.add(r.getName());
+                    repoNames.add(r.getFull_name());
                 }
                 userEntry.setStarredRepos(repoNames);
                 databaseHelper.writeUser(userEntry);
