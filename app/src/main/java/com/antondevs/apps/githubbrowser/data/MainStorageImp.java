@@ -39,13 +39,11 @@ public class MainStorageImp implements MainStorage {
 
     private UserEntry currentUser;
 
-    private Map<String, RepoEntry> currentUserOwnedRepos;
-    private Map<String, RepoEntry> currentUserStarredRepos;
+    private Map<String, RepoEntry> currentUserRepos;
 
     private MainStorageImp() {
         apiService = APIService.getService();
-        currentUserOwnedRepos = new HashMap<>();
-        currentUserStarredRepos = new HashMap<>();
+        currentUserRepos = new HashMap<>();
     }
 
 //    public MainStorageImp(DatabaseHelper databaseHelper) {
@@ -160,8 +158,7 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void queryRepo(final RepoListener listener, String repoFullName) {
 
-        if (currentUserOwnedRepos.containsKey(repoFullName)) listener.onRepoLoaded(currentUserOwnedRepos.get(repoFullName));
-        else listener.onRepoLoaded(currentUserStarredRepos.get(repoFullName));
+        listener.onRepoLoaded(currentUserRepos.get(repoFullName));
 
     }
 
@@ -191,7 +188,7 @@ public class MainStorageImp implements MainStorage {
 
                 for (RepoEntry r : listOfRepos) {
                     repoNames.add(r.getFull_name());
-                    currentUserOwnedRepos.put(r.getFull_name(), r);
+                    currentUserRepos.put(r.getFull_name(), r);
                 }
                 userEntry.setOwnedRepos(repoNames);
                 getUserStarred(listener, userEntry);
@@ -216,7 +213,7 @@ public class MainStorageImp implements MainStorage {
 
                 for (RepoEntry r : listOfRepos) {
                     repoNames.add(r.getFull_name());
-                    currentUserStarredRepos.put(r.getFull_name(), r);
+                    currentUserRepos.put(r.getFull_name(), r);
                 }
                 userEntry.setStarredRepos(repoNames);
                 databaseHelper.writeUser(userEntry);
