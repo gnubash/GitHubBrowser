@@ -54,11 +54,6 @@ public class MainStorageImp implements MainStorage {
         currentUserRepos = new HashMap<>();
     }
 
-//    public MainStorageImp(DatabaseHelper databaseHelper) {
-//        this.databaseHelper = databaseHelper;
-//        apiService = APIService.getService();
-//    }
-
     public static MainStorage getInstance() {
         return mainStorageUniqueInstance;
     }
@@ -93,16 +88,15 @@ public class MainStorageImp implements MainStorage {
         CompletableObserver observer = new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "observer.onSubscribe()");
-                if (d.isDisposed()) {
-                    Log.d(LOGTAG, "observer.onSubscribe() if (d.isDisposed())");
-                    d.dispose();
-                }
+                Log.d(LOGTAG, "observer.onSubscribe() " + d.isDisposed());
+
             }
 
             @Override
             public void onComplete() {
                 Log.d(LOGTAG, "observer.onComplete()");
+                databaseHelper.writeAuthnetication(new AuthEntry(username, password));
+                databaseHelper.writeUser(currentUser);
                 listener.onUserAuthenticated();
             }
 
@@ -114,78 +108,7 @@ public class MainStorageImp implements MainStorage {
             }
         };
 
-
-        Completable completeable = userEntrySingle(basicCredentials, username).subscribeOn(Schedulers.io())
-                .concatWith(userOwnedeRepos(basicCredentials, username).subscribeOn(Schedulers.io()))
-                .concatWith(userStarredRepos(basicCredentials, username).subscribeOn(Schedulers.io()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        completeable.doOnComplete(new Action() {
-            @Override
-            public void run() throws Exception {
-                Log.d(LOGTAG, "doOnComplete()");
-                databaseHelper.writeAuthnetication(new AuthEntry(username, password));
-
-            }
-        }).doOnError(new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                Log.d(LOGTAG, "doOnError()");
-
-            }
-        }).subscribe(observer);
-
-        Log.d(LOGTAG, "Completed !!!");
-    }
-
-    private Completable userEntrySingle(String authCredentials, String username) {
-
-        return apiService.queryUser(authCredentials, username)
-                .doOnSuccess(new Consumer<UserEntry>() {
-                    @Override
-                    public void accept(UserEntry userEntry) throws Exception {
-                        currentUser = userEntry;
-                    }
-                })
-                .ignoreElement();
-    }
-
-    private Completable userOwnedeRepos(String authCredentials, String username) {
-
-        Single<List<RepoEntry>> userOwnedCall = apiService.queryUserOwnedRepos(authCredentials, username)
-                .doOnSuccess(new Consumer<List<RepoEntry>>() {
-                    @Override
-                    public void accept(List<RepoEntry> repoEntries) throws Exception {
-                        List<String> ownedRepos = new ArrayList<>();
-                        for (RepoEntry entry : repoEntries) {
-                            ownedRepos.add(entry.getFull_name());
-                            currentUserRepos.put(entry.getFull_name(), entry);
-                        }
-                        currentUser.setOwnedRepos(ownedRepos);
-                    }
-                });
-
-        return userOwnedCall.ignoreElement();
-
-    }
-
-    private Completable userStarredRepos(String authCredentials, String username) {
-
-        Single<List<RepoEntry>> userStarredCall = apiService.queryUserStarredRepos(authCredentials, username)
-                .doOnSuccess(new Consumer<List<RepoEntry>>() {
-                    @Override
-                    public void accept(List<RepoEntry> repoEntries) throws Exception {
-                        List<String> starredRepos = new ArrayList<>();
-                        for (RepoEntry entry : repoEntries) {
-                            starredRepos.add(entry.getFull_name());
-                            currentUserRepos.put(entry.getFull_name(), entry);
-                        }
-                        currentUser.setStarredRepos(starredRepos);
-                    }
-                });
-
-        return userStarredCall.ignoreElement();
+        createUserFromRemoteSource(basicCredentials, username).subscribe(observer);
 
     }
 
@@ -197,6 +120,29 @@ public class MainStorageImp implements MainStorage {
             return;
         }
 
+        CompletableObserver observer = new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(LOGTAG, "observer.onSubscribe() " + d.isDisposed());
+
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(LOGTAG, "observer.onComplete()");
+                databaseHelper.writeUser(currentUser);
+                listener.onUserLoaded(currentUser);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOGTAG, "observer.onError()");
+                listener.onLoadFailed();
+
+            }
+        };
+
+        createUserFromRemoteSource(basicCredentials, loginName).subscribe(observer);
 
     }
 
@@ -248,5 +194,51 @@ public class MainStorageImp implements MainStorage {
         String substring = linkHeader.substring(start + searchCriteria.length(), end);
         Log.d(LOGTAG, "getPagesCountFromLinkHeader() substring = " + substring);
         return Integer.valueOf(substring);
+    }
+
+    private Completable createUserFromRemoteSource(String authCredentials, String username) {
+
+        Completable userEntryCall = apiService.queryUser(authCredentials, username)
+                .doOnSuccess(new Consumer<UserEntry>() {
+                    @Override
+                    public void accept(UserEntry userEntry) throws Exception {
+                        currentUser = userEntry;
+                    }
+                }).ignoreElement();
+
+        Completable userOwnedCall = apiService.queryUserOwnedRepos(authCredentials, username)
+                .doOnSuccess(new Consumer<List<RepoEntry>>() {
+                    @Override
+                    public void accept(List<RepoEntry> repoEntries) throws Exception {
+                        List<String> ownedRepos = new ArrayList<>();
+                        for (RepoEntry entry : repoEntries) {
+                            ownedRepos.add(entry.getFull_name());
+                            currentUserRepos.put(entry.getFull_name(), entry);
+                        }
+                        currentUser.setOwnedRepos(ownedRepos);
+                    }
+                }).ignoreElement();
+
+        Completable userStarredCall = apiService.queryUserStarredRepos(authCredentials, username)
+                .doOnSuccess(new Consumer<List<RepoEntry>>() {
+                    @Override
+                    public void accept(List<RepoEntry> repoEntries) throws Exception {
+                        List<String> starredRepos = new ArrayList<>();
+                        for (RepoEntry entry : repoEntries) {
+                            starredRepos.add(entry.getFull_name());
+                            currentUserRepos.put(entry.getFull_name(), entry);
+                        }
+                        currentUser.setStarredRepos(starredRepos);
+                    }
+                }).ignoreElement();
+
+        Completable completeable = userEntryCall.subscribeOn(Schedulers.io())
+                .concatWith(userOwnedCall.subscribeOn(Schedulers.io()))
+                .concatWith(userStarredCall.subscribeOn(Schedulers.io()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        return completeable;
+
     }
 }
