@@ -9,6 +9,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,6 +49,8 @@ public class MainStorageImp implements MainStorage {
     private UserEntry currentUser;
 
     private Map<String, RepoEntry> currentUserRepos;
+
+    private RepoEntry currentRepo;
 
     private MainStorageImp() {
         apiService = APIService.getService();
@@ -103,6 +106,10 @@ public class MainStorageImp implements MainStorage {
             @Override
             public void onError(Throwable e) {
                 Log.d(LOGTAG, "observer.onError()");
+                if (e instanceof IOException) {
+                    listener.onNetworkConnectionFailure();
+                    return;
+                }
                 listener.onAuthenticationFailed();
 
             }
