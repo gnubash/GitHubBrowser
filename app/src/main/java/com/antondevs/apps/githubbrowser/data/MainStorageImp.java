@@ -8,18 +8,25 @@ import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
-import com.antondevs.apps.githubbrowser.utilities.Constants;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.CompletableSubject;
 import okhttp3.Credentials;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -82,72 +89,114 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void performAuthentication(final String username, final String password, final AuthenticationListener listener) {
         basicCredentials = Credentials.basic(username, password, UTF_8);
-        
-        apiService.queryUser(basicCredentials, username).enqueue(new Callback<UserEntry>() {
+
+        CompletableObserver observer = new CompletableObserver() {
             @Override
-            public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
-                if (response.code() == 401) {
-                    listener.onAuthenticationFailed();
-                    return;
+            public void onSubscribe(Disposable d) {
+                Log.d(LOGTAG, "observer.onSubscribe()");
+                if (d.isDisposed()) {
+                    Log.d(LOGTAG, "observer.onSubscribe() if (d.isDisposed())");
+                    d.dispose();
                 }
-                Log.d(LOGTAG, "Request performAuthentication().onResponse()");
-                UserEntry user = response.body();
-                Log.d(LOGTAG, user.toString());
-                AuthEntry authEntry = new AuthEntry(username, password);
-
-                Log.d(LOGTAG, authEntry.toString());
-
-                databaseHelper.writeAuthnetication(authEntry);
-
-                getUserOwned(listener, user);
-
             }
 
             @Override
-            public void onFailure(Call<UserEntry> call, Throwable t) {
-                if (t instanceof IOException) {
-                    Log.d(LOGTAG, "Request performAuthentication().onFailure() 't instanceof IOException'");
-                    listener.onNetworkConnectionFailure();
-                    return;
-                }
-                Log.d(LOGTAG, "Request performAuthentication().onFailure()");
+            public void onComplete() {
+                Log.d(LOGTAG, "observer.onComplete()");
+                listener.onUserAuthenticated();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOGTAG, "observer.onError()");
                 listener.onAuthenticationFailed();
+
             }
-        });
+        };
+
+
+        Completable completeable = userEntrySingle(basicCredentials, username).subscribeOn(Schedulers.io())
+                .concatWith(userOwnedeRepos(basicCredentials, username).subscribeOn(Schedulers.io()))
+                .concatWith(userStarredRepos(basicCredentials, username).subscribeOn(Schedulers.io()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        completeable.doOnComplete(new Action() {
+            @Override
+            public void run() throws Exception {
+                Log.d(LOGTAG, "doOnComplete()");
+                databaseHelper.writeAuthnetication(new AuthEntry(username, password));
+
+            }
+        }).doOnError(new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                Log.d(LOGTAG, "doOnError()");
+
+            }
+        }).subscribe(observer);
+
+        Log.d(LOGTAG, "Completed !!!");
+    }
+
+    private Completable userEntrySingle(String authCredentials, String username) {
+
+        return apiService.queryUser(authCredentials, username)
+                .doOnSuccess(new Consumer<UserEntry>() {
+                    @Override
+                    public void accept(UserEntry userEntry) throws Exception {
+                        currentUser = userEntry;
+                    }
+                })
+                .ignoreElement();
+    }
+
+    private Completable userOwnedeRepos(String authCredentials, String username) {
+
+        Single<List<RepoEntry>> userOwnedCall = apiService.queryUserOwnedRepos(authCredentials, username)
+                .doOnSuccess(new Consumer<List<RepoEntry>>() {
+                    @Override
+                    public void accept(List<RepoEntry> repoEntries) throws Exception {
+                        List<String> ownedRepos = new ArrayList<>();
+                        for (RepoEntry entry : repoEntries) {
+                            ownedRepos.add(entry.getFull_name());
+                            currentUserRepos.put(entry.getFull_name(), entry);
+                        }
+                        currentUser.setOwnedRepos(ownedRepos);
+                    }
+                });
+
+        return userOwnedCall.ignoreElement();
+
+    }
+
+    private Completable userStarredRepos(String authCredentials, String username) {
+
+        Single<List<RepoEntry>> userStarredCall = apiService.queryUserStarredRepos(authCredentials, username)
+                .doOnSuccess(new Consumer<List<RepoEntry>>() {
+                    @Override
+                    public void accept(List<RepoEntry> repoEntries) throws Exception {
+                        List<String> starredRepos = new ArrayList<>();
+                        for (RepoEntry entry : repoEntries) {
+                            starredRepos.add(entry.getFull_name());
+                            currentUserRepos.put(entry.getFull_name(), entry);
+                        }
+                        currentUser.setStarredRepos(starredRepos);
+                    }
+                });
+
+        return userStarredCall.ignoreElement();
+
     }
 
     @Override
     public void queryUser(final UserListener listener, final String loginName) {
+
         if (currentUser != null && currentUser.getLogin().equals(loginName)) {
             listener.onUserLoaded(currentUser);
             return;
         }
 
-        apiService.queryUser(basicCredentials, loginName).enqueue(new Callback<UserEntry>() {
-            @Override
-            public void onResponse(Call<UserEntry> call, Response<UserEntry> response) {
-                if (response.code() == 401) {
-                    listener.onLoadFailed();
-                    return;
-
-                }
-                Log.d(LOGTAG, "Request queryUser().queryUser().onResponse()");
-                UserEntry user = response.body();
-                Log.d(LOGTAG, user.toString());
-
-                getUserOwned(listener, user);
-
-
-            }
-
-            @Override
-            public void onFailure(Call<UserEntry> call, Throwable t) {
-
-                Log.d(LOGTAG, "Request queryUser().queryUser().onFailure()");
-                listener.onLoadFailed();
-            }
-
-        });
 
     }
 
@@ -176,58 +225,6 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void queryContributors(SearchListener listener, String repoName) {
 
-    }
-
-    private void getUserOwned(final UserListener listener,final UserEntry userEntry) {
-        String loginName = userEntry.getLogin();
-        apiService.queryUserOwnedRepos(basicCredentials, loginName).enqueue(new Callback<List<RepoEntry>>() {
-            @Override
-            public void onResponse(Call<List<RepoEntry>> call, Response<List<RepoEntry>> response) {
-                Log.d(LOGTAG, "Request getUserOwned().queryUserOwnedRepos().onResponse()");
-                List<RepoEntry> listOfRepos = response.body();
-                List<String> repoNames = new ArrayList<>();
-
-                for (RepoEntry r : listOfRepos) {
-                    repoNames.add(r.getFull_name());
-                    currentUserRepos.put(r.getFull_name(), r);
-                }
-                userEntry.setOwnedRepos(repoNames);
-                getUserStarred(listener, userEntry);
-
-            }
-
-            @Override
-            public void onFailure(Call<List<RepoEntry>> call, Throwable t) {
-
-            }
-        });
-    }
-
-    private void getUserStarred(final UserListener listener, final UserEntry userEntry) {
-        String loginName = userEntry.getLogin();
-        apiService.queryUserStarredRepos(basicCredentials, loginName).enqueue(new Callback<List<RepoEntry>>() {
-            @Override
-            public void onResponse(Call<List<RepoEntry>> call, Response<List<RepoEntry>> response) {
-                Log.d(LOGTAG, "Request getUserStarred().queryUserStarredRepos().onResponse()");
-                List<RepoEntry> listOfRepos = response.body();
-                List<String> repoNames = new ArrayList<>();
-
-                for (RepoEntry r : listOfRepos) {
-                    repoNames.add(r.getFull_name());
-                    currentUserRepos.put(r.getFull_name(), r);
-                }
-                userEntry.setStarredRepos(repoNames);
-                databaseHelper.writeUser(userEntry);
-                currentUser = userEntry;
-                notifyUserListener(listener);
-
-            }
-
-            @Override
-            public void onFailure(Call<List<RepoEntry>> call, Throwable t) {
-
-            }
-        });
     }
 
     private void notifyUserListener(UserListener listener) {

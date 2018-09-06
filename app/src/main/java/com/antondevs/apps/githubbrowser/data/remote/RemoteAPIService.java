@@ -5,6 +5,8 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -18,8 +20,8 @@ public interface RemoteAPIService {
 
     // User
     @GET("users/{login_name}")
-    Call<UserEntry> queryUser(@Header("Authorization") String authKey,
-                              @Path("login_name") String loginName);
+    Single<UserEntry> queryUser(@Header("Authorization") String authKey,
+                                @Path("login_name") String loginName);
 
     // Repo
     @GET("repos/{full_name}")
@@ -28,12 +30,12 @@ public interface RemoteAPIService {
 
     // User owned
     @GET("users/{login_name}/repos")
-    Call <List<RepoEntry>> queryUserOwnedRepos(@Header("Authorization") String authKey,
+    Single<List<RepoEntry>> queryUserOwnedRepos(@Header("Authorization") String authKey,
                                                @Path("login_name") String loginName);
 
     //User starred
     @GET("users/{login_name}/starred")
-    Call<List<RepoEntry>> queryUserStarredRepos(@Header("Authorization") String authKey,
+    Single<List<RepoEntry>> queryUserStarredRepos(@Header("Authorization") String authKey,
                                                 @Path("login_name") String loginName);
 
     // Followers
