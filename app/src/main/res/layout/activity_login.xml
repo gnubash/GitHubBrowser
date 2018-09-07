@@ -3,76 +3,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.login.LoginActivity">
-<android.support.constraint.ConstraintLayout
+
+<FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/login_image"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:src="@drawable/storage_black"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/login_username_edit_text"/>
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/login_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-    <EditText
-        android:id="@+id/login_username_edit_text"
-        android:visibility="invisible"
-        android:layout_width="252dp"
-        android:layout_height="41dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/login_image"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/storage_black"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/login_username_edit_text"/>
 
-    <EditText
-        android:id="@+id/login_password_edit_text"
-        android:visibility="invisible"
-        android:layout_width="252dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="16dp"
-        android:inputType="textPassword"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/login_username_edit_text" />
+        <EditText
+            android:id="@+id/login_username_edit_text"
+            android:layout_width="252dp"
+            android:layout_height="41dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/login_button_login"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/login_screen_login_button_name"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/login_password_edit_text"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        <EditText
+            android:id="@+id/login_password_edit_text"
+            android:layout_width="252dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="16dp"
+            android:inputType="textPassword"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/login_username_edit_text" />
 
+        <Button
+            android:id="@+id/login_button_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/login_screen_login_button_name"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/login_password_edit_text"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
 
-    <android.support.v4.widget.ContentLoadingProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        style="?android:progressBarStyleLarge"
-        app:layout_constraintTop_toBottomOf="@id/login_image"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        <TextView
+            android:id="@+id/login_error_message_text_view"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:textColor="@color/errorMessageColor"
+            android:text="@string/login_screen_error_message_text"
+            app:layout_constraintTop_toBottomOf="@id/login_button_login"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
 
-    <TextView
-        android:id="@+id/login_error_message_text_view"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:textColor="@color/errorMessageColor"
-        android:text="@string/login_screen_error_message_text"
-        app:layout_constraintTop_toBottomOf="@id/login_button_login"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
 
-</android.support.constraint.ConstraintLayout>
+    <include layout="@layout/progress_bar_overlay"
+        android:id="@+id/login_progress_bar"/>
+
+</FrameLayout>
 </layout>

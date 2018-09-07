@@ -86,11 +86,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
     @Override
     public void showLoading() {
-        binding.progressBar.setVisibility(View.VISIBLE);
-        binding.loginErrorMessageTextView.setVisibility(View.INVISIBLE);
-        binding.loginUsernameEditText.setVisibility(View.INVISIBLE);
-        binding.loginPasswordEditText.setVisibility(View.INVISIBLE);
-        binding.loginButtonLogin.setVisibility(View.INVISIBLE);
+        binding.loginProgressBar.setVisibility(View.VISIBLE);
+        binding.loginContainer.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -106,17 +103,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     }
 
     private void showLoginViews() {
-        binding.progressBar.setVisibility(View.INVISIBLE);
-        binding.loginUsernameEditText.setVisibility(View.VISIBLE);
-        binding.loginPasswordEditText.setVisibility(View.VISIBLE);
-        binding.loginButtonLogin.setVisibility(View.VISIBLE);
-    }
-
-    private void hideLoginViews() {
-        binding.progressBar.setVisibility(View.INVISIBLE);
-        binding.loginUsernameEditText.setVisibility(View.VISIBLE);
-        binding.loginPasswordEditText.setVisibility(View.VISIBLE);
-        binding.loginButtonLogin.setVisibility(View.VISIBLE);
+        binding.loginProgressBar.setVisibility(View.GONE);
+        binding.loginContainer.setVisibility(View.VISIBLE);
     }
 
 }
