@@ -47,8 +47,6 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
         Log.d(LOGTAG, "onCreate()");
 
-        showLoading();
-
 
         binding.userReposRecycler.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -109,7 +107,6 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
     @Override
     public void setUserName(String name) {
-        hideLoading();
         binding.userLoginNameTextView.setText(name);
     }
 
@@ -171,12 +168,14 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         }
     }
 
-    private void showLoading() {
+    @Override
+    public void showLoading() {
         binding.container.setVisibility(View.INVISIBLE);
         binding.progressBarFrame.setVisibility(View.VISIBLE);
     }
 
-    private void hideLoading() {
+    @Override
+    public void hideLoading() {
         binding.container.setVisibility(View.VISIBLE);
         binding.progressBarFrame.setVisibility(View.GONE);
     }

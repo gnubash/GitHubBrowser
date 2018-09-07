@@ -28,7 +28,7 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
 
     @Override
     public void loadPresenter() {
-
+        view.showLoading();
         storage.queryUser(this, userLoginName);
 
     }
@@ -57,6 +57,8 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
         view.setFollowing(String.valueOf(userEntry.getFollowing()));
         view.setUserName(userEntry.getLogin());
         view.setReposList(userEntry.getOwnedRepos());
+
+        view.hideLoading();
     }
 
     @Override

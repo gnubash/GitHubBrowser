@@ -16,6 +16,10 @@ public interface UserContract {
         void setFollowing(String followingNumber);
 
         void setReposList(List<String> repoEntryList);
+
+        void showLoading();
+
+        void hideLoading();
     }
 
 
