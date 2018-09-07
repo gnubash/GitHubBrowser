@@ -35,16 +35,6 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter,
     }
 
     @Override
-    public void onUserLoaded(UserEntry userEntry) {
-
-    }
-
-    @Override
-    public void onLoadFailed() {
-
-    }
-
-    @Override
     public String getLogedUsername() {
         return storage.getLoggedUser();
     }

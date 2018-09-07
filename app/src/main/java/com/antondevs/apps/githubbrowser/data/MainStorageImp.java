@@ -180,16 +180,6 @@ public class MainStorageImp implements MainStorage {
 
     }
 
-    private void notifyUserListener(UserListener listener) {
-        if (listener instanceof AuthenticationListener) {
-            AuthenticationListener authenticationListener = (AuthenticationListener) listener;
-            authenticationListener.onUserAuthenticated();
-        }
-        else {
-            listener.onUserLoaded(currentUser);
-        }
-    }
-
     private int getPagesCountFromLinkHeader(String linkHeader) {
 
         int startIndexForSearch = linkHeader.indexOf("next");
