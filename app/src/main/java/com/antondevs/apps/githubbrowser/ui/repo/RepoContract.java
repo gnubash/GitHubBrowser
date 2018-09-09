@@ -15,6 +15,8 @@ public interface RepoContract {
 
         void setBranches(String branchesNumber);
 
+        void setReleases(String releasesNumber);
+
         void setContributors(String contributorsNumber);
 
         void setStar(String starNumber);

@@ -2,6 +2,9 @@ package com.antondevs.apps.githubbrowser.data;
 
 import android.util.Log;
 
+import com.antondevs.apps.githubbrowser.data.database.model.BranchEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.CommitEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.ReleaseEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 
@@ -59,6 +62,119 @@ public class RepoBuilder {
 
     }
 
+    public static Observable<Integer> getRepoCommitsCount(final String authentication,
+                                                               final RemoteAPIService service, final String repoFullName) {
+        HashMap<String, String> queryMap = new HashMap<>();
+
+        return service.queryRepoCommits(authentication, repoFullName, queryMap)
+                .flatMap(new Function<Response<List<CommitEntry>>, ObservableSource<Integer>>() {
+                    @Override
+                    public ObservableSource<Integer> apply(Response<List<CommitEntry>> listResponse) throws Exception {
+                        HashMap<String, String> lastPageQuery = new HashMap<>();
+                        if (listResponse.headers().get("Link") != null) {
+                            lastPageQuery.put("page", RepoBuilder.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
+                        }
+                        return Observable.just(listResponse)
+                                .zipWith(service.queryRepoCommits(authentication, repoFullName, lastPageQuery),
+                                        new BiFunction<Response<List<CommitEntry>>, Response<List<CommitEntry>>, Integer>() {
+                                            @Override
+                                            public Integer apply(Response<List<CommitEntry>> listResponse,
+                                                                 Response<List<CommitEntry>> listResponse2) throws Exception {
+                                                List<CommitEntry> fromFirstResponse = listResponse.body();
+                                                List<CommitEntry> fromSecondResponse = listResponse2.body();
+                                                if (listResponse.headers().get("Link") != null) {
+                                                    String pages = RepoBuilder.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
+                                                    Integer pagesCount = Integer.valueOf(pages) - 1;
+                                                    Log.d(LOGTAG, "pagesCount after " + pagesCount);
+                                                    Log.d(LOGTAG, "Calculating " + pagesCount + " * " +
+                                                            fromFirstResponse.size() + " + " + fromSecondResponse.size());
+                                                    Integer totalCount = (pagesCount * fromFirstResponse.size()) + fromSecondResponse.size();
+                                                    Log.d(LOGTAG, "totalCount = " + totalCount);
+                                                    return totalCount;
+                                                }
+                                                return fromFirstResponse.size();
+                                            }
+                                        });
+                    }
+                });
+
+    }
+
+    public static Observable<Integer> getRepoReleasesCount(final String authentication,
+                                                          final RemoteAPIService service, final String repoFullName) {
+        HashMap<String, String> queryMap = new HashMap<>();
+
+        return service.queryRepoReleases(authentication, repoFullName, queryMap)
+                .flatMap(new Function<Response<List<ReleaseEntry>>, ObservableSource<Integer>>() {
+                    @Override
+                    public ObservableSource<Integer> apply(Response<List<ReleaseEntry>> listResponse) throws Exception {
+                        HashMap<String, String> lastPageQuery = new HashMap<>();
+                        if (listResponse.headers().get("Link") != null) {
+                            lastPageQuery.put("page", RepoBuilder.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
+                        }
+                        return Observable.just(listResponse)
+                                .zipWith(service.queryRepoReleases(authentication, repoFullName, lastPageQuery),
+                                        new BiFunction<Response<List<ReleaseEntry>>, Response<List<ReleaseEntry>>, Integer>() {
+                                            @Override
+                                            public Integer apply(Response<List<ReleaseEntry>> listResponse,
+                                                                 Response<List<ReleaseEntry>> listResponse2) throws Exception {
+                                                List<ReleaseEntry> fromFirstResponse = listResponse.body();
+                                                List<ReleaseEntry> fromSecondResponse = listResponse2.body();
+                                                if (listResponse.headers().get("Link") != null) {
+                                                    String pages = RepoBuilder.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
+                                                    Integer pagesCount = Integer.valueOf(pages) - 1;
+                                                    Log.d(LOGTAG, "pagesCount after " + pagesCount);
+                                                    Log.d(LOGTAG, "Calculating " + pagesCount + " * " +
+                                                            fromFirstResponse.size() + " + " + fromSecondResponse.size());
+                                                    Integer totalCount = (pagesCount * fromFirstResponse.size()) + fromSecondResponse.size();
+                                                    Log.d(LOGTAG, "totalCount = " + totalCount);
+                                                    return totalCount;
+                                                }
+                                                return fromFirstResponse.size();
+                                            }
+                                        });
+                    }
+                });
+
+    }
+
+    public static Observable<Integer> getRepoBranchesCount(final String authentication,
+                                                           final RemoteAPIService service, final String repoFullName) {
+        HashMap<String, String> queryMap = new HashMap<>();
+
+        return service.queryRepoBranches(authentication, repoFullName, queryMap)
+                .flatMap(new Function<Response<List<BranchEntry>>, ObservableSource<Integer>>() {
+                    @Override
+                    public ObservableSource<Integer> apply(Response<List<BranchEntry>> listResponse) throws Exception {
+                        HashMap<String, String> lastPageQuery = new HashMap<>();
+                        if (listResponse.headers().get("Link") != null) {
+                            lastPageQuery.put("page", RepoBuilder.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
+                        }
+                        return Observable.just(listResponse)
+                                .zipWith(service.queryRepoBranches(authentication, repoFullName, lastPageQuery),
+                                        new BiFunction<Response<List<BranchEntry>>, Response<List<BranchEntry>>, Integer>() {
+                                            @Override
+                                            public Integer apply(Response<List<BranchEntry>> listResponse,
+                                                                 Response<List<BranchEntry>> listResponse2) throws Exception {
+                                                List<BranchEntry> fromFirstResponse = listResponse.body();
+                                                List<BranchEntry> fromSecondResponse = listResponse2.body();
+                                                if (listResponse.headers().get("Link") != null) {
+                                                    String pages = RepoBuilder.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
+                                                    Integer pagesCount = Integer.valueOf(pages) - 1;
+                                                    Log.d(LOGTAG, "pagesCount after " + pagesCount);
+                                                    Log.d(LOGTAG, "Calculating " + pagesCount + " * " +
+                                                            fromFirstResponse.size() + " + " + fromSecondResponse.size());
+                                                    Integer totalCount = (pagesCount * fromFirstResponse.size()) + fromSecondResponse.size();
+                                                    Log.d(LOGTAG, "totalCount = " + totalCount);
+                                                    return totalCount;
+                                                }
+                                                return fromFirstResponse.size();
+                                            }
+                                        });
+                    }
+                });
+
+    }
 
     private static String getLastPageFromLinkHeader(String linkHeader) {
 
@@ -73,15 +189,4 @@ public class RepoBuilder {
         return substring;
     }
 
-    private static int getPrevPageFromLinkHeader(String linkHeader) {
-
-        int startIndexForSearch = linkHeader.indexOf("prev");
-
-        String searchCriteria = "page=";
-
-        String substring = linkHeader.substring(linkHeader.indexOf(searchCriteria) +
-                searchCriteria.length(), linkHeader.indexOf('&'));
-
-        return Integer.valueOf(substring);
-    }
 }

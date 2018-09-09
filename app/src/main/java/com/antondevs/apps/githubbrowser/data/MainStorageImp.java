@@ -22,6 +22,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function4;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Credentials;
 
@@ -162,34 +163,49 @@ public class MainStorageImp implements MainStorage {
         currentRepo = currentUserRepos.get(repoFullName);
 
         Observable<Integer> contributors = RepoBuilder.getRepoContributorsCount(basicCredentials, apiService, repoFullName);
+        Observable<Integer> commits = RepoBuilder.getRepoCommitsCount(basicCredentials, apiService, repoFullName);
+        Observable<Integer> releases = RepoBuilder.getRepoReleasesCount(basicCredentials, apiService, repoFullName);
+        Observable<Integer> branches = RepoBuilder.getRepoBranchesCount(basicCredentials, apiService, repoFullName);
 
-        contributors.subscribeOn(Schedulers.io())
+        Observable<RepoEntry> zippedObservable = Observable.zip(contributors, commits, releases, branches, new Function4<Integer, Integer, Integer, Integer, RepoEntry>() {
+            @Override
+            public RepoEntry apply(Integer integer, Integer integer2, Integer integer3, Integer integer4) throws Exception {
+                currentRepo.setContributors_count(integer);
+                currentRepo.setCommits_count(integer2);
+                currentRepo.setReleases_count(integer3);
+                currentRepo.setBranches_count(integer4);
+                currentUserRepos.put(currentRepo.getFull_name(), currentRepo);
+                return currentRepo;
+            }
+        });
+
+        Observer<RepoEntry> observer = new Observer<RepoEntry>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(LOGTAG, "queryRepo.onSubscribe");
+            }
+
+            @Override
+            public void onNext(RepoEntry repoEntry) {
+                Log.d(LOGTAG, "queryRepo.onNext");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOGTAG, "queryRepo.onError");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+                listener.onRepoLoaded(currentRepo);
+                Log.d(LOGTAG, "queryRepo.onComplete");
+            }
+        };
+
+        zippedObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Integer>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(LOGTAG, "queryRepo.onSubscribe");
-                    }
-
-                    @Override
-                    public void onNext(Integer integer) {
-                        currentRepo.setContributors_count(integer);
-                        currentUserRepos.put(currentRepo.getFull_name(), currentRepo);
-                        listener.onRepoLoaded(currentRepo);
-                        Log.d(LOGTAG, "queryRepo.onNext");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(LOGTAG, "queryRepo.onError");
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(LOGTAG, "queryRepo.onComplete");
-                    }
-                });
+                .subscribe(observer);
 
     }
 

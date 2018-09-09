@@ -48,6 +48,9 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
         view.setFork(String.valueOf(repoEntry.getForks()));
         view.setStar(String.valueOf(repoEntry.getWatchers()));
         view.setContributors(String.valueOf(repoEntry.getContributors_count()));
+        view.setCommits(String.valueOf(repoEntry.getCommits_count()));
+        view.setBranches(String.valueOf(repoEntry.getBranches_count()));
+        view.setReleases(String.valueOf(repoEntry.getReleases_count()));
     }
 
     @Override

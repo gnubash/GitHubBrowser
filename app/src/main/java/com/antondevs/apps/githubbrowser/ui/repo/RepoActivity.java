@@ -91,6 +91,11 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
     }
 
     @Override
+    public void setReleases(String releasesNumber) {
+        binding.repoReleasesTextView.append(releasesNumber);
+    }
+
+    @Override
     public void setContributors(String contributorsNumber) {
         binding.repoContributorsButtonTextView.append(contributorsNumber);
     }
