@@ -12,21 +12,17 @@ import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.CompletableSubject;
 import okhttp3.Credentials;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -159,9 +155,41 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryRepo(final RepoListener listener, String repoFullName) {
+    public void queryRepo(final RepoListener listener, final String repoFullName) {
 
-        listener.onRepoLoaded(currentUserRepos.get(repoFullName));
+        Log.d(LOGTAG, "queryRepo()");
+
+        currentRepo = currentUserRepos.get(repoFullName);
+
+        Observable<Integer> contributors = RepoBuilder.getRepoContributorsCount(basicCredentials, apiService, repoFullName);
+
+        contributors.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(LOGTAG, "queryRepo.onSubscribe");
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        currentRepo.setContributors_count(integer);
+                        currentUserRepos.put(currentRepo.getFull_name(), currentRepo);
+                        listener.onRepoLoaded(currentRepo);
+                        Log.d(LOGTAG, "queryRepo.onNext");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(LOGTAG, "queryRepo.onError");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(LOGTAG, "queryRepo.onComplete");
+                    }
+                });
 
     }
 
@@ -178,19 +206,6 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void queryContributors(SearchListener listener, String repoName) {
 
-    }
-
-    private int getPagesCountFromLinkHeader(String linkHeader) {
-
-        int startIndexForSearch = linkHeader.indexOf("next");
-
-        String searchCriteria = "page=";
-
-        int start = linkHeader.indexOf(searchCriteria, startIndexForSearch);
-        int end = linkHeader.indexOf('&', startIndexForSearch);
-        String substring = linkHeader.substring(start + searchCriteria.length(), end);
-        Log.d(LOGTAG, "getPagesCountFromLinkHeader() substring = " + substring);
-        return Integer.valueOf(substring);
     }
 
     private Completable createUserFromRemoteSource(String authCredentials, String username) {
@@ -238,4 +253,5 @@ public class MainStorageImp implements MainStorage {
         return completeable;
 
     }
+
 }

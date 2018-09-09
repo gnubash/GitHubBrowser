@@ -47,6 +47,7 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
         view.setRepoName(repoOwnerAndName[1]);
         view.setFork(String.valueOf(repoEntry.getForks()));
         view.setStar(String.valueOf(repoEntry.getWatchers()));
+        view.setContributors(String.valueOf(repoEntry.getContributors_count()));
     }
 
     @Override

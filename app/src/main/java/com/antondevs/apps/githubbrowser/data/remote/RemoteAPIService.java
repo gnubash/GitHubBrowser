@@ -4,6 +4,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -13,6 +14,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 /**
  * Created by Anton.
@@ -79,8 +81,8 @@ public interface RemoteAPIService {
 
     // Repo Contributors
     @GET("repos/{full_name}/contributors")
-    Single<Response> queryRepoContributors(@Header("Authorization") String authKey,
-                                           @Path(value = "full_name", encoded = true) String full_name,
-                                           @Query("page") int page_number,
-                                           @Query("per_page") int per_page);
+    Observable<Response<List<UserEntry>>> queryRepoContributors(@Header("Authorization") String authKey,
+                                                                 @Path(value = "full_name", encoded = true) String full_name,
+                                                                 @QueryMap(encoded = true) Map<String, String> queryMap);
+
 }
