@@ -1,6 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.search;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,9 +11,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.antondevs.apps.githubbrowser.databinding.ActivitySearchBinding;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
@@ -28,26 +31,25 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     public static final String EXTRA_SEARCH_USER_FOLLOWERS = "user_login_followers";
     public static final String EXTRA_SEARCH_USER_FOLLOWING = "user_login_following";
 
-    private UserSearchAdapter adapter;
+    private ActivitySearchBinding binding;
 
-    private RecyclerView usersRecyclerView;
+    private UserSearchAdapter adapter;
 
     private SearchContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        usersRecyclerView = findViewById(R.id.search_user_recycler_view);
-        usersRecyclerView.setHasFixedSize(true);
+        binding.searchUserRecyclerView.setHasFixedSize(true);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        usersRecyclerView.setLayoutManager(layoutManager);
+        binding.searchUserRecyclerView.setLayoutManager(layoutManager);
 
         presenter = new SearchPresenterImp(this);
         checkIntent();
@@ -57,7 +59,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     public void setSearchResult(List<String> userList) {
         if (adapter == null) {
             adapter = new UserSearchAdapter((ArrayList<String>) userList, this);
-            usersRecyclerView.setAdapter(adapter);
+            binding.searchUserRecyclerView.setAdapter(adapter);
         }
         else {
             adapter.swapUserList((ArrayList<String>) userList);
@@ -67,7 +69,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     @Override
     public void showNoResultsView() {
         if (!(adapter == null)) {
-            usersRecyclerView.setAdapter(null);
+            binding.searchUserRecyclerView.setAdapter(null);
         }
     }
 
@@ -78,6 +80,18 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         Intent userActivityIntent = new Intent(this, UserActivity.class);
         userActivityIntent.putExtra(LoginActivity.INTENT_EXTRA_USER_LOGIN_KEY, itemName);
         startActivity(userActivityIntent);
+    }
+
+    @Override
+    public void showLoading() {
+        binding.loginProgressBar.setVisibility(View.VISIBLE);
+        binding.searchViewContainer.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showViews() {
+        binding.loginProgressBar.setVisibility(View.GONE);
+        binding.searchViewContainer.setVisibility(View.VISIBLE);
     }
 
     private void checkIntent() {

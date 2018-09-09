@@ -27,6 +27,7 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
 
     @Override
     public void loadPresenter() {
+        view.showLoading();
         storage.queryRepo(this, repoName);
     }
 
@@ -51,6 +52,7 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
         view.setCommits(String.valueOf(repoEntry.getCommits_count()));
         view.setBranches(String.valueOf(repoEntry.getBranches_count()));
         view.setReleases(String.valueOf(repoEntry.getReleases_count()));
+        view.showViews();
     }
 
     @Override

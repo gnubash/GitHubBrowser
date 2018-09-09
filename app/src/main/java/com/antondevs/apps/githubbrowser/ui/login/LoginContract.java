@@ -1,11 +1,13 @@
 package com.antondevs.apps.githubbrowser.ui.login;
 
+import com.antondevs.apps.githubbrowser.ui.BaseView;
+
 /**
  * Created by Anton on 6/30/18.
  */
 public interface LoginContract {
 
-    interface LoginView {
+    interface LoginView extends BaseView {
 
         void requestAuthentication();
 
@@ -15,7 +17,6 @@ public interface LoginContract {
 
         void showNetworkErrorMsg();
 
-        void showLoading();
     }
 
     interface LoginPresenter {

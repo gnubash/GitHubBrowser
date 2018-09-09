@@ -1,5 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.user;
 
+import com.antondevs.apps.githubbrowser.ui.BaseView;
+
 import java.util.List;
 
 /**
@@ -7,7 +9,7 @@ import java.util.List;
  */
 public interface UserContract {
 
-    interface UserView {
+    interface UserView extends BaseView{
 
         void setUserName(String name);
 
@@ -17,9 +19,6 @@ public interface UserContract {
 
         void setReposList(List<String> repoEntryList);
 
-        void showLoading();
-
-        void hideLoading();
     }
 
 

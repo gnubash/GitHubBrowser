@@ -132,7 +132,12 @@ public class RepoBuilder {
                                                 }
                                                 return fromFirstResponse.size();
                                             }
-                                        });
+                                        }).onErrorReturn(new Function<Throwable, Integer>() {
+                                    @Override
+                                    public Integer apply(Throwable throwable) throws Exception {
+                                        return 0;
+                                    }
+                                });
                     }
                 });
 

@@ -1,11 +1,13 @@
 package com.antondevs.apps.githubbrowser.ui.repo;
 
+import com.antondevs.apps.githubbrowser.ui.BaseView;
+
 /**
  * Created by Anton on 7/3/18.
  */
 public interface RepoContract {
 
-    interface View {
+    interface View extends BaseView{
 
         void setOwnerName(String ownerName);
 

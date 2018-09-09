@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
     @Override
     public void requestAuthentication() {
-        showLoginViews();
+        showViews();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
     @Override
     public void showLoading() {
         binding.loginProgressBar.setVisibility(View.VISIBLE);
-        binding.loginContainer.setVisibility(View.INVISIBLE);
+        binding.loginViewContainer.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -96,15 +96,16 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
         super.onDestroy();
     }
 
-    private void showError(String message) {
-        showLoginViews();
-        binding.loginErrorMessageTextView.setVisibility(View.VISIBLE);
-        binding.loginErrorMessageTextView.setText(message);
+    @Override
+    public void showViews() {
+        binding.loginProgressBar.setVisibility(View.GONE);
+        binding.loginViewContainer.setVisibility(View.VISIBLE);
     }
 
-    private void showLoginViews() {
-        binding.loginProgressBar.setVisibility(View.GONE);
-        binding.loginContainer.setVisibility(View.VISIBLE);
+    private void showError(String message) {
+        showViews();
+        binding.loginErrorMessageTextView.setVisibility(View.VISIBLE);
+        binding.loginErrorMessageTextView.setText(message);
     }
 
 }

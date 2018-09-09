@@ -111,6 +111,18 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
     }
 
     @Override
+    public void showLoading() {
+        binding.repoViewContainer.setVisibility(View.INVISIBLE);
+        binding.progressBarFrame.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showViews() {
+        binding.repoViewContainer.setVisibility(View.VISIBLE);
+        binding.progressBarFrame.setVisibility(View.GONE);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_repo_view, menu);

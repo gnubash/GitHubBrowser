@@ -170,13 +170,13 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
     @Override
     public void showLoading() {
-        binding.container.setVisibility(View.INVISIBLE);
+        binding.userViewContainer.setVisibility(View.INVISIBLE);
         binding.progressBarFrame.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideLoading() {
-        binding.container.setVisibility(View.VISIBLE);
+    public void showViews() {
+        binding.userViewContainer.setVisibility(View.VISIBLE);
         binding.progressBarFrame.setVisibility(View.GONE);
     }
 }

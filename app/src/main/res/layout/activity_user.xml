@@ -9,7 +9,7 @@
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/container"
+        android:id="@+id/user_view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp">

@@ -58,7 +58,7 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
         view.setUserName(userEntry.getLogin());
         view.setReposList(userEntry.getOwnedRepos());
 
-        view.hideLoading();
+        view.showViews();
     }
 
     @Override

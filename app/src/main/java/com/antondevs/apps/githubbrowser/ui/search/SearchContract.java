@@ -1,5 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.search;
 
+import com.antondevs.apps.githubbrowser.ui.BaseView;
+
 import java.util.List;
 
 /**
@@ -7,7 +9,7 @@ import java.util.List;
  */
 public interface SearchContract {
 
-    interface View {
+    interface View extends BaseView{
 
         void setSearchResult(List<String> userList);
 
