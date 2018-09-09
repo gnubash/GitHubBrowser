@@ -62,22 +62,19 @@ public interface RemoteAPIService {
     @GET("repos/{full_name}/commits")
     Single<Response> queryRepoCommits(@Header("Authorization") String authKey,
                                       @Path(value = "full_name", encoded = true) String full_name,
-                                      @Query("page") int page_number,
-                                      @Query("per_page") int per_page);
+                                      @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Repo Branches
     @GET("repos/{full_name}/branches")
     Single<Response> queryRepoBranches(@Header("Authorization") String authKey,
-                                      @Path(value = "full_name", encoded = true) String full_name,
-                                      @Query("page") int page_number,
-                                      @Query("per_page") int per_page);
+                                       @Path(value = "full_name", encoded = true) String full_name,
+                                       @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Repo Releases
     @GET("repos/{full_name}/releases")
     Single<Response> queryRepoReleases(@Header("Authorization") String authKey,
-                                      @Path(value = "full_name", encoded = true) String full_name,
-                                      @Query("page") int page_number,
-                                      @Query("per_page") int per_page);
+                                       @Path(value = "full_name", encoded = true) String full_name,
+                                       @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Repo Contributors
     @GET("repos/{full_name}/contributors")
