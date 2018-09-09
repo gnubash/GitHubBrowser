@@ -5,27 +5,27 @@ package com.antondevs.apps.githubbrowser.data.database.model;
  */
 public class ReleaseEntry {
 
-    private long id;
-    private String name;
+    private String ref;
+    private String node_id;
 
-    public long getId() {
-        return id;
+    public String getRef() {
+        return ref;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 
     public String getName() {
-        return name;
+        return node_id;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.node_id = name;
     }
 
     @Override
     public String toString() {
-        return id + name;
+        return ref + node_id;
     }
 }

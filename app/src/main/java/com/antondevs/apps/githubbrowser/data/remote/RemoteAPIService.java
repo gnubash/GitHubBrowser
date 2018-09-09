@@ -74,7 +74,7 @@ public interface RemoteAPIService {
                                                               @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Repo Releases
-    @GET("repos/{full_name}/releases")
+    @GET("repos/{full_name}/git/refs/tags")
     Observable<Response<List<ReleaseEntry>>> queryRepoReleases(@Header("Authorization") String authKey,
                                                                @Path(value = "full_name", encoded = true) String full_name,
                                                                @QueryMap(encoded = true) Map<String, String> queryMap);
