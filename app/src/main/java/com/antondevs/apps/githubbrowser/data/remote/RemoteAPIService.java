@@ -1,5 +1,8 @@
 package com.antondevs.apps.githubbrowser.data.remote;
 
+import com.antondevs.apps.githubbrowser.data.database.model.BranchEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.CommitEntry;
+import com.antondevs.apps.githubbrowser.data.database.model.ReleaseEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
@@ -60,21 +63,21 @@ public interface RemoteAPIService {
 
     // Repo Commits
     @GET("repos/{full_name}/commits")
-    Single<Response> queryRepoCommits(@Header("Authorization") String authKey,
-                                      @Path(value = "full_name", encoded = true) String full_name,
-                                      @QueryMap(encoded = true) Map<String, String> queryMap);
+    Observable<Response<List<CommitEntry>>> queryRepoCommits(@Header("Authorization") String authKey,
+                                                             @Path(value = "full_name", encoded = true) String full_name,
+                                                             @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Repo Branches
     @GET("repos/{full_name}/branches")
-    Single<Response> queryRepoBranches(@Header("Authorization") String authKey,
-                                       @Path(value = "full_name", encoded = true) String full_name,
-                                       @QueryMap(encoded = true) Map<String, String> queryMap);
+    Observable<Response<List<BranchEntry>>> queryRepoBranches(@Header("Authorization") String authKey,
+                                                              @Path(value = "full_name", encoded = true) String full_name,
+                                                              @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Repo Releases
     @GET("repos/{full_name}/releases")
-    Single<Response> queryRepoReleases(@Header("Authorization") String authKey,
-                                       @Path(value = "full_name", encoded = true) String full_name,
-                                       @QueryMap(encoded = true) Map<String, String> queryMap);
+    Observable<Response<List<ReleaseEntry>>> queryRepoReleases(@Header("Authorization") String authKey,
+                                                               @Path(value = "full_name", encoded = true) String full_name,
+                                                               @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Repo Contributors
     @GET("repos/{full_name}/contributors")
