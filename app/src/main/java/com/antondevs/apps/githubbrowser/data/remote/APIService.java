@@ -27,16 +27,30 @@ public class APIService {
 
     private static OkHttpClient.Builder client = new OkHttpClient.Builder();
 
-//    public static BasicAuthInterceptor authenticationInterceptor = new BasicAuthInterceptor();
+    private static BasicAuthInterceptor authenticationInterceptor = new BasicAuthInterceptor();
 
     public static RemoteAPIService getService() {
         if (!client.interceptors().contains(loggingInterceptor)) {
             client.addInterceptor(loggingInterceptor);
-//            client.addInterceptor(authenticationInterceptor);
+            client.addInterceptor(authenticationInterceptor);
             retrofitBuilder.client(client.build());
             retrofit = retrofitBuilder.build();
         }
         return retrofit.create(RemoteAPIService.class);
+    }
+
+    public static void setCredentials(String basicCredentials) {
+        if(client.interceptors().contains(authenticationInterceptor)) {
+            BasicAuthInterceptor interceptor = (BasicAuthInterceptor) client.interceptors().get(1);
+            interceptor.setCredentials(basicCredentials);
+        }
+    }
+
+    public static void clearAuthCredentials() {
+        if(client.interceptors().contains(authenticationInterceptor)) {
+            BasicAuthInterceptor interceptor = (BasicAuthInterceptor) client.interceptors().get(1);
+            interceptor.clearCredentials();
+        }
     }
 
 }

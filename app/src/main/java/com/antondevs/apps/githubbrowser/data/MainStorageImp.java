@@ -77,6 +77,7 @@ public class MainStorageImp implements MainStorage {
         else {
             AuthEntry entry = databaseHelper.getAuthentication();
             basicCredentials = Credentials.basic(entry.getLogin(), entry.getPass(), UTF_8);
+            APIService.setCredentials(basicCredentials);
             listener.onUserAuthenticated();
         }
     }
@@ -84,6 +85,7 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void performAuthentication(final String username, final String password, final AuthenticationListener listener) {
         basicCredentials = Credentials.basic(username, password, UTF_8);
+        APIService.setCredentials(basicCredentials);
 
         CompletableObserver observer = new CompletableObserver() {
             @Override
@@ -112,7 +114,7 @@ public class MainStorageImp implements MainStorage {
             }
         };
 
-        createUserFromRemoteSource(basicCredentials, username).subscribe(observer);
+        createUserFromRemoteSource(username).subscribe(observer);
 
     }
 
@@ -146,7 +148,7 @@ public class MainStorageImp implements MainStorage {
             }
         };
 
-        createUserFromRemoteSource(basicCredentials, loginName).subscribe(observer);
+        createUserFromRemoteSource(loginName).subscribe(observer);
 
     }
 
@@ -162,14 +164,15 @@ public class MainStorageImp implements MainStorage {
 
         currentRepo = currentUserRepos.get(repoFullName);
 
-        Observable<Integer> contributors = RepoBuilder.getRepoContributorsCount(basicCredentials, apiService, repoFullName);
-        Observable<Integer> commits = RepoBuilder.getRepoCommitsCount(basicCredentials, apiService, repoFullName);
-        Observable<Integer> releases = RepoBuilder.getRepoReleasesCount(basicCredentials, apiService, repoFullName);
-        Observable<Integer> branches = RepoBuilder.getRepoBranchesCount(basicCredentials, apiService, repoFullName);
+        Observable<Integer> contributors = RepoBuilder.getRepoContributorsCount(apiService, repoFullName);
+        Observable<Integer> commits = RepoBuilder.getRepoCommitsCount(apiService, repoFullName);
+        Observable<Integer> releases = RepoBuilder.getRepoReleasesCount(apiService, repoFullName);
+        Observable<Integer> branches = RepoBuilder.getRepoBranchesCount(apiService, repoFullName);
 
         Observable<RepoEntry> zippedObservable = Observable.zip(contributors, commits, releases, branches, new Function4<Integer, Integer, Integer, Integer, RepoEntry>() {
             @Override
             public RepoEntry apply(Integer integer, Integer integer2, Integer integer3, Integer integer4) throws Exception {
+                Log.d(LOGTAG, "queryRepo().Function4().apply()");
                 currentRepo.setContributors_count(integer);
                 currentRepo.setCommits_count(integer2);
                 currentRepo.setReleases_count(integer3);
@@ -224,9 +227,9 @@ public class MainStorageImp implements MainStorage {
 
     }
 
-    private Completable createUserFromRemoteSource(String authCredentials, String username) {
+    private Completable createUserFromRemoteSource(String username) {
 
-        Completable userEntryCall = apiService.queryUser(authCredentials, username)
+        Completable userEntryCall = apiService.queryUser(username)
                 .doOnSuccess(new Consumer<UserEntry>() {
                     @Override
                     public void accept(UserEntry userEntry) throws Exception {
@@ -234,7 +237,7 @@ public class MainStorageImp implements MainStorage {
                     }
                 }).ignoreElement();
 
-        Completable userOwnedCall = apiService.queryUserOwnedRepos(authCredentials, username)
+        Completable userOwnedCall = apiService.queryUserOwnedRepos(username)
                 .doOnSuccess(new Consumer<List<RepoEntry>>() {
                     @Override
                     public void accept(List<RepoEntry> repoEntries) throws Exception {
@@ -247,7 +250,7 @@ public class MainStorageImp implements MainStorage {
                     }
                 }).ignoreElement();
 
-        Completable userStarredCall = apiService.queryUserStarredRepos(authCredentials, username)
+        Completable userStarredCall = apiService.queryUserStarredRepos(username)
                 .doOnSuccess(new Consumer<List<RepoEntry>>() {
                     @Override
                     public void accept(List<RepoEntry> repoEntries) throws Exception {

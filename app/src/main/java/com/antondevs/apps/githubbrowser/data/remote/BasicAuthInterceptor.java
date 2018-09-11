@@ -11,33 +11,33 @@ import okhttp3.Response;
 /**
  * Created by Anton.
  */
-public class BasicAuthInterceptor implements Interceptor {
+class BasicAuthInterceptor implements Interceptor {
 
-    private String credentials;
+    private String basicAuthCredentials;
 
-    public BasicAuthInterceptor() {
-        this.credentials = null;
-    }
-
-    public void setCredentials(String username, String password) {
-        this.credentials = Credentials.basic(username, password);
-    }
-
-    public void clearCredentials() {
-        this.credentials = null;
+    BasicAuthInterceptor() {
+        this.basicAuthCredentials = null;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
-        if (credentials != null) {
+        if (basicAuthCredentials != null) {
             Request authentication = request.newBuilder()
-                    .addHeader("Authorization", credentials)
+                    .addHeader("Authorization", basicAuthCredentials)
                     .build();
             return chain.proceed(authentication);
         }
 
         return chain.proceed(request);
+    }
+
+    void setCredentials(String basicAuthCredentials) {
+        this.basicAuthCredentials = basicAuthCredentials;
+    }
+
+    void clearCredentials() {
+        this.basicAuthCredentials = null;
     }
 }
