@@ -9,6 +9,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.Call;
@@ -42,15 +43,17 @@ public interface RemoteAPIService {
 
     // Followers
     @GET("users/{login_name}/followers")
-    Call<List<UserEntry>> queryUserFollowers(@Path("login_name") String login_name);
+    Flowable<Response<List<UserEntry>>> queryUserFollowers(@Path("login_name") String login_name,
+                                                           @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Following
     @GET("users/{login_name}/following")
-    Call<List<UserEntry>> queryUserFollowing(@Path("login_name") String login_name);
+    Flowable<Response<List<UserEntry>>> queryUserFollowing(@Path("login_name") String login_name,
+                                             @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Search
     @GET("search/users")
-    Call<List<UserEntry>> searchUsers(@Query("login_name") String login_name);
+    Flowable<Response<List<UserEntry>>> searchUsers(@QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Methods required to form full RepoEntry
 
