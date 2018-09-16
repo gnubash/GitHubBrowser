@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.databinding.ActivitySearchBinding;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
@@ -56,13 +57,13 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     @Override
-    public void setSearchResult(List<String> userList) {
+    public void setSearchResult(List<UserEntry> userList) {
         if (adapter == null) {
-            adapter = new UserSearchAdapter((ArrayList<String>) userList, this);
+            adapter = new UserSearchAdapter((ArrayList<UserEntry>) userList, this);
             binding.searchUserRecyclerView.setAdapter(adapter);
         }
         else {
-            adapter.swapUserList((ArrayList<String>) userList);
+            adapter.swapUserList((ArrayList<UserEntry>) userList);
         }
     }
 

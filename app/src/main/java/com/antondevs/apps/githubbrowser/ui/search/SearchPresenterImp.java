@@ -25,17 +25,17 @@ public class SearchPresenterImp implements SearchContract.Presenter {
 
     @Override
     public void searchContributors(String repoName) {
-        view.setSearchResult(convertUserListToStringList());
+
     }
 
     @Override
     public void searchFollowers(String userName) {
-        view.setSearchResult(convertUserListToStringList());
+
     }
 
     @Override
     public void searchFollowing(String username) {
-        view.setSearchResult(convertUserListToStringList());
+
     }
 
     private ArrayList<String> convertUserListToStringList() {

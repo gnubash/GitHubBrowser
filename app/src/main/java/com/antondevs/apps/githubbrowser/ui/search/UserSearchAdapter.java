@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
 import java.util.ArrayList;
 
@@ -26,9 +27,9 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
 
     private UserSearchAdapter.UserSearchAdapterClickListener clickListener;
 
-    private ArrayList<String> userList;
+    private ArrayList<UserEntry> userList;
 
-    public UserSearchAdapter(ArrayList<String> userList, UserSearchAdapter.UserSearchAdapterClickListener clickListener) {
+    public UserSearchAdapter(ArrayList<UserEntry> userList, UserSearchAdapter.UserSearchAdapterClickListener clickListener) {
         this.userList = userList;
         this.clickListener = clickListener;
     }
@@ -48,7 +49,7 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull UserSearchAdapter.ViewHolder holder, int position) {
 
-        holder.itemTextView.setText(userList.get(position));
+        holder.itemTextView.setText(userList.get(position).getLogin());
 
     }
 
@@ -57,7 +58,7 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
         return userList.size();
     }
 
-    public void swapUserList(ArrayList<String> newUserList) {
+    public void swapUserList(ArrayList<UserEntry> newUserList) {
         userList = newUserList;
         notifyDataSetChanged();
     }
@@ -76,7 +77,7 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
         @Override
         public void onClick(View view) {
             Log.d(LOGTAG, "ViewHolder.onClick()");
-            clickListener.onUserItemCLick(userList.get(getAdapterPosition()));
+            clickListener.onUserItemCLick(userList.get(getAdapterPosition()).getLogin());
         }
 
     }
