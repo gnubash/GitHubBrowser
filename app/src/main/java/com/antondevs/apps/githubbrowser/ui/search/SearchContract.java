@@ -26,7 +26,7 @@ public interface SearchContract {
 
         void searchFollowers(String userName);
 
-        void searchFollowing(String username);
+        void searchFollowing(String userName);
 
     }
 }

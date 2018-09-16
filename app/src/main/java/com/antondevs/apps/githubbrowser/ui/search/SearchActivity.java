@@ -15,6 +15,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.antondevs.apps.githubbrowser.data.MainStorage;
+import com.antondevs.apps.githubbrowser.data.MainStorageImp;
+import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
+import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
+import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.databinding.ActivitySearchBinding;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
@@ -52,7 +57,12 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         binding.searchUserRecyclerView.setLayoutManager(layoutManager);
 
-        presenter = new SearchPresenterImp(this);
+        GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
+        DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
+        MainStorage storage = MainStorageImp.getInstance();
+        storage.setDatabaseHelper(databaseHelper);
+
+        presenter = new SearchPresenterImp(this, storage);
         checkIntent();
     }
 
