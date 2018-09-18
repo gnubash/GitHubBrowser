@@ -227,6 +227,11 @@ public class MainStorageImp implements MainStorage {
 
     }
 
+    @Override
+    public void loadMoreSearchResults(SearchListener listener) {
+
+    }
+
     private Completable createUserFromRemoteSource(String username) {
 
         Completable userEntryCall = apiService.queryUser(username)

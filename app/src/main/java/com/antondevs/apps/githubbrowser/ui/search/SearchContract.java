@@ -16,6 +16,8 @@ public interface SearchContract {
 
         void showNoResultsView();
 
+        void showNoMoreSearchResults();
+
     }
 
     interface Presenter {
@@ -27,6 +29,8 @@ public interface SearchContract {
         void searchFollowers(String userName);
 
         void searchFollowing(String userName);
+
+        void userScrollToBottom();
 
     }
 }

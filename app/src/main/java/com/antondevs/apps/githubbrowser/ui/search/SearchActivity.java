@@ -105,17 +105,9 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         binding.searchViewContainer.setVisibility(View.VISIBLE);
     }
 
-    private void checkIntent() {
-        Intent intent = getIntent();
-        if (intent.hasExtra(EXTRA_SEARCH_USER_FOLLOWERS)) {
-            presenter.searchFollowers(intent.getStringExtra(EXTRA_SEARCH_USER_FOLLOWERS));
-        }
-        else if (intent.hasExtra(EXTRA_SEARCH_USER_FOLLOWING)) {
-            presenter.searchFollowing(intent.getStringExtra(EXTRA_SEARCH_USER_FOLLOWING));
-        }
-        else if (intent.hasExtra(EXTRA_SEARCH_REPO_CONTRIBUTORS)) {
-            presenter.searchContributors(intent.getStringExtra(EXTRA_SEARCH_REPO_CONTRIBUTORS));
-        }
+    @Override
+    public void showNoMoreSearchResults() {
+
     }
 
     @Override
@@ -160,6 +152,19 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void checkIntent() {
+        Intent intent = getIntent();
+        if (intent.hasExtra(EXTRA_SEARCH_USER_FOLLOWERS)) {
+            presenter.searchFollowers(intent.getStringExtra(EXTRA_SEARCH_USER_FOLLOWERS));
+        }
+        else if (intent.hasExtra(EXTRA_SEARCH_USER_FOLLOWING)) {
+            presenter.searchFollowing(intent.getStringExtra(EXTRA_SEARCH_USER_FOLLOWING));
+        }
+        else if (intent.hasExtra(EXTRA_SEARCH_REPO_CONTRIBUTORS)) {
+            presenter.searchContributors(intent.getStringExtra(EXTRA_SEARCH_REPO_CONTRIBUTORS));
         }
     }
 }

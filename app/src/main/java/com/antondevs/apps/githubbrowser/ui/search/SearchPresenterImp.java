@@ -63,4 +63,8 @@ public class SearchPresenterImp implements SearchContract.Presenter,
         view.showViews();
     }
 
+    @Override
+    public void userScrollToBottom() {
+        storage.loadMoreSearchResults(this);
+    }
 }

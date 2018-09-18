@@ -31,6 +31,8 @@ public interface MainStorage {
 
     void queryContributors(SearchListener listener, String repoName);
 
+    void loadMoreSearchResults(SearchListener listener);
+
     interface AuthenticationListener {
 
         void onUserAuthenticated();
