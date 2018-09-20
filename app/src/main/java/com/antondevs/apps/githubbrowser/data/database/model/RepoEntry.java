@@ -15,6 +15,8 @@ public class RepoEntry {
 
     private String full_name;
 
+    private String contributors_url;
+
     private int commits_count;
     private int branches_count;
     private int releases_count;
@@ -49,6 +51,14 @@ public class RepoEntry {
 
     public void setFull_name(String full_name) {
         this.full_name = full_name;
+    }
+
+    public String getContributors_url() {
+        return contributors_url;
+    }
+
+    public void setContributors_url(String contributors_url) {
+        this.contributors_url = contributors_url;
     }
 
     public int getCommits_count() {
@@ -106,6 +116,7 @@ public class RepoEntry {
         
         asString.append(id).append(separator)
                 .append(full_name).append(separator)
+                .append(contributors_url).append(separator)
                 .append(commits_count).append(separator)
                 .append(branches_count).append(separator)
                 .append(releases_count).append(separator)

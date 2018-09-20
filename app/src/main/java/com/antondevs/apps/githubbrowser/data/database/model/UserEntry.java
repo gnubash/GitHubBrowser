@@ -19,7 +19,9 @@ public class UserEntry {
 
     private String login;
 
+    private String followers_url;
     private int followers;
+    private String following_url;
     private int following;
 
     @TypeConverters(ReposListConverter.class)
@@ -55,12 +57,28 @@ public class UserEntry {
         this.login = login;
     }
 
+    public String getFollowers_url() {
+        return followers_url;
+    }
+
+    public void setFollowers_url(String followers_url) {
+        this.followers_url = followers_url;
+    }
+
     public int getFollowers() {
         return followers;
     }
 
     public void setFollowers(int followers) {
         this.followers = followers;
+    }
+
+    public String getFollowing_url() {
+        return following_url;
+    }
+
+    public void setFollowing_url(String following_url) {
+        this.following_url = following_url;
     }
 
     public int getFollowing() {
@@ -94,7 +112,9 @@ public class UserEntry {
         String separator = " ";
         asString.append(id).append(separator)
                 .append(login).append(separator)
+                .append(followers_url).append(separator)
                 .append(followers).append(separator)
+                .append(following_url).append(separator)
                 .append(following);
 
         if (ownedRepos != null) {
