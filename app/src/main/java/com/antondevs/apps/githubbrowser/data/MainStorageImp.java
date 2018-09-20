@@ -51,9 +51,17 @@ public class MainStorageImp implements MainStorage {
 
     private RepoEntry currentRepo;
 
+    private ResponsePaginator<List<UserEntry>> userSearchHelper;
+
+    private Map<String, String> defaultSearchQueryMap;
+
+    List<UserEntry> currentSearchResults;
+
     private MainStorageImp() {
         apiService = APIService.getService();
         currentUserRepos = new HashMap<>();
+        userSearchHelper = new SearchPaginationHelper();
+        defaultSearchQueryMap = new HashMap<>();
     }
 
     public static MainStorage getInstance() {
@@ -156,10 +164,11 @@ public class MainStorageImp implements MainStorage {
 
     @Override
     public void queryUsers(final SearchListener listener, String loginName) {
-        ResponsePaginator<List<UserEntry>> searchHelper = new SearchPaginationHelper();
+
         Map<String, String> queryMap = new HashMap<>();
         queryMap.put("q", loginName);
-        Observable<List<UserEntry>> observable = searchHelper.search(Constants.URL_GIT_API_SEARCH, queryMap);
+
+        Observable<List<UserEntry>> observable = userSearchHelper.search(Constants.URL_GIT_API_SEARCH, queryMap);
 
         Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
             @Override
@@ -170,6 +179,7 @@ public class MainStorageImp implements MainStorage {
             @Override
             public void onNext(List<UserEntry> userEntries) {
                 Log.d(LOGTAG, "queryUsers.onNext");
+                currentSearchResults = userEntries;
                 listener.onSearchSuccess(userEntries);
             }
 
@@ -202,7 +212,8 @@ public class MainStorageImp implements MainStorage {
         Observable<Integer> releases = RepoBuilder.getRepoReleasesCount(apiService, repoFullName);
         Observable<Integer> branches = RepoBuilder.getRepoBranchesCount(apiService, repoFullName);
 
-        Observable<RepoEntry> zippedObservable = Observable.zip(contributors, commits, releases, branches, new Function4<Integer, Integer, Integer, Integer, RepoEntry>() {
+        Observable<RepoEntry> zippedObservable = Observable.zip(contributors, commits, releases, branches,
+                new Function4<Integer, Integer, Integer, Integer, RepoEntry>() {
             @Override
             public RepoEntry apply(Integer integer, Integer integer2, Integer integer3, Integer integer4) throws Exception {
                 Log.d(LOGTAG, "queryRepo().Function4().apply()");
@@ -246,11 +257,10 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryFollowers(final SearchListener listener, String loginName) {
-        ResponsePaginator<List<UserEntry>> searchHelper = new SearchPaginationHelper();
-        Map<String, String> queryMap = new HashMap<>();
+    public void queryFollowers(final SearchListener listener) {
 
-        Observable<List<UserEntry>> observable = searchHelper.search(currentUser.getFollowers_url(), queryMap);
+        Observable<List<UserEntry>> observable = userSearchHelper.search(currentUser.getFollowers_url(),
+                defaultSearchQueryMap);
 
         Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
             @Override
@@ -261,6 +271,7 @@ public class MainStorageImp implements MainStorage {
             @Override
             public void onNext(List<UserEntry> userEntries) {
                 Log.d(LOGTAG, "queryFollowers.onNext");
+                currentSearchResults = userEntries;
                 listener.onSearchSuccess(userEntries);
             }
 
@@ -282,14 +293,12 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryFollowing(final SearchListener listener, String loginName) {
-        ResponsePaginator<List<UserEntry>> searchHelper = new SearchPaginationHelper();
-        Map<String, String> queryMap = new HashMap<>();
+    public void queryFollowing(final SearchListener listener) {
 
         Log.d(LOGTAG, "following_url before replacement " + currentUser.getFollowing_url());
         String followingUrl = currentUser.getFollowing_url().replace("{/other_user}", "");
         Log.d(LOGTAG, "following_url after replacement " + followingUrl);
-        Observable<List<UserEntry>> observable = searchHelper.search(followingUrl, queryMap);
+        Observable<List<UserEntry>> observable = userSearchHelper.search(followingUrl, defaultSearchQueryMap);
 
         Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
             @Override
@@ -300,6 +309,7 @@ public class MainStorageImp implements MainStorage {
             @Override
             public void onNext(List<UserEntry> userEntries) {
                 Log.d(LOGTAG, "queryFollowing.onNext");
+                currentSearchResults = userEntries;
                 listener.onSearchSuccess(userEntries);
             }
 
@@ -321,11 +331,10 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryContributors(final SearchListener listener, String repoName) {
-        ResponsePaginator<List<UserEntry>> searchHelper = new SearchPaginationHelper();
-        Map<String, String> queryMap = new HashMap<>();
+    public void queryContributors(final SearchListener listener) {
 
-        Observable<List<UserEntry>> observable = searchHelper.search(currentRepo.getContributors_url(), queryMap);
+        Observable<List<UserEntry>> observable = userSearchHelper.search(currentRepo.getContributors_url(),
+                defaultSearchQueryMap);
 
         Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
             @Override
@@ -336,6 +345,7 @@ public class MainStorageImp implements MainStorage {
             @Override
             public void onNext(List<UserEntry> userEntries) {
                 Log.d(LOGTAG, "queryContributors.onNext");
+                currentSearchResults = userEntries;
                 listener.onSearchSuccess(userEntries);
             }
 

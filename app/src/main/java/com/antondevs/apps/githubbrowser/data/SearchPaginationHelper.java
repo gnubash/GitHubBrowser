@@ -31,7 +31,6 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
     private static final String LOGTAG = SearchPaginationHelper.class.getSimpleName();
 
     private Map<String, String> currentQueryMap;
-    private ArrayList<UserEntry> currentSearchResults;
     private String pagesCount;
     private String nextPage;
     private String searchUrl;
@@ -67,7 +66,6 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
                 Gson gson = new GsonBuilder().
                         registerTypeAdapter(typeToken, new GsonSearchResponseAdapter()).create();
                 ArrayList<UserEntry> users = gson.fromJson(responseBodyResponse.body().string(), typeToken);
-                currentSearchResults = users;
 
 
                 if (responseBodyResponse.headers().get("Link") != null) {
@@ -99,7 +97,6 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
                             registerTypeAdapter(typeToken, new GsonSearchResponseAdapter()).create();
                     nextPage = getNextPageFromLinkHeader(responseBodyResponse.headers().get("Link"));
                     List<UserEntry> users = gson.fromJson(responseBodyResponse.body().string(), typeToken);
-                    currentSearchResults.addAll(users);
 
                     return Observable.just(users);
                 }
@@ -116,7 +113,7 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
         return (nextPage != null && !nextPage.isEmpty());
     }
 
-    private static String getLastPageFromLinkHeader(String linkHeader) {
+    private String getLastPageFromLinkHeader(String linkHeader) {
 
         int indexOfLastRel = linkHeader.indexOf(">; rel=\"last\"");
 
@@ -133,7 +130,7 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
         return substring;
     }
 
-    private static String getNextPageFromLinkHeader(String linkHeader) {
+    private String getNextPageFromLinkHeader(String linkHeader) {
 
         int indexOfLastRel = linkHeader.indexOf(">; rel=\"next\"");
 
