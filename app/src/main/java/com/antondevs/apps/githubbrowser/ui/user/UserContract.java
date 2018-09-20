@@ -5,7 +5,7 @@ import com.antondevs.apps.githubbrowser.ui.BaseView;
 import java.util.List;
 
 /**
- * Created by Anton on 7/1/18.
+ * Created by Anton.
  */
 public interface UserContract {
 

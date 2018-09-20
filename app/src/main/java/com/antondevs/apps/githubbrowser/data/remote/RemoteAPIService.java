@@ -9,16 +9,14 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 /**
  * Created by Anton.
@@ -41,19 +39,10 @@ public interface RemoteAPIService {
     @GET("users/{login_name}/starred")
     Single<List<RepoEntry>> queryUserStarredRepos(@Path("login_name") String loginName);
 
-    // Followers
-    @GET("users/{login_name}/followers")
-    Flowable<Response<List<UserEntry>>> queryUserFollowers(@Path("login_name") String login_name,
+    // Dynamic Search - users, repo contributors, followers and following
+    @GET
+    Observable<Response<okhttp3.ResponseBody>> searchUsers(@Url String url,
                                                            @QueryMap(encoded = true) Map<String, String> queryMap);
-
-    // Following
-    @GET("users/{login_name}/following")
-    Flowable<Response<List<UserEntry>>> queryUserFollowing(@Path("login_name") String login_name,
-                                             @QueryMap(encoded = true) Map<String, String> queryMap);
-
-    // Search
-    @GET("search/users")
-    Flowable<Response<List<UserEntry>>> searchUsers(@QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Methods required to form full RepoEntry
 

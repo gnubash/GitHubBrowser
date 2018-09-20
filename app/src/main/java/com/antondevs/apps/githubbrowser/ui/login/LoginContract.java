@@ -3,7 +3,7 @@ package com.antondevs.apps.githubbrowser.ui.login;
 import com.antondevs.apps.githubbrowser.ui.BaseView;
 
 /**
- * Created by Anton on 6/30/18.
+ * Created by Anton.
  */
 public interface LoginContract {
 

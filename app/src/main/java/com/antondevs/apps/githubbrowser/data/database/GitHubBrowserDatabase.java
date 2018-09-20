@@ -14,7 +14,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserDao;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
 /**
- * Created by Anton on 6/29/18.
+ * Created by Anton.
  */
 @Database(entities = {UserEntry.class, RepoEntry.class, AuthEntry.class}, version = 1, exportSchema = false)
 public abstract class GitHubBrowserDatabase extends RoomDatabase {

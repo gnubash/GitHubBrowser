@@ -156,6 +156,8 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         switch (itemId) {
             case R.id.menu_action_search:
                 // Start Search View when this is selected
+                Intent searchActivityIntent = new Intent(UserActivity.this, SearchActivity.class);
+                startActivity(searchActivityIntent);
                 return true;
             case R.id.menu_action_logout:
                 //  Should call presenter to logout(finish activity directly after setting logged out status

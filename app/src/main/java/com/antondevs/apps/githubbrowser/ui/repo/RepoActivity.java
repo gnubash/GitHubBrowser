@@ -17,6 +17,7 @@ import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.databinding.ActivityRepoBinding;
+import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
@@ -63,6 +64,16 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
                 Intent searchContributorsIntent = new Intent(RepoActivity.this, SearchActivity.class);
                 searchContributorsIntent.putExtra(SearchActivity.EXTRA_SEARCH_REPO_CONTRIBUTORS, presenter.getRepoName());
                 startActivity(searchContributorsIntent);
+            }
+        });
+
+        binding.repoOwnerImageWrapperView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent userIntent = new Intent(RepoActivity.this, UserActivity.class);
+                userIntent.putExtra(LoginActivity.INTENT_EXTRA_USER_LOGIN_KEY,
+                        binding.repoOwnerNameTextView.getText());
+                startActivity(userIntent);
             }
         });
 

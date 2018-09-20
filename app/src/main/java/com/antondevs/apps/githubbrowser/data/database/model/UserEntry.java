@@ -7,7 +7,7 @@ import android.arch.persistence.room.TypeConverters;
 import java.util.List;
 
 /**
- * Created by Anton on 6/24/18.
+ * Created by Anton.
  */
 @Entity(tableName = "users")
 public class UserEntry {

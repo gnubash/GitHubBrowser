@@ -4,7 +4,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 /**
- * Created by Anton on 6/24/18.
+ * Created by Anton.
  */
 @Entity(tableName = "repos")
 public class RepoEntry {

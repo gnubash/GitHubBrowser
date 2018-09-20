@@ -1,10 +1,9 @@
 package com.antondevs.apps.githubbrowser.ui.login;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
-import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
 /**
- * Created by Anton on 6/30/18.
+ * Created by Anton.
  */
 public class LoginPresenterImp implements LoginContract.LoginPresenter,
         MainStorage.AuthenticationListener {

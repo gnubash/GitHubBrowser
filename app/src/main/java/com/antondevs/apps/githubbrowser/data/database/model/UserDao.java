@@ -10,7 +10,7 @@ import android.arch.persistence.room.Update;
 import java.util.List;
 
 /**
- * Created by Anton on 6/28/18.
+ * Created by Anton.
  */
 @Dao
 public interface UserDao {

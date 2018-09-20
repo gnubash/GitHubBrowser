@@ -3,7 +3,7 @@ package com.antondevs.apps.githubbrowser.ui.repo;
 import com.antondevs.apps.githubbrowser.ui.BaseView;
 
 /**
- * Created by Anton on 7/3/18.
+ * Created by Anton.
  */
 public interface RepoContract {
 

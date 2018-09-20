@@ -13,7 +13,7 @@ import com.antondevs.apps.githubbrowser.R;
 import java.util.ArrayList;
 
 /**
- * Created by Anton on 7/8/18.
+ * Created by Anton.
  */
 public class RepoAdapter extends RecyclerView.Adapter<RepoAdapter.ViewHolder> {
 

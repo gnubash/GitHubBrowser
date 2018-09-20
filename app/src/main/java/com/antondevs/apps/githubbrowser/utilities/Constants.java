@@ -7,5 +7,5 @@ public class Constants {
 
     public static final String URL_GIT_API = "https://api.github.com/";
 
-    public static final int RESULTS_PER_PAGE = 5;
+    public static final String URL_GIT_API_SEARCH = "https://api.github.com/search/users";
 }

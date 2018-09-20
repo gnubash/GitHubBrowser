@@ -8,6 +8,8 @@ import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
+import com.antondevs.apps.githubbrowser.data.remote.ResponsePaginator;
+import com.antondevs.apps.githubbrowser.utilities.Constants;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -153,8 +155,39 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryUsers(SearchListener listener, String loginName) {
+    public void queryUsers(final SearchListener listener, String loginName) {
+        ResponsePaginator<List<UserEntry>> searchHelper = new SearchPaginationHelper();
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("q", loginName);
+        Observable<List<UserEntry>> observable = searchHelper.search(Constants.URL_GIT_API_SEARCH, queryMap);
 
+        Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(LOGTAG, "queryUsers.onSubscribe");
+            }
+
+            @Override
+            public void onNext(List<UserEntry> userEntries) {
+                Log.d(LOGTAG, "queryUsers.onNext");
+                listener.onSearchSuccess(userEntries);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOGTAG, "queryUsers.onError");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(LOGTAG, "queryUsers.onComplete");
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 
     @Override
@@ -213,18 +246,114 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryFollowers(SearchListener listener, String loginName) {
+    public void queryFollowers(final SearchListener listener, String loginName) {
+        ResponsePaginator<List<UserEntry>> searchHelper = new SearchPaginationHelper();
+        Map<String, String> queryMap = new HashMap<>();
 
+        Observable<List<UserEntry>> observable = searchHelper.search(currentUser.getFollowers_url(), queryMap);
+
+        Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(LOGTAG, "queryFollowers.onSubscribe");
+            }
+
+            @Override
+            public void onNext(List<UserEntry> userEntries) {
+                Log.d(LOGTAG, "queryFollowers.onNext");
+                listener.onSearchSuccess(userEntries);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOGTAG, "queryFollowers.onError");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(LOGTAG, "queryFollowers.onComplete");
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 
     @Override
-    public void queryFollowing(SearchListener listener, String loginName) {
+    public void queryFollowing(final SearchListener listener, String loginName) {
+        ResponsePaginator<List<UserEntry>> searchHelper = new SearchPaginationHelper();
+        Map<String, String> queryMap = new HashMap<>();
 
+        Log.d(LOGTAG, "following_url before replacement " + currentUser.getFollowing_url());
+        String followingUrl = currentUser.getFollowing_url().replace("{/other_user}", "");
+        Log.d(LOGTAG, "following_url after replacement " + followingUrl);
+        Observable<List<UserEntry>> observable = searchHelper.search(followingUrl, queryMap);
+
+        Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(LOGTAG, "queryFollowing.onSubscribe");
+            }
+
+            @Override
+            public void onNext(List<UserEntry> userEntries) {
+                Log.d(LOGTAG, "queryFollowing.onNext");
+                listener.onSearchSuccess(userEntries);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOGTAG, "queryFollowing.onError");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(LOGTAG, "queryFollowing.onComplete");
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 
     @Override
-    public void queryContributors(SearchListener listener, String repoName) {
+    public void queryContributors(final SearchListener listener, String repoName) {
+        ResponsePaginator<List<UserEntry>> searchHelper = new SearchPaginationHelper();
+        Map<String, String> queryMap = new HashMap<>();
 
+        Observable<List<UserEntry>> observable = searchHelper.search(currentRepo.getContributors_url(), queryMap);
+
+        Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(LOGTAG, "queryContributors.onSubscribe");
+            }
+
+            @Override
+            public void onNext(List<UserEntry> userEntries) {
+                Log.d(LOGTAG, "queryContributors.onNext");
+                listener.onSearchSuccess(userEntries);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOGTAG, "queryContributors.onError");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(LOGTAG, "queryContributors.onComplete");
+            }
+        };
+
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 
     @Override

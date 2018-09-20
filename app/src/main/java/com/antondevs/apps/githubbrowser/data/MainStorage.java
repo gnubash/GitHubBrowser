@@ -7,7 +7,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import java.util.List;
 
 /**
- * Created by Anton on 6/30/18.
+ * Created by Anton.
  */
 public interface MainStorage {
 
