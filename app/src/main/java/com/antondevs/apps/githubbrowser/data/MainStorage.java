@@ -25,11 +25,11 @@ public interface MainStorage {
 
     void queryRepo(RepoListener listener, String repoName);
 
-    void queryFollowers(SearchListener listener);
+    void queryFollowers(SearchListener listener, String loginName);
 
-    void queryFollowing(SearchListener listener);
+    void queryFollowing(SearchListener listener, String loginName);
 
-    void queryContributors(SearchListener listener);
+    void queryContributors(SearchListener listener, String repoName);
 
     void loadMoreSearchResults(SearchListener listener);
 

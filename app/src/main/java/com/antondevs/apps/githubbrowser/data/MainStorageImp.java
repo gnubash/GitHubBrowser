@@ -53,15 +53,15 @@ public class MainStorageImp implements MainStorage {
 
     private ResponsePaginator<List<UserEntry>> userSearchHelper;
 
-    private Map<String, String> defaultSearchQueryMap;
+    private List<UserEntry> currentSearchResults;
 
-    List<UserEntry> currentSearchResults;
+    private Map<String, UserEntry> loadedUsers;
 
     private MainStorageImp() {
         apiService = APIService.getService();
         currentUserRepos = new HashMap<>();
         userSearchHelper = new SearchPaginationHelper();
-        defaultSearchQueryMap = new HashMap<>();
+        loadedUsers = new HashMap<>();
     }
 
     public static MainStorage getInstance() {
@@ -257,10 +257,12 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryFollowers(final SearchListener listener) {
+    public void queryFollowers(final SearchListener listener, String loginName) {
+
+        setCurrentUser(loginName);
 
         Observable<List<UserEntry>> observable = userSearchHelper.search(currentUser.getFollowers_url(),
-                defaultSearchQueryMap);
+                new HashMap<String, String>());
 
         Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
             @Override
@@ -293,12 +295,14 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryFollowing(final SearchListener listener) {
+    public void queryFollowing(final SearchListener listener, String loginName) {
+
+        setCurrentUser(loginName);
 
         Log.d(LOGTAG, "following_url before replacement " + currentUser.getFollowing_url());
         String followingUrl = currentUser.getFollowing_url().replace("{/other_user}", "");
         Log.d(LOGTAG, "following_url after replacement " + followingUrl);
-        Observable<List<UserEntry>> observable = userSearchHelper.search(followingUrl, defaultSearchQueryMap);
+        Observable<List<UserEntry>> observable = userSearchHelper.search(followingUrl, new HashMap<String, String>());
 
         Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
             @Override
@@ -331,10 +335,12 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryContributors(final SearchListener listener) {
+    public void queryContributors(final SearchListener listener, String repoName) {
+
+        currentRepo = currentUserRepos.get(repoName);
 
         Observable<List<UserEntry>> observable = userSearchHelper.search(currentRepo.getContributors_url(),
-                defaultSearchQueryMap);
+                new HashMap<String, String>());
 
         Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
             @Override
@@ -415,6 +421,12 @@ public class MainStorageImp implements MainStorage {
 
         return completeable;
 
+    }
+
+    private void setCurrentUser(String loginName) {
+        if (!currentUser.getLogin().equals(loginName) && loadedUsers.containsKey(loginName)) {
+            currentUser = loadedUsers.get(loginName);
+        }
     }
 
 }

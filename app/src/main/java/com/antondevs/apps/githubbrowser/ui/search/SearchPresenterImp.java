@@ -34,21 +34,21 @@ public class SearchPresenterImp implements SearchContract.Presenter,
     public void searchContributors(String repoName) {
         Log.d(LOGTAG, "searchContributors = " + repoName);
         view.showLoading();
-        storage.queryContributors(this);
+        storage.queryContributors(this, repoName);
     }
 
     @Override
     public void searchFollowers(String userName) {
         Log.d(LOGTAG, "searchFollowers = " + userName);
         view.showLoading();
-        storage.queryFollowers(this);
+        storage.queryFollowers(this, userName);
     }
 
     @Override
     public void searchFollowing(String userName) {
         Log.d(LOGTAG, "searchFollowing = " + userName);
         view.showLoading();
-        storage.queryFollowing(this);
+        storage.queryFollowing(this, userName);
     }
 
     @Override
