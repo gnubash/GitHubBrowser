@@ -47,7 +47,7 @@ public class MainStorageImp implements MainStorage {
 
     private UserEntry currentUser;
 
-    private Map<String, RepoEntry> currentUserRepos;
+    private Map<String, RepoEntry> loadedRepos;
 
     private RepoEntry currentRepo;
 
@@ -59,7 +59,7 @@ public class MainStorageImp implements MainStorage {
 
     private MainStorageImp() {
         apiService = APIService.getService();
-        currentUserRepos = new HashMap<>();
+        loadedRepos = new HashMap<>();
         userSearchHelper = new SearchPaginationHelper();
         loadedUsers = new HashMap<>();
     }
@@ -130,6 +130,8 @@ public class MainStorageImp implements MainStorage {
 
     @Override
     public void queryUser(final UserListener listener, final String loginName) {
+
+        setCurrentUser(loginName);
 
         if (currentUser != null && currentUser.getLogin().equals(loginName)) {
             listener.onUserLoaded(currentUser);
@@ -205,7 +207,12 @@ public class MainStorageImp implements MainStorage {
 
         Log.d(LOGTAG, "queryRepo()");
 
-        currentRepo = currentUserRepos.get(repoFullName);
+        currentRepo = loadedRepos.get(repoFullName);
+
+        if (currentRepo.getContributors_count() > 0) {
+            listener.onRepoLoaded(currentRepo);
+            return;
+        }
 
         Observable<Integer> contributors = RepoBuilder.getRepoContributorsCount(apiService, repoFullName);
         Observable<Integer> commits = RepoBuilder.getRepoCommitsCount(apiService, repoFullName);
@@ -221,7 +228,7 @@ public class MainStorageImp implements MainStorage {
                 currentRepo.setCommits_count(integer2);
                 currentRepo.setReleases_count(integer3);
                 currentRepo.setBranches_count(integer4);
-                currentUserRepos.put(currentRepo.getFull_name(), currentRepo);
+                loadedRepos.put(currentRepo.getFull_name(), currentRepo);
                 return currentRepo;
             }
         });
@@ -337,7 +344,7 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void queryContributors(final SearchListener listener, String repoName) {
 
-        currentRepo = currentUserRepos.get(repoName);
+        currentRepo = loadedRepos.get(repoName);
 
         Observable<List<UserEntry>> observable = userSearchHelper.search(currentRepo.getContributors_url(),
                 new HashMap<String, String>());
@@ -394,7 +401,7 @@ public class MainStorageImp implements MainStorage {
                         List<String> ownedRepos = new ArrayList<>();
                         for (RepoEntry entry : repoEntries) {
                             ownedRepos.add(entry.getFull_name());
-                            currentUserRepos.put(entry.getFull_name(), entry);
+                            loadedRepos.put(entry.getFull_name(), entry);
                         }
                         currentUser.setOwnedRepos(ownedRepos);
                     }
@@ -407,9 +414,10 @@ public class MainStorageImp implements MainStorage {
                         List<String> starredRepos = new ArrayList<>();
                         for (RepoEntry entry : repoEntries) {
                             starredRepos.add(entry.getFull_name());
-                            currentUserRepos.put(entry.getFull_name(), entry);
+                            loadedRepos.put(entry.getFull_name(), entry);
                         }
                         currentUser.setStarredRepos(starredRepos);
+                        loadedUsers.put(currentUser.getLogin(), currentUser);
                     }
                 }).ignoreElement();
 
@@ -424,7 +432,12 @@ public class MainStorageImp implements MainStorage {
     }
 
     private void setCurrentUser(String loginName) {
+        if (currentUser == null) {
+            return;
+        }
+
         if (!currentUser.getLogin().equals(loginName) && loadedUsers.containsKey(loginName)) {
+            Log.d(LOGTAG, "setCurrentUser.if");
             currentUser = loadedUsers.get(loginName);
         }
     }
