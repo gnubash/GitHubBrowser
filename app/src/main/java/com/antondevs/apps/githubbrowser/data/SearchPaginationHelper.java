@@ -71,7 +71,7 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
                 if (responseBodyResponse.headers().get("Link") != null) {
                     String linkHeader = responseBodyResponse.headers().get("Link");
                     nextPage = getNextPageFromLinkHeader(linkHeader);
-                    currentQueryMap.put("page=", nextPage);
+                    currentQueryMap.put("page", nextPage);
                     pagesCount = getLastPageFromLinkHeader(linkHeader);
                 }
 
@@ -96,6 +96,7 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
                     Gson gson = new GsonBuilder().
                             registerTypeAdapter(typeToken, new GsonSearchResponseAdapter()).create();
                     nextPage = getNextPageFromLinkHeader(responseBodyResponse.headers().get("Link"));
+                    currentQueryMap.put("page", nextPage);
                     List<UserEntry> users = gson.fromJson(responseBodyResponse.body().string(), typeToken);
 
                     return Observable.just(users);
@@ -126,24 +127,25 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
         }
 
         String substring = linkHeader.substring(indexOfLastPage + searchCriteria.length(), indexOfLastRel);
-        Log.d(LOGTAG, "getLastPageFromLinkHeader() substring = " + substring);
+        Log.d(LOGTAG, "getLastPageFromLinkHeader substring = " + substring);
         return substring;
     }
 
     private String getNextPageFromLinkHeader(String linkHeader) {
 
-        int indexOfLastRel = linkHeader.indexOf(">; rel=\"next\"");
+        String nextPageRel = ">; rel=\"next\"";
 
-        String searchCriteria = "page=";
-
-        int indexOfLastPage = linkHeader.indexOf(searchCriteria);
-
-        if (indexOfLastRel == -1 || indexOfLastPage == -1) {
+        if (!linkHeader.contains(nextPageRel)) {
             return "";
         }
 
-        String substring = linkHeader.substring(indexOfLastPage + searchCriteria.length(), indexOfLastRel);
-        Log.d(LOGTAG, "getLastPageFromLinkHeader() substring = " + substring);
+        String splitHeader = linkHeader.substring(0,linkHeader.indexOf(nextPageRel));
+
+        String searchCriteria = "page=";
+
+        String substring = splitHeader.substring(splitHeader.lastIndexOf(searchCriteria) + searchCriteria.length());
+        Log.d(LOGTAG, "getNextPageFromLinkHeader substring = " + substring);
         return substring;
     }
+
 }
