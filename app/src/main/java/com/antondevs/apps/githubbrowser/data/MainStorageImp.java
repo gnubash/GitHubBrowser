@@ -57,6 +57,8 @@ public class MainStorageImp implements MainStorage {
 
     private Map<String, UserEntry> loadedUsers;
 
+    private boolean isLoadingSearchResults;
+
     private MainStorageImp() {
         apiService = APIService.getService();
         loadedRepos = new HashMap<>();
@@ -267,6 +269,7 @@ public class MainStorageImp implements MainStorage {
     public void queryFollowers(final SearchListener listener, String loginName) {
 
         setCurrentUser(loginName);
+        clearSearchCache();
 
         Observable<List<UserEntry>> observable = userSearchHelper.search(currentUser.getFollowers_url(),
                 new HashMap<String, String>());
@@ -305,6 +308,7 @@ public class MainStorageImp implements MainStorage {
     public void queryFollowing(final SearchListener listener, String loginName) {
 
         setCurrentUser(loginName);
+        clearSearchCache();
 
         Log.d(LOGTAG, "following_url before replacement " + currentUser.getFollowing_url());
         String followingUrl = currentUser.getFollowing_url().replace("{/other_user}", "");
@@ -345,6 +349,7 @@ public class MainStorageImp implements MainStorage {
     public void queryContributors(final SearchListener listener, String repoName) {
 
         currentRepo = loadedRepos.get(repoName);
+        clearSearchCache();
 
         Observable<List<UserEntry>> observable = userSearchHelper.search(currentRepo.getContributors_url(),
                 new HashMap<String, String>());
@@ -380,7 +385,41 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void loadMoreSearchResults(SearchListener listener) {
+    public void loadMoreSearchResults(final SearchListener listener) {
+        if (userSearchHelper.hasMorePages() && !isLoadingSearchResults) {
+            isLoadingSearchResults = true;
+            userSearchHelper.getNextPage().subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<UserEntry>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Log.d(LOGTAG, "loadMoreSearchResults.onSubscribe");
+                        }
+
+                        @Override
+                        public void onNext(List<UserEntry> userEntries) {
+                            Log.d(LOGTAG, "loadMoreSearchResults.onNext");
+                            currentSearchResults.addAll(userEntries);
+                            listener.onSearchSuccess(currentSearchResults);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d(LOGTAG, "loadMoreSearchResults.onError");
+                            isLoadingSearchResults = false;
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            Log.d(LOGTAG, "loadMoreSearchResults.onComplete");
+                            if (!userSearchHelper.hasMorePages()) {
+                                listener.onNoMoreResults();
+                            }
+                            isLoadingSearchResults = false;
+                        }
+                    });
+        }
 
     }
 
@@ -440,6 +479,10 @@ public class MainStorageImp implements MainStorage {
             Log.d(LOGTAG, "setCurrentUser.if");
             currentUser = loadedUsers.get(loginName);
         }
+    }
+
+    private void clearSearchCache() {
+        currentSearchResults = null;
     }
 
 }

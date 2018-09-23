@@ -46,6 +46,8 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOGTAG, "onCreate");
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_search);
 
         if (getSupportActionBar() != null) {
@@ -54,7 +56,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
         binding.searchUserRecyclerView.setHasFixedSize(true);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         binding.searchUserRecyclerView.setLayoutManager(layoutManager);
 
         GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
@@ -64,10 +66,26 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
         presenter = new SearchPresenterImp(this, storage);
         checkIntent();
+
+        binding.searchUserRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                if (layoutManager.findLastVisibleItemPosition() == layoutManager.getItemCount() - 1) {
+                    Log.d(LOGTAG, "onScrolled lastVisible = " +
+                            layoutManager.findLastVisibleItemPosition() + " itemCount " +
+                            layoutManager.getItemCount());
+                    presenter.userScrollToBottom();
+                }
+
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
     }
 
     @Override
     public void setSearchResult(List<UserEntry> userList) {
+        Log.d(LOGTAG, "setSearchResult");
         if (adapter == null) {
             adapter = new UserSearchAdapter((ArrayList<UserEntry>) userList, this);
             binding.searchUserRecyclerView.setAdapter(adapter);
@@ -79,6 +97,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     @Override
     public void showNoResultsView() {
+        Log.d(LOGTAG, "showNoResultsView");
         if (!(adapter == null)) {
             binding.searchUserRecyclerView.setAdapter(null);
         }
@@ -86,7 +105,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     @Override
     public void onUserItemCLick(String itemName) {
-        Log.d(LOGTAG, "onUserItemCLick(String)" + itemName);
+        Log.d(LOGTAG, "onUserItemCLick " + itemName);
         Toast.makeText(this, itemName, Toast.LENGTH_SHORT).show();
         Intent userActivityIntent = new Intent(this, UserActivity.class);
         userActivityIntent.putExtra(LoginActivity.INTENT_EXTRA_USER_LOGIN_KEY, itemName);
@@ -95,19 +114,29 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     @Override
     public void showLoading() {
+        Log.d(LOGTAG, "showLoading");
         binding.loginProgressBar.setVisibility(View.VISIBLE);
         binding.searchViewContainer.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void showViews() {
+        Log.d(LOGTAG, "showViews");
         binding.loginProgressBar.setVisibility(View.GONE);
         binding.searchViewContainer.setVisibility(View.VISIBLE);
+        binding.loadingMoreProgressBar.setVisibility(View.GONE);
     }
 
     @Override
     public void showNoMoreSearchResults() {
+        Log.d(LOGTAG, "showNoMoreSearchResults");
+        binding.loadingMoreProgressBar.setVisibility(View.GONE);
+    }
 
+    @Override
+    public void showLoadingMoreResults() {
+        Log.d(LOGTAG, "showLoadingMoreResults");
+        binding.loadingMoreProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -156,6 +185,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     private void checkIntent() {
+        Log.d(LOGTAG, "checkIntent");
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_SEARCH_USER_FOLLOWERS)) {
             presenter.searchFollowers(intent.getStringExtra(EXTRA_SEARCH_USER_FOLLOWERS));

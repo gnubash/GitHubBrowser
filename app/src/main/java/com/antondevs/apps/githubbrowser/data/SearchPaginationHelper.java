@@ -85,7 +85,7 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
 
         if (hasMorePages()) {
             return service.searchUsers(searchUrl, currentQueryMap)
-                    .concatMap(new Function<Response<ResponseBody>, ObservableSource<? extends List<UserEntry>>>() {
+                    .flatMap(new Function<Response<ResponseBody>, ObservableSource<? extends List<UserEntry>>>() {
                 @Override
                 public ObservableSource<? extends List<UserEntry>> apply(Response<ResponseBody> responseBodyResponse)
                         throws Exception {

@@ -18,6 +18,8 @@ public interface SearchContract {
 
         void showNoMoreSearchResults();
 
+        void showLoadingMoreResults();
+
     }
 
     interface Presenter {

@@ -17,6 +17,7 @@ public class SearchPresenterImp implements SearchContract.Presenter,
 
     private SearchContract.View view;
     private MainStorage storage;
+    private boolean hasMoreResults;
 
     public SearchPresenterImp(SearchContract.View view, MainStorage storage) {
         this.view = view;
@@ -59,12 +60,25 @@ public class SearchPresenterImp implements SearchContract.Presenter,
 
     @Override
     public void onSearchSuccess(List<UserEntry> userList) {
+        Log.d(LOGTAG, "onSearchSuccess");
+        hasMoreResults = true;
         view.setSearchResult(userList);
         view.showViews();
     }
 
     @Override
+    public void onNoMoreResults() {
+        Log.d(LOGTAG, "onNoMoreResults");
+        hasMoreResults = false;
+        view.showNoMoreSearchResults();
+    }
+
+    @Override
     public void userScrollToBottom() {
-        storage.loadMoreSearchResults(this);
+        Log.d(LOGTAG, "userScrollToBottom");
+        if (hasMoreResults) {
+            view.showLoadingMoreResults();
+            storage.loadMoreSearchResults(this);
+        }
     }
 }

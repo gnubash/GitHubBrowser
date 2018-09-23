@@ -51,6 +51,8 @@ public interface MainStorage {
 
         void onSearchSuccess(List<UserEntry> userList);
 
+        void onNoMoreResults();
+
     }
 
     interface RepoListener {
