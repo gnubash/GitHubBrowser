@@ -47,8 +47,6 @@ public class MainStorageImp implements MainStorage {
 
     private UserEntry currentUser;
 
-    private Map<String, RepoEntry> loadedRepos;
-
     private RepoEntry currentRepo;
 
     private ResponsePaginator<List<UserEntry>> userSearchHelper;
@@ -56,6 +54,8 @@ public class MainStorageImp implements MainStorage {
     private List<UserEntry> currentSearchResults;
 
     private Map<String, UserEntry> loadedUsers;
+
+    private Map<String, RepoEntry> loadedRepos;
 
     private boolean isLoadingSearchResults;
 

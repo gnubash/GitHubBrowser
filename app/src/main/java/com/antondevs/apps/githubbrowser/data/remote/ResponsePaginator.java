@@ -9,9 +9,9 @@ import io.reactivex.Observable;
  */
 public interface ResponsePaginator<T> {
 
-    public Observable<T> search(String url, Map<String, String> queryMap);
+    Observable<T> search(String url, Map<String, String> queryMap);
 
-    public Observable<T> getNextPage();
+    Observable<T> getNextPage();
 
-    public boolean hasMorePages();
+    boolean hasMorePages();
 }
