@@ -41,6 +41,16 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
     }
 
     @Override
+    public void scrollOwnedToBottom() {
+
+    }
+
+    @Override
+    public void scrollStarredToBottom() {
+
+    }
+
+    @Override
     public String getUserLoginName() {
         return currentUserEntry.getLogin();
     }

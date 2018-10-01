@@ -30,6 +30,10 @@ public interface UserContract {
 
         void getStarredRepos();
 
+        void scrollOwnedToBottom();
+
+        void scrollStarredToBottom();
+
         String getUserLoginName();
 
     }

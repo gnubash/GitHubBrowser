@@ -7,7 +7,7 @@ import io.reactivex.Observable;
 /**
  * Created by Anton.
  */
-public interface ResponsePaginator<T> {
+public interface ResponsePaging<T> {
 
     Observable<T> search(String url, Map<String, String> queryMap);
 

@@ -8,18 +8,18 @@ import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
-import com.antondevs.apps.githubbrowser.data.remote.ResponsePaginator;
+import com.antondevs.apps.githubbrowser.data.remote.ResponsePaging;
+import com.antondevs.apps.githubbrowser.data.remote.UserWrapper;
 import com.antondevs.apps.githubbrowser.utilities.Constants;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
-import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -49,7 +49,7 @@ public class MainStorageImp implements MainStorage {
 
     private RepoEntry currentRepo;
 
-    private ResponsePaginator<List<UserEntry>> userSearchHelper;
+    private ResponsePaging<List<UserEntry>> userSearchHelper;
 
     private List<UserEntry> currentSearchResults;
 
@@ -57,12 +57,14 @@ public class MainStorageImp implements MainStorage {
 
     private Map<String, RepoEntry> loadedRepos;
 
+    private UserWrapper userHelper;
+
     private boolean isLoadingSearchResults;
 
     private MainStorageImp() {
         apiService = APIService.getService();
         loadedRepos = new HashMap<>();
-        userSearchHelper = new SearchPaginationHelper();
+        userSearchHelper = new UserSearchPagingHelper();
         loadedUsers = new HashMap<>();
     }
 
@@ -88,9 +90,7 @@ public class MainStorageImp implements MainStorage {
         }
         else {
             AuthEntry entry = databaseHelper.getAuthentication();
-            basicCredentials = Credentials.basic(entry.getLogin(), entry.getPass(), UTF_8);
-            APIService.setCredentials(basicCredentials);
-            listener.onUserAuthenticated();
+            performAuthentication(entry.getLogin(), entry.getPass(), listener);
         }
     }
 
@@ -99,70 +99,83 @@ public class MainStorageImp implements MainStorage {
         basicCredentials = Credentials.basic(username, password, UTF_8);
         APIService.setCredentials(basicCredentials);
 
-        CompletableObserver observer = new CompletableObserver() {
+        userHelper = new UserWrapperHelper(username);
+
+        Observable<UserEntry> createUserEntry = userHelper.createUser();
+        Observer<UserEntry> createUserEntryObserver = new Observer<UserEntry>() {
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "observer.onSubscribe() " + d.isDisposed());
-
+                Log.d(LOGTAG, "performAuthentication.onSubscribe() " + d.isDisposed());
             }
 
             @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "observer.onComplete()");
+            public void onNext(UserEntry userEntry) {
+                Log.d(LOGTAG, "performAuthentication.onNext() ");
+                currentUser = userEntry;
+                loadedUsers.put(currentUser.getLogin(), currentUser);
                 databaseHelper.writeAuthnetication(new AuthEntry(username, password));
                 databaseHelper.writeUser(currentUser);
-                listener.onUserAuthenticated();
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.d(LOGTAG, "observer.onError()");
+                Log.d(LOGTAG, "performAuthentication.onError() ");
                 if (e instanceof IOException) {
                     listener.onNetworkConnectionFailure();
                     return;
                 }
+                e.printStackTrace();
                 listener.onAuthenticationFailed();
+            }
 
+            @Override
+            public void onComplete() {
+                Log.d(LOGTAG, "performAuthentication.onComplete()");
+                listener.onUserAuthenticated();
             }
         };
 
-        createUserFromRemoteSource(username).subscribe(observer);
+        createUserEntry.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(createUserEntryObserver);
 
     }
 
     @Override
     public void queryUser(final UserListener listener, final String loginName) {
 
-        setCurrentUser(loginName);
+        UserWrapper userWrapper = new UserWrapperHelper(loginName);
 
-        if (currentUser != null && currentUser.getLogin().equals(loginName)) {
-            listener.onUserLoaded(currentUser);
-            return;
-        }
+        Observable<UserEntry> userEntryObservable = userWrapper.createUser();
 
-        CompletableObserver observer = new CompletableObserver() {
+        Observer<UserEntry> userEntryObserver = new Observer<UserEntry>() {
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "observer.onSubscribe() " + d.isDisposed());
-
+                Log.d(LOGTAG, "queryUser.onSubscribe() " + d.isDisposed());
             }
 
             @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "observer.onComplete()");
-                databaseHelper.writeUser(currentUser);
-                listener.onUserLoaded(currentUser);
+            public void onNext(UserEntry userEntry) {
+                Log.d(LOGTAG, "queryUser.onNext()");
+                currentUser = userEntry;
+                loadedUsers.put(userEntry.getLogin(), userEntry);
+                databaseHelper.writeUser(userEntry);
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.d(LOGTAG, "observer.onError()");
-                listener.onLoadFailed();
+                Log.d(LOGTAG, "queryUser.onError()");
+            }
 
+            @Override
+            public void onComplete() {
+                Log.d(LOGTAG, "queryUser.onComplete()");
+                listener.onUserLoaded(currentUser);
             }
         };
 
-        createUserFromRemoteSource(loginName).subscribe(observer);
+        userEntryObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(userEntryObserver);
 
     }
 
@@ -209,19 +222,20 @@ public class MainStorageImp implements MainStorage {
 
         Log.d(LOGTAG, "queryRepo()");
 
-        currentRepo = loadedRepos.get(repoFullName);
-
-        if (currentRepo.getContributors_count() > 0) {
+        if (loadedRepos.containsKey(repoFullName)) {
+            currentRepo = loadedRepos.get(repoFullName);
             listener.onRepoLoaded(currentRepo);
             return;
         }
+
+        Observable<RepoEntry> repoEntryObservable = apiService.queryRepo(repoFullName);
 
         Observable<Integer> contributors = RepoBuilder.getRepoContributorsCount(apiService, repoFullName);
         Observable<Integer> commits = RepoBuilder.getRepoCommitsCount(apiService, repoFullName);
         Observable<Integer> releases = RepoBuilder.getRepoReleasesCount(apiService, repoFullName);
         Observable<Integer> branches = RepoBuilder.getRepoBranchesCount(apiService, repoFullName);
 
-        Observable<RepoEntry> zippedObservable = Observable.zip(contributors, commits, releases, branches,
+        final Observable<RepoEntry> zippedObservable = Observable.zip(contributors, commits, releases, branches,
                 new Function4<Integer, Integer, Integer, Integer, RepoEntry>() {
             @Override
             public RepoEntry apply(Integer integer, Integer integer2, Integer integer3, Integer integer4) throws Exception {
@@ -259,7 +273,17 @@ public class MainStorageImp implements MainStorage {
             }
         };
 
-        zippedObservable.subscribeOn(Schedulers.io())
+        repoEntryObservable.doOnNext(new Consumer<RepoEntry>() {
+            @Override
+            public void accept(RepoEntry repoEntry) throws Exception {
+                currentRepo = repoEntry;
+            }
+        }).concatWith(Observable.defer(new Callable<ObservableSource<? extends RepoEntry>>() {
+            @Override
+            public ObservableSource<? extends RepoEntry> call() throws Exception {
+                return zippedObservable;
+            }
+        })).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
 
@@ -420,53 +444,6 @@ public class MainStorageImp implements MainStorage {
                         }
                     });
         }
-
-    }
-
-    private Completable createUserFromRemoteSource(String username) {
-
-        Completable userEntryCall = apiService.queryUser(username)
-                .doOnSuccess(new Consumer<UserEntry>() {
-                    @Override
-                    public void accept(UserEntry userEntry) throws Exception {
-                        currentUser = userEntry;
-                    }
-                }).ignoreElement();
-
-        Completable userOwnedCall = apiService.queryUserOwnedRepos(username)
-                .doOnSuccess(new Consumer<List<RepoEntry>>() {
-                    @Override
-                    public void accept(List<RepoEntry> repoEntries) throws Exception {
-                        List<String> ownedRepos = new ArrayList<>();
-                        for (RepoEntry entry : repoEntries) {
-                            ownedRepos.add(entry.getFull_name());
-                            loadedRepos.put(entry.getFull_name(), entry);
-                        }
-                        currentUser.setOwnedRepos(ownedRepos);
-                    }
-                }).ignoreElement();
-
-        Completable userStarredCall = apiService.queryUserStarredRepos(username)
-                .doOnSuccess(new Consumer<List<RepoEntry>>() {
-                    @Override
-                    public void accept(List<RepoEntry> repoEntries) throws Exception {
-                        List<String> starredRepos = new ArrayList<>();
-                        for (RepoEntry entry : repoEntries) {
-                            starredRepos.add(entry.getFull_name());
-                            loadedRepos.put(entry.getFull_name(), entry);
-                        }
-                        currentUser.setStarredRepos(starredRepos);
-                        loadedUsers.put(currentUser.getLogin(), currentUser);
-                    }
-                }).ignoreElement();
-
-        Completable completeable = userEntryCall.subscribeOn(Schedulers.io())
-                .concatWith(userOwnedCall.subscribeOn(Schedulers.io()))
-                .concatWith(userStarredCall.subscribeOn(Schedulers.io()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        return completeable;
 
     }
 

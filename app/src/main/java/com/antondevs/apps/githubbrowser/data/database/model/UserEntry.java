@@ -26,8 +26,10 @@ public class UserEntry {
 
     @TypeConverters(ReposListConverter.class)
     private List<String> ownedRepos;
+    private String repos_url;
     @TypeConverters(ReposListConverter.class)
     private List<String> starredRepos;
+    private String starred_url;
 
     public UserEntry() {
 
@@ -97,12 +99,28 @@ public class UserEntry {
         this.ownedRepos = ownedRepos;
     }
 
+    public String getRepos_url() {
+        return repos_url;
+    }
+
+    public void setRepos_url(String repos_url) {
+        this.repos_url = repos_url;
+    }
+
     public List<String> getStarredRepos() {
         return starredRepos;
     }
 
     public void setStarredRepos(List<String> starredRepos) {
         this.starredRepos = starredRepos;
+    }
+
+    public String getStarred_url() {
+        return starred_url;
+    }
+
+    public void setStarred_url(String starred_url) {
+        this.starred_url = starred_url;
     }
 
     @Override

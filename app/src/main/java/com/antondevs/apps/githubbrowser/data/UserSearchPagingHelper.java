@@ -6,7 +6,8 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.GsonSearchResponseAdapter;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
-import com.antondevs.apps.githubbrowser.data.remote.ResponsePaginator;
+import com.antondevs.apps.githubbrowser.data.remote.ResponsePaging;
+import com.antondevs.apps.githubbrowser.utilities.Methods;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -26,9 +27,9 @@ import retrofit2.Response;
 /**
  * Created by Anton.
  */
-public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>> {
+public class UserSearchPagingHelper implements ResponsePaging<List<UserEntry>> {
 
-    private static final String LOGTAG = SearchPaginationHelper.class.getSimpleName();
+    private static final String LOGTAG = UserSearchPagingHelper.class.getSimpleName();
 
     private Map<String, String> currentQueryMap;
     private String pagesCount;
@@ -36,9 +37,9 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
     private String searchUrl;
     private RemoteAPIService service;
 
-    public SearchPaginationHelper() {
+    public UserSearchPagingHelper() {
 
-        Log.d(LOGTAG, "SearchPaginationHelper");
+        Log.d(LOGTAG, "UserSearchPagingHelper");
 
         service = APIService.getService();
 
@@ -70,9 +71,9 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
 
                 if (responseBodyResponse.headers().get("Link") != null) {
                     String linkHeader = responseBodyResponse.headers().get("Link");
-                    nextPage = getNextPageFromLinkHeader(linkHeader);
+                    nextPage = Methods.getNextPageFromLinkHeader(linkHeader);
                     currentQueryMap.put("page", nextPage);
-                    pagesCount = getLastPageFromLinkHeader(linkHeader);
+                    pagesCount = Methods.getLastPageFromLinkHeader(linkHeader);
                 }
 
                 return Observable.just(users);
@@ -95,7 +96,7 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
                     Type typeToken = new TypeToken<List<UserEntry>>() {}.getType();
                     Gson gson = new GsonBuilder().
                             registerTypeAdapter(typeToken, new GsonSearchResponseAdapter()).create();
-                    nextPage = getNextPageFromLinkHeader(responseBodyResponse.headers().get("Link"));
+                    nextPage = Methods.getNextPageFromLinkHeader(responseBodyResponse.headers().get("Link"));
                     currentQueryMap.put("page", nextPage);
                     List<UserEntry> users = gson.fromJson(responseBodyResponse.body().string(), typeToken);
 
@@ -114,38 +115,38 @@ public class SearchPaginationHelper implements ResponsePaginator<List<UserEntry>
         return (nextPage != null && !nextPage.isEmpty());
     }
 
-    private String getLastPageFromLinkHeader(String linkHeader) {
-
-        int indexOfLastRel = linkHeader.indexOf(">; rel=\"last\"");
-
-        String searchCriteria = "page=";
-
-        int indexOfLastPage = linkHeader.lastIndexOf(searchCriteria);
-
-        if (indexOfLastRel == -1 || indexOfLastPage == -1) {
-            return "";
-        }
-
-        String substring = linkHeader.substring(indexOfLastPage + searchCriteria.length(), indexOfLastRel);
-        Log.d(LOGTAG, "getLastPageFromLinkHeader substring = " + substring);
-        return substring;
-    }
-
-    private String getNextPageFromLinkHeader(String linkHeader) {
-
-        String nextPageRel = ">; rel=\"next\"";
-
-        if (!linkHeader.contains(nextPageRel)) {
-            return "";
-        }
-
-        String splitHeader = linkHeader.substring(0,linkHeader.indexOf(nextPageRel));
-
-        String searchCriteria = "page=";
-
-        String substring = splitHeader.substring(splitHeader.lastIndexOf(searchCriteria) + searchCriteria.length());
-        Log.d(LOGTAG, "getNextPageFromLinkHeader substring = " + substring);
-        return substring;
-    }
+//    private String getLastPageFromLinkHeader(String linkHeader) {
+//
+//        int indexOfLastRel = linkHeader.indexOf(">; rel=\"last\"");
+//
+//        String searchCriteria = "page=";
+//
+//        int indexOfLastPage = linkHeader.lastIndexOf(searchCriteria);
+//
+//        if (indexOfLastRel == -1 || indexOfLastPage == -1) {
+//            return "";
+//        }
+//
+//        String substring = linkHeader.substring(indexOfLastPage + searchCriteria.length(), indexOfLastRel);
+//        Log.d(LOGTAG, "getLastPageFromLinkHeader substring = " + substring);
+//        return substring;
+//    }
+//
+//    private String getNextPageFromLinkHeader(String linkHeader) {
+//
+//        String nextPageRel = ">; rel=\"next\"";
+//
+//        if (!linkHeader.contains(nextPageRel)) {
+//            return "";
+//        }
+//
+//        String splitHeader = linkHeader.substring(0,linkHeader.indexOf(nextPageRel));
+//
+//        String searchCriteria = "page=";
+//
+//        String substring = splitHeader.substring(splitHeader.lastIndexOf(searchCriteria) + searchCriteria.length());
+//        Log.d(LOGTAG, "getNextPageFromLinkHeader substring = " + substring);
+//        return substring;
+//    }
 
 }

@@ -21,6 +21,10 @@ public interface MainStorage {
 
     void queryUser(UserListener listener, String loginName);
 
+    void loadMoreOwnedRepos(UserListener listener, String loginName);
+
+    void loadMoreStarredRepos(UserListener listener, String loginName);
+
     void queryUsers(SearchListener listener, String loginName);
 
     void queryRepo(RepoListener listener, String repoName);

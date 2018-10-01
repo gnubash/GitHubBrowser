@@ -29,15 +29,12 @@ public interface RemoteAPIService {
 
     // Repo
     @GET("repos/{full_name}")
-    Call<RepoEntry> queryRepo(@Path(value = "full_name", encoded = true) String full_name);
+    Observable<RepoEntry> queryRepo(@Path(value = "full_name", encoded = true) String full_name);
 
-    // User owned
-    @GET("users/{login_name}/repos")
-    Single<List<RepoEntry>> queryUserOwnedRepos(@Path("login_name") String loginName);
-
-    //User starred
-    @GET("users/{login_name}/starred")
-    Single<List<RepoEntry>> queryUserStarredRepos(@Path("login_name") String loginName);
+    // User owned and starred repos
+    @GET
+    Observable<Response<List<RepoEntry>>> queryUserRepos(@Url String url,
+                                           @QueryMap(encoded = true) Map<String, String> queryMap);
 
     // Dynamic Search - users, repo contributors, followers and following
     @GET

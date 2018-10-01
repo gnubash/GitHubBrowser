@@ -11,13 +11,14 @@ import okhttp3.Credentials;
 @Entity(tableName = "auth")
 public class AuthEntry {
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     private int auth_id;
 
     private String login;
     private String pass;
 
     public AuthEntry(String login, String pass) {
+        auth_id = 1;
         this.login = login;
         this.pass = pass;
     }
