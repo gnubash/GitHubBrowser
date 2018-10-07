@@ -7,8 +7,8 @@
     <string name="login_screen_error_msg_network_issue">Cannot connect.\nPlease check your network connection</string>
 
     <!-- User screen view string values -->
-    <string name="followers_button_text">Followers: </string>
-    <string name="following_button_text">Following: </string>
+    <string name="followers_button_text">Followers: %1$s</string>
+    <string name="following_button_text">Following: %1$s</string>
 
     <string name="repositories_title">Repositories</string>
     <string name="user_owned_repos_button_title">Owned</string>

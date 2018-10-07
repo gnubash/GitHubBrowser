@@ -7,7 +7,7 @@ import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.GsonSearchResponseAdapter;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 import com.antondevs.apps.githubbrowser.data.remote.ResponsePaging;
-import com.antondevs.apps.githubbrowser.utilities.Methods;
+import com.antondevs.apps.githubbrowser.utilities.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -71,9 +71,9 @@ public class UserSearchPagingHelper implements ResponsePaging<List<UserEntry>> {
 
                 if (responseBodyResponse.headers().get("Link") != null) {
                     String linkHeader = responseBodyResponse.headers().get("Link");
-                    nextPage = Methods.getNextPageFromLinkHeader(linkHeader);
+                    nextPage = Utils.getNextPageFromLinkHeader(linkHeader);
                     currentQueryMap.put("page", nextPage);
-                    pagesCount = Methods.getLastPageFromLinkHeader(linkHeader);
+                    pagesCount = Utils.getLastPageFromLinkHeader(linkHeader);
                 }
 
                 return Observable.just(users);
@@ -96,7 +96,7 @@ public class UserSearchPagingHelper implements ResponsePaging<List<UserEntry>> {
                     Type typeToken = new TypeToken<List<UserEntry>>() {}.getType();
                     Gson gson = new GsonBuilder().
                             registerTypeAdapter(typeToken, new GsonSearchResponseAdapter()).create();
-                    nextPage = Methods.getNextPageFromLinkHeader(responseBodyResponse.headers().get("Link"));
+                    nextPage = Utils.getNextPageFromLinkHeader(responseBodyResponse.headers().get("Link"));
                     currentQueryMap.put("page", nextPage);
                     List<UserEntry> users = gson.fromJson(responseBodyResponse.body().string(), typeToken);
 
@@ -114,39 +114,5 @@ public class UserSearchPagingHelper implements ResponsePaging<List<UserEntry>> {
     public boolean hasMorePages() {
         return (nextPage != null && !nextPage.isEmpty());
     }
-
-//    private String getLastPageFromLinkHeader(String linkHeader) {
-//
-//        int indexOfLastRel = linkHeader.indexOf(">; rel=\"last\"");
-//
-//        String searchCriteria = "page=";
-//
-//        int indexOfLastPage = linkHeader.lastIndexOf(searchCriteria);
-//
-//        if (indexOfLastRel == -1 || indexOfLastPage == -1) {
-//            return "";
-//        }
-//
-//        String substring = linkHeader.substring(indexOfLastPage + searchCriteria.length(), indexOfLastRel);
-//        Log.d(LOGTAG, "getLastPageFromLinkHeader substring = " + substring);
-//        return substring;
-//    }
-//
-//    private String getNextPageFromLinkHeader(String linkHeader) {
-//
-//        String nextPageRel = ">; rel=\"next\"";
-//
-//        if (!linkHeader.contains(nextPageRel)) {
-//            return "";
-//        }
-//
-//        String splitHeader = linkHeader.substring(0,linkHeader.indexOf(nextPageRel));
-//
-//        String searchCriteria = "page=";
-//
-//        String substring = splitHeader.substring(splitHeader.lastIndexOf(searchCriteria) + searchCriteria.length());
-//        Log.d(LOGTAG, "getNextPageFromLinkHeader substring = " + substring);
-//        return substring;
-//    }
 
 }

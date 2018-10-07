@@ -18,6 +18,7 @@ import java.util.concurrent.Callable;
 import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
@@ -46,7 +47,7 @@ public class UserWrapperHelper implements UserWrapper {
     private ResponsePaging<List<RepoEntry>> ownedReposPaging;
     private ResponsePaging<List<RepoEntry>> starredReposPaging;
 
-    public UserWrapperHelper(String loginName) {
+    UserWrapperHelper(String loginName) {
         Log.d(LOGTAG, "UserWrapperHelper");
         this.loginName = loginName;
         service = APIService.getService();
@@ -54,10 +55,12 @@ public class UserWrapperHelper implements UserWrapper {
         starredReposPaging = new RepoResponsePaging();
     }
 
-    public UserWrapperHelper(UserEntry user) {
+    UserWrapperHelper(UserEntry user) {
         Log.d(LOGTAG, "UserWrapperHelper " + user.getLogin());
         service = APIService.getService();
         currentUser = user;
+        ownedUrl = currentUser.getRepos_url();
+        starredUrl = currentUser.getStarred_url().replace("{/owner}{/repo}", "");
         ownedReposPaging = new RepoResponsePaging();
         starredReposPaging = new RepoResponsePaging();
         initNewOwnedSearch = true;
@@ -84,13 +87,29 @@ public class UserWrapperHelper implements UserWrapper {
     }
 
     @Override
-    public Observable<List<RepoEntry>> loadMoreOwnedRepos() {
+    public Observable<UserEntry> loadMoreOwnedRepos() {
 
         if (initNewOwnedSearch) {
             Map<String, String> queryMap = new HashMap<>();
             queryMap.put("page", "2");
             queryMap.put("per_page", String.valueOf(currentUser.getOwnedRepos().size()));
-            return ownedReposPaging.search(currentUser.getRepos_url(), queryMap).doFinally(new Action() {
+
+            Log.d(LOGTAG, "loadMoreOwnedRepos.initNewStarredSearch " + queryMap.toString());
+
+            return ownedReposPaging.search(ownedUrl, queryMap)
+                    .flatMap(new Function<List<RepoEntry>, ObservableSource<? extends UserEntry>>() {
+                        @Override
+                        public ObservableSource<? extends UserEntry> apply(List<RepoEntry> repoEntries) throws Exception {
+                            List<String> currentRepos = currentUser.getOwnedRepos();
+                            List<String> newRepos = new ArrayList<>();
+                            for (RepoEntry repo : repoEntries) {
+                                newRepos.add(repo.getFull_name());
+                            }
+                            currentRepos.addAll(newRepos);
+                            currentUser.setOwnedRepos(currentRepos);
+                            return Observable.just(currentUser);
+                        }
+                    }).doFinally(new Action() {
                 @Override
                 public void run() throws Exception {
                     initNewOwnedSearch = false;
@@ -99,16 +118,20 @@ public class UserWrapperHelper implements UserWrapper {
         }
 
         if (ownedReposPaging.hasMorePages()) {
-            return ownedReposPaging.getNextPage().doOnNext(new Consumer<List<RepoEntry>>() {
+            Log.d(LOGTAG, "loadMoreStarredRepos.ownedReposPaging.hasMorePages");
+            return ownedReposPaging.getNextPage()
+                    .flatMap(new Function<List<RepoEntry>, ObservableSource<? extends UserEntry>>() {
                 @Override
-                public void accept(List<RepoEntry> repoEntries) throws Exception {
+                public ObservableSource<? extends UserEntry> apply(List<RepoEntry> repoEntries) throws Exception {
                     List<String> currentRepos = currentUser.getOwnedRepos();
                     List<String> newRepos = new ArrayList<>();
                     for (RepoEntry repo : repoEntries) {
                         newRepos.add(repo.getFull_name());
                     }
                     currentRepos.addAll(newRepos);
-                    currentUser.setOwnedRepos(newRepos);
+                    currentUser.setOwnedRepos(currentRepos);
+                    Log.d(LOGTAG, "loadMoreStarredRepos.ownedReposPaging.hasMorePages " + currentUser.toString());
+                    return Observable.just(currentUser);
                 }
             });
         }
@@ -118,13 +141,29 @@ public class UserWrapperHelper implements UserWrapper {
     }
 
     @Override
-    public Observable<List<RepoEntry>> loadMoreStarredRepos() {
+    public Observable<UserEntry> loadMoreStarredRepos() {
 
         if (initNewStarredSearch) {
             Map<String, String> queryMap = new HashMap<>();
             queryMap.put("page", "2");
             queryMap.put("per_page", String.valueOf(currentUser.getOwnedRepos().size()));
-            return starredReposPaging.search(currentUser.getStarred_url(), queryMap).doFinally(new Action() {
+
+            Log.d(LOGTAG, "loadMoreStarredRepos.initNewStarredSearch " + queryMap.toString());
+
+            return starredReposPaging.search(starredUrl, queryMap)
+                    .flatMap(new Function<List<RepoEntry>, ObservableSource<? extends UserEntry>>() {
+                @Override
+                public ObservableSource<? extends UserEntry> apply(List<RepoEntry> repoEntries) throws Exception {
+                    List<String> currentRepos = currentUser.getStarredRepos();
+                    List<String> newRepos = new ArrayList<>();
+                    for (RepoEntry repo : repoEntries) {
+                        newRepos.add(repo.getFull_name());
+                    }
+                    currentRepos.addAll(newRepos);
+                    currentUser.setStarredRepos(currentRepos);
+                    return Observable.just(currentUser);
+                }
+            }).doFinally(new Action() {
                 @Override
                 public void run() throws Exception {
                     initNewStarredSearch = false;
@@ -133,16 +172,20 @@ public class UserWrapperHelper implements UserWrapper {
         }
 
         if (starredReposPaging.hasMorePages()) {
-            return starredReposPaging.getNextPage().doOnNext(new Consumer<List<RepoEntry>>() {
+            Log.d(LOGTAG, "loadMoreStarredRepos.starredReposPaging.hasMorePages");
+            return starredReposPaging.getNextPage()
+                    .flatMap(new Function<List<RepoEntry>, ObservableSource<? extends UserEntry>>() {
                 @Override
-                public void accept(List<RepoEntry> repoEntries) throws Exception {
+                public ObservableSource<? extends UserEntry> apply(List<RepoEntry> repoEntries) throws Exception {
                     List<String> currentRepos = currentUser.getStarredRepos();
                     List<String> newRepos = new ArrayList<>();
                     for (RepoEntry repo : repoEntries) {
                         newRepos.add(repo.getFull_name());
                     }
                     currentRepos.addAll(newRepos);
-                    currentUser.setStarredRepos(newRepos);
+                    currentUser.setStarredRepos(currentRepos);
+                    Log.d(LOGTAG, "loadMoreStarredRepos.starredReposPaging.hasMorePages" + currentUser.toString());
+                    return Observable.just(currentUser);
                 }
             });
         }
@@ -188,6 +231,7 @@ public class UserWrapperHelper implements UserWrapper {
                 .andThen(Completable.defer(new Callable<CompletableSource>() {
                     @Override
                     public CompletableSource call() throws Exception {
+                        Log.d(LOGTAG, "createUserFromRemoteSource.starredReposPaging " + starredUrl);
                         return starredReposPaging.search(starredUrl,
                                 new HashMap<String, String>()).flatMapCompletable(new Function<List<RepoEntry>, CompletableSource>() {
                             @Override

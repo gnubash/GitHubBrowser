@@ -14,7 +14,7 @@ public interface UserWrapper {
 
     Observable<UserEntry> createUser();
 
-    Observable<List<RepoEntry>> loadMoreOwnedRepos();
+    Observable<UserEntry> loadMoreOwnedRepos();
 
-    Observable<List<RepoEntry>> loadMoreStarredRepos();
+    Observable<UserEntry> loadMoreStarredRepos();
 }

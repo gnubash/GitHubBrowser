@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,11 +22,10 @@ import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.repo.RepoActivity;
 import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserActivity extends AppCompatActivity implements UserContract.UserView,
-        RepoAdapter.RepoAdapterClickListener {
+        UserReposFragment.UserReposClickListener, UserReposFragment.ReposListScrollListener {
 
     private static final String LOGTAG = UserActivity.class.getSimpleName();
 
@@ -37,7 +34,11 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
     private ActivityUserBinding binding;
 
     private UserContract.UserPresenter userPresenter;
-    private RepoAdapter repoAdapter;
+
+    private UserReposPagerAdapter fragmentPagerAdapter;
+
+//    private boolean isLoadingOwned;
+//    private boolean isLoadingStarred;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +48,9 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
         Log.d(LOGTAG, "onCreate()");
 
+        fragmentPagerAdapter = new UserReposPagerAdapter(getSupportFragmentManager());
 
-        binding.userReposRecycler.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        binding.userReposRecycler.setLayoutManager(layoutManager);
+        binding.userViewPager.setAdapter(fragmentPagerAdapter);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -90,19 +90,6 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
             }
         });
 
-        binding.userOwnedReposBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                userPresenter.getOwnedRepos();
-            }
-        });
-
-        binding.userStarredReposBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                userPresenter.getStarredRepos();
-            }
-        });
     }
 
     @Override
@@ -112,34 +99,27 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
     @Override
     public void setFollowers(String followersNumber) {
-        binding.userFollowersButton.append(followersNumber);
+        binding.userFollowersButton.setText(String.format(getString(R.string.followers_button_text), followersNumber));
     }
 
     @Override
     public void setFollowing(String followingNumber) {
-        binding.userFollowingButton.append(followingNumber);
+        binding.userFollowingButton.setText(String.format(getString(R.string.following_button_text), followingNumber));
     }
 
     @Override
-    public void setReposList(List<String> repoEntryList) {
-        if (repoAdapter == null) {
-            Log.d(LOGTAG, "setReposList() if statement. repoAdapter == null");
-            repoAdapter = new RepoAdapter((ArrayList<String>) repoEntryList, this);
-            binding.userReposRecycler.setAdapter(repoAdapter);
-        }
-        else {
-            repoAdapter.swapRepoList((ArrayList<String>) repoEntryList);
-        }
+    public void setOwnedReposList(List<String> repoEntryList) {
+        Log.d(LOGTAG, "setOwnedReposList");
 
+        fragmentPagerAdapter.setOwnedReposList(repoEntryList);
     }
 
     @Override
-    public void onRepoItemClick(String itemName) {
-        Log.d(LOGTAG, "onRepoItemClick(String)" + itemName);
-        Toast.makeText(this, itemName, Toast.LENGTH_SHORT).show();
-        Intent repoActivityIntent = new Intent(this, RepoActivity.class);
-        repoActivityIntent.putExtra(INTENT_EXTRA_REPO_NAME_KEY, itemName);
-        startActivity(repoActivityIntent);
+    public void setStarredReposList(List<String> repoEntryList) {
+        Log.d(LOGTAG, "setStarredReposList");
+
+        fragmentPagerAdapter.setStarredReposList(repoEntryList);
+
     }
 
     @Override
@@ -180,5 +160,32 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
     public void showViews() {
         binding.userViewContainer.setVisibility(View.VISIBLE);
         binding.progressBarFrame.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onRepoSelected(String repoFullName) {
+        onRepoItemClick(repoFullName);
+    }
+
+    @Override
+    public void onScrollToBottom() {
+        String currentPageTitile = String.valueOf(fragmentPagerAdapter.getPageTitle(binding.userViewPager.getCurrentItem()));
+        if (currentPageTitile.equals(UserReposPagerAdapter.TAB_1_TITLE)) {
+            Log.d(LOGTAG, "onScrollToBottom " + UserReposPagerAdapter.TAB_1_TITLE);
+            userPresenter.scrollOwnedToBottom();
+        }
+        else {
+            Log.d(LOGTAG, "onScrollToBottom " + UserReposPagerAdapter.TAB_2_TITLE);
+            userPresenter.scrollStarredToBottom();
+        }
+    }
+
+    //        @Override
+    public void onRepoItemClick(String itemName) {
+        Log.d(LOGTAG, "onRepoItemClick " + itemName);
+        Toast.makeText(this, itemName, Toast.LENGTH_SHORT).show();
+        Intent repoActivityIntent = new Intent(this, RepoActivity.class);
+        repoActivityIntent.putExtra(INTENT_EXTRA_REPO_NAME_KEY, itemName);
+        startActivity(repoActivityIntent);
     }
 }

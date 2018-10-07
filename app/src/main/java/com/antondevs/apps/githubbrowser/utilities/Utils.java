@@ -5,11 +5,11 @@ import android.util.Log;
 /**
  * Created by Anton.
  */
-public final class Methods {
+public final class Utils {
 
-    private static final String LOGTAG = Methods.class.getSimpleName();
+    private static final String LOGTAG = Utils.class.getSimpleName();
 
-    private Methods() {
+    private Utils() {
 
     }
 
@@ -41,6 +41,17 @@ public final class Methods {
         String splitHeader = linkHeader.substring(0,linkHeader.indexOf(nextPageRel));
 
         String searchCriteria = "page=";
+        String searchCriteriaPerPage = "&per_page=";
+
+        if (splitHeader.contains(searchCriteriaPerPage)) {
+
+            String substring = splitHeader.substring(splitHeader.lastIndexOf("?page=") + "?page=".length(),
+                    splitHeader.lastIndexOf(searchCriteriaPerPage));
+
+            Log.d(LOGTAG, "getNextPageFromLinkHeader.if substring = " + substring);
+
+            return substring;
+        }
 
         String substring = splitHeader.substring(splitHeader.lastIndexOf(searchCriteria) + searchCriteria.length());
         Log.d(LOGTAG, "getNextPageFromLinkHeader substring = " + substring);

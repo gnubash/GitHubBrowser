@@ -6,7 +6,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 import com.antondevs.apps.githubbrowser.data.remote.ResponsePaging;
-import com.antondevs.apps.githubbrowser.utilities.Methods;
+import com.antondevs.apps.githubbrowser.utilities.Utils;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class RepoResponsePaging implements ResponsePaging<List<RepoEntry>> {
     @Override
     public Observable<List<RepoEntry>> search(String url, Map<String, String> queryMap) {
 
-        Log.d(LOGTAG, "searchUsers " + searchUrl + queryMap.toString());
+        Log.d(LOGTAG, "searchUsers " + url + " " + queryMap.toString());
 
         searchUrl = url;
         currentQueryMap = queryMap;
@@ -54,9 +54,10 @@ public class RepoResponsePaging implements ResponsePaging<List<RepoEntry>> {
 
                 if (listResponse.headers().get("Link") != null) {
                     String linkHeader = listResponse.headers().get("Link");
-                    nextPage = Methods.getNextPageFromLinkHeader(linkHeader);
+                    nextPage = Utils.getNextPageFromLinkHeader(linkHeader);
                     currentQueryMap.put("page", nextPage);
-                    pagesCount = Methods.getLastPageFromLinkHeader(linkHeader);
+                    Log.d(LOGTAG, "search.apply nextPage = " + nextPage +
+                            " currentQueryMap = " + currentQueryMap);
                 }
 
                 return Observable.just(listResponse.body());
@@ -76,8 +77,10 @@ public class RepoResponsePaging implements ResponsePaging<List<RepoEntry>> {
 
                             Log.d(LOGTAG, "getNextPageRepos.apply");
 
-                            nextPage = Methods.getNextPageFromLinkHeader(listResponse.headers().get("Link"));
+                            nextPage = Utils.getNextPageFromLinkHeader(listResponse.headers().get("Link"));
                             currentQueryMap.put("page", nextPage);
+                            Log.d(LOGTAG, "getNextPageRepos.apply nextPage = " + nextPage +
+                                    " currentQueryMap = " + currentQueryMap);
                             return Observable.just(listResponse.body());
                         }
                     });

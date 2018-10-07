@@ -17,7 +17,9 @@ public interface UserContract {
 
         void setFollowing(String followingNumber);
 
-        void setReposList(List<String> repoEntryList);
+        void setOwnedReposList(List<String> repoEntryList);
+
+        void setStarredReposList(List<String> repoEntryList);
 
     }
 
@@ -25,10 +27,6 @@ public interface UserContract {
     interface UserPresenter {
 
         void loadPresenter();
-
-        void getOwnedRepos();
-
-        void getStarredRepos();
 
         void scrollOwnedToBottom();
 

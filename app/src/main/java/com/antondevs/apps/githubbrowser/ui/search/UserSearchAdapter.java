@@ -40,7 +40,7 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        View itemView = inflater.inflate(R.layout.item_view_user_repos_list,
+        View itemView = inflater.inflate(R.layout.item_view_user_search,
                 parent, false);
 
         return new UserSearchAdapter.ViewHolder(itemView);
@@ -70,7 +70,7 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
         public ViewHolder(View view) {
             super(view);
             view.setOnClickListener(this);
-            itemTextView = (TextView) view.findViewById(R.id.item_view_repo_tv);
+            itemTextView = view.findViewById(R.id.item_view_user_login_tv);
 
         }
 

@@ -41,7 +41,7 @@ public interface RemoteAPIService {
     Observable<Response<okhttp3.ResponseBody>> searchUsers(@Url String url,
                                                            @QueryMap(encoded = true) Map<String, String> queryMap);
 
-    // Methods required to form full RepoEntry
+    // Utils required to form full RepoEntry
 
     // Repo Commits
     @GET("repos/{full_name}/commits")

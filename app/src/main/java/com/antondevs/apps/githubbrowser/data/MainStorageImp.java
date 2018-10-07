@@ -43,8 +43,6 @@ public class MainStorageImp implements MainStorage {
 
     private DatabaseHelper databaseHelper;
 
-    private String basicCredentials;
-
     private UserEntry currentUser;
 
     private RepoEntry currentRepo;
@@ -85,7 +83,7 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void checkCredentials(AuthenticationListener listener) {
         if (databaseHelper.getStoredAuth() != 1) {
-            Log.d(LOGTAG, "databaseHelper.getStoredAuth() = " + databaseHelper.getStoredAuth());
+            Log.d(LOGTAG, "databaseHelper.getStoredAuth = " + databaseHelper.getStoredAuth());
             listener.onAuthenticationRequered();
         }
         else {
@@ -96,7 +94,7 @@ public class MainStorageImp implements MainStorage {
 
     @Override
     public void performAuthentication(final String username, final String password, final AuthenticationListener listener) {
-        basicCredentials = Credentials.basic(username, password, UTF_8);
+        String basicCredentials = Credentials.basic(username, password, UTF_8);
         APIService.setCredentials(basicCredentials);
 
         userHelper = new UserWrapperHelper(username);
@@ -105,12 +103,12 @@ public class MainStorageImp implements MainStorage {
         Observer<UserEntry> createUserEntryObserver = new Observer<UserEntry>() {
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "performAuthentication.onSubscribe() " + d.isDisposed());
+                Log.d(LOGTAG, "performAuthentication.onSubscribe " + d.isDisposed());
             }
 
             @Override
             public void onNext(UserEntry userEntry) {
-                Log.d(LOGTAG, "performAuthentication.onNext() ");
+                Log.d(LOGTAG, "performAuthentication.onNext ");
                 currentUser = userEntry;
                 loadedUsers.put(currentUser.getLogin(), currentUser);
                 databaseHelper.writeAuthnetication(new AuthEntry(username, password));
@@ -119,7 +117,7 @@ public class MainStorageImp implements MainStorage {
 
             @Override
             public void onError(Throwable e) {
-                Log.d(LOGTAG, "performAuthentication.onError() ");
+                Log.d(LOGTAG, "performAuthentication.onError ");
                 if (e instanceof IOException) {
                     listener.onNetworkConnectionFailure();
                     return;
@@ -130,7 +128,7 @@ public class MainStorageImp implements MainStorage {
 
             @Override
             public void onComplete() {
-                Log.d(LOGTAG, "performAuthentication.onComplete()");
+                Log.d(LOGTAG, "performAuthentication.onComplete");
                 listener.onUserAuthenticated();
             }
         };
@@ -143,19 +141,19 @@ public class MainStorageImp implements MainStorage {
     @Override
     public void queryUser(final UserListener listener, final String loginName) {
 
-        UserWrapper userWrapper = new UserWrapperHelper(loginName);
+        userHelper = new UserWrapperHelper(loginName);
 
-        Observable<UserEntry> userEntryObservable = userWrapper.createUser();
+        Observable<UserEntry> userEntryObservable = userHelper.createUser();
 
         Observer<UserEntry> userEntryObserver = new Observer<UserEntry>() {
             @Override
             public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "queryUser.onSubscribe() " + d.isDisposed());
+                Log.d(LOGTAG, "queryUser.onSubscribe " + d.isDisposed());
             }
 
             @Override
             public void onNext(UserEntry userEntry) {
-                Log.d(LOGTAG, "queryUser.onNext()");
+                Log.d(LOGTAG, "queryUser.onNext");
                 currentUser = userEntry;
                 loadedUsers.put(userEntry.getLogin(), userEntry);
                 databaseHelper.writeUser(userEntry);
@@ -163,12 +161,12 @@ public class MainStorageImp implements MainStorage {
 
             @Override
             public void onError(Throwable e) {
-                Log.d(LOGTAG, "queryUser.onError()");
+                Log.d(LOGTAG, "queryUser.onError");
             }
 
             @Override
             public void onComplete() {
-                Log.d(LOGTAG, "queryUser.onComplete()");
+                Log.d(LOGTAG, "queryUser.onComplete");
                 listener.onUserLoaded(currentUser);
             }
         };
@@ -177,6 +175,92 @@ public class MainStorageImp implements MainStorage {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userEntryObserver);
 
+    }
+
+    @Override
+    public void loadMoreOwnedRepos(final UserListener listener, String loginName) {
+
+        if (!loginName.equals(currentUser.getLogin())) {
+            setCurrentUser(loginName);
+            userHelper = new UserWrapperHelper(currentUser);
+        }
+
+        Observable<UserEntry> userEntryObservable = userHelper.loadMoreOwnedRepos();
+
+        Observer<UserEntry> userEntryObserver = new Observer<UserEntry>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(LOGTAG, "loadMoreOwnedRepos.onSubscribe " + d.isDisposed());
+            }
+
+            @Override
+            public void onNext(UserEntry userEntry) {
+                Log.d(LOGTAG, "loadMoreOwnedRepos.onNext");
+                currentUser = userEntry;
+                Log.d(LOGTAG, "loadMoreOwnedRepos.onNext " + userEntry.toString());
+                loadedUsers.put(userEntry.getLogin(), userEntry);
+                databaseHelper.writeUser(userEntry);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOGTAG, "loadMoreOwnedRepos.onError");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(LOGTAG, "loadMoreOwnedRepos.onComplete");
+                listener.onUserLoaded(currentUser);
+            }
+        };
+
+        userEntryObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(userEntryObserver);
+    }
+
+    @Override
+    public void loadMoreStarredRepos(final UserListener listener, String loginName) {
+
+        if (!loginName.equals(currentUser.getLogin())) {
+            setCurrentUser(loginName);
+            userHelper = new UserWrapperHelper(currentUser);
+        }
+
+        Observable<UserEntry> userEntryObservable = userHelper.loadMoreStarredRepos();
+
+        Observer<UserEntry> userEntryObserver = new Observer<UserEntry>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(LOGTAG, "loadMoreStarredRepos.onSubscribe " + d.isDisposed());
+            }
+
+            @Override
+            public void onNext(UserEntry userEntry) {
+                Log.d(LOGTAG, "loadMoreStarredRepos.onNext");
+                currentUser = userEntry;
+                Log.d(LOGTAG, "loadMoreStarredRepos.onNext " + userEntry.toString());
+                loadedUsers.put(userEntry.getLogin(), userEntry);
+                databaseHelper.writeUser(userEntry);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOGTAG, "loadMoreStarredRepos.onError");
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(LOGTAG, "loadMoreStarredRepos.onComplete");
+                listener.onUserLoaded(currentUser);
+            }
+        };
+
+        userEntryObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(userEntryObserver);
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.CommitEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.ReleaseEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
-import com.antondevs.apps.githubbrowser.utilities.Methods;
+import com.antondevs.apps.githubbrowser.utilities.Utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +34,7 @@ public class RepoBuilder {
                     public ObservableSource<Integer> apply(Response<List<UserEntry>> listResponse) throws Exception {
                         HashMap<String, String> lastPageQuery = new HashMap<>();
                         if (listResponse.headers().get("Link") != null) {
-                            lastPageQuery.put("page", Methods.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
+                            lastPageQuery.put("page", Utils.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
                         }
                         return Observable.just(listResponse)
                                 .zipWith(service.queryRepoContributors(repoFullName, lastPageQuery),
@@ -45,7 +45,7 @@ public class RepoBuilder {
                                                 List<UserEntry> fromFirstResponse = listResponse.body();
                                                 List<UserEntry> fromSecondResponse = listResponse2.body();
                                                 if (listResponse.headers().get("Link") != null) {
-                                                    String pages = Methods.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
+                                                    String pages = Utils.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
                                                     Integer pagesCount = Integer.valueOf(pages) - 1;
                                                     Log.d(LOGTAG, "pagesCount after " + pagesCount);
                                                     Log.d(LOGTAG, "Calculating " + pagesCount + " * " +
@@ -71,7 +71,7 @@ public class RepoBuilder {
                     public ObservableSource<Integer> apply(Response<List<CommitEntry>> listResponse) throws Exception {
                         HashMap<String, String> lastPageQuery = new HashMap<>();
                         if (listResponse.headers().get("Link") != null) {
-                            lastPageQuery.put("page", Methods.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
+                            lastPageQuery.put("page", Utils.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
                         }
                         return Observable.just(listResponse)
                                 .zipWith(service.queryRepoCommits(repoFullName, lastPageQuery),
@@ -82,7 +82,7 @@ public class RepoBuilder {
                                                 List<CommitEntry> fromFirstResponse = listResponse.body();
                                                 List<CommitEntry> fromSecondResponse = listResponse2.body();
                                                 if (listResponse.headers().get("Link") != null) {
-                                                    String pages = Methods.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
+                                                    String pages = Utils.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
                                                     Integer pagesCount = Integer.valueOf(pages) - 1;
                                                     Log.d(LOGTAG, "pagesCount after " + pagesCount);
                                                     Log.d(LOGTAG, "Calculating " + pagesCount + " * " +
@@ -108,7 +108,7 @@ public class RepoBuilder {
                     public ObservableSource<Integer> apply(Response<List<ReleaseEntry>> listResponse) throws Exception {
                         HashMap<String, String> lastPageQuery = new HashMap<>();
                         if (listResponse.headers().get("Link") != null) {
-                            lastPageQuery.put("page", Methods.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
+                            lastPageQuery.put("page", Utils.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
                         }
                         return Observable.just(listResponse)
                                 .zipWith(service.queryRepoReleases(repoFullName, lastPageQuery),
@@ -119,7 +119,7 @@ public class RepoBuilder {
                                                 List<ReleaseEntry> fromFirstResponse = listResponse.body();
                                                 List<ReleaseEntry> fromSecondResponse = listResponse2.body();
                                                 if (listResponse.headers().get("Link") != null) {
-                                                    String pages = Methods.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
+                                                    String pages = Utils.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
                                                     Integer pagesCount = Integer.valueOf(pages) - 1;
                                                     Log.d(LOGTAG, "pagesCount after " + pagesCount);
                                                     Log.d(LOGTAG, "Calculating " + pagesCount + " * " +
@@ -151,7 +151,7 @@ public class RepoBuilder {
                     public ObservableSource<Integer> apply(Response<List<BranchEntry>> listResponse) throws Exception {
                         HashMap<String, String> lastPageQuery = new HashMap<>();
                         if (listResponse.headers().get("Link") != null) {
-                            lastPageQuery.put("page", Methods.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
+                            lastPageQuery.put("page", Utils.getLastPageFromLinkHeader(listResponse.headers().get("Link")));
                         }
                         return Observable.just(listResponse)
                                 .zipWith(service.queryRepoBranches(repoFullName, lastPageQuery),
@@ -162,7 +162,7 @@ public class RepoBuilder {
                                                 List<BranchEntry> fromFirstResponse = listResponse.body();
                                                 List<BranchEntry> fromSecondResponse = listResponse2.body();
                                                 if (listResponse.headers().get("Link") != null) {
-                                                    String pages = Methods.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
+                                                    String pages = Utils.getLastPageFromLinkHeader(listResponse.headers().get("Link"));
                                                     Integer pagesCount = Integer.valueOf(pages) - 1;
                                                     Log.d(LOGTAG, "pagesCount after " + pagesCount);
                                                     Log.d(LOGTAG, "Calculating " + pagesCount + " * " +
