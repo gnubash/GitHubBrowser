@@ -32,6 +32,7 @@ import io.reactivex.schedulers.Schedulers;
 public class UserWrapperHelper implements UserWrapper {
 
     private static final String LOGTAG = UserWrapperHelper.class.getSimpleName();
+    private static final int DEFAULT_PER_PAGE_RESPONSE = 30;
 
     private String ownedUrl;
     private String starredUrl;
@@ -90,9 +91,13 @@ public class UserWrapperHelper implements UserWrapper {
     public Observable<UserEntry> loadMoreOwnedRepos() {
 
         if (initNewOwnedSearch) {
+            if (currentUser.getOwnedRepos().size() % DEFAULT_PER_PAGE_RESPONSE != 0) {
+                Log.d(LOGTAG, "loadMoreOwnedRepos.initNewOwnedSearch.if");
+                return Observable.just(currentUser);
+            }
+            int nextPage = currentUser.getOwnedRepos().size() / 30;
             Map<String, String> queryMap = new HashMap<>();
-            queryMap.put("page", "2");
-            queryMap.put("per_page", String.valueOf(currentUser.getOwnedRepos().size()));
+            queryMap.put("page", String.valueOf(nextPage));
 
             Log.d(LOGTAG, "loadMoreOwnedRepos.initNewStarredSearch " + queryMap.toString());
 
@@ -144,9 +149,13 @@ public class UserWrapperHelper implements UserWrapper {
     public Observable<UserEntry> loadMoreStarredRepos() {
 
         if (initNewStarredSearch) {
+            if (currentUser.getStarredRepos().size() % DEFAULT_PER_PAGE_RESPONSE != 0) {
+                Log.d(LOGTAG, "loadMoreStarredRepos.initNewOwnedSearch.if");
+                return Observable.just(currentUser);
+            }
+            int nextPage = currentUser.getStarredRepos().size() / 30;
             Map<String, String> queryMap = new HashMap<>();
-            queryMap.put("page", "2");
-            queryMap.put("per_page", String.valueOf(currentUser.getOwnedRepos().size()));
+            queryMap.put("page", String.valueOf(nextPage));
 
             Log.d(LOGTAG, "loadMoreStarredRepos.initNewStarredSearch " + queryMap.toString());
 
@@ -223,6 +232,7 @@ public class UserWrapperHelper implements UserWrapper {
                                     ownedRepos.add(entry.getFull_name());
                                 }
                                 currentUser.setOwnedRepos(ownedRepos);
+                                Log.d(LOGTAG, "createUserFromRemoteSource ownedRepos = " + ownedRepos.size());
                                 return Completable.complete();
                             }
                         });
@@ -241,6 +251,7 @@ public class UserWrapperHelper implements UserWrapper {
                                     starredRepos.add(entry.getFull_name());
                                 }
                                 currentUser.setStarredRepos(starredRepos);
+                                Log.d(LOGTAG, "createUserFromRemoteSource starredRepos = " + starredRepos.size());
                                 return Completable.complete();
                             }
                         });

@@ -9,6 +9,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.Call;
@@ -22,6 +23,10 @@ import retrofit2.http.Url;
  * Created by Anton.
  */
 public interface RemoteAPIService {
+
+    // Authenticate
+    @GET("users/{login_name}")
+    Completable authenticated(@Path("login_name") String loginName);
 
     // User
     @GET("users/{login_name}")

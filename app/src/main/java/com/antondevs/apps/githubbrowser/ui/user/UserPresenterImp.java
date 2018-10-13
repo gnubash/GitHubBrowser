@@ -19,7 +19,7 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
 
     private final UserContract.UserView view;
 
-    MainStorage storage;
+    private MainStorage storage;
 
     private boolean isLoadingOwned;
     private boolean isLoadingStarred;
@@ -47,7 +47,7 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
 
     @Override
     public void scrollStarredToBottom() {
-        if (!isLoadingOwned) {
+        if (!isLoadingStarred) {
             isLoadingStarred = true;
             storage.loadMoreStarredRepos(this, currentUserEntry.getLogin());
         }

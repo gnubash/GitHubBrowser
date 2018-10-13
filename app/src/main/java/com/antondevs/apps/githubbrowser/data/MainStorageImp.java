@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
@@ -88,7 +89,9 @@ public class MainStorageImp implements MainStorage {
         }
         else {
             AuthEntry entry = databaseHelper.getAuthentication();
-            performAuthentication(entry.getLogin(), entry.getPass(), listener);
+            String basicCredentials = Credentials.basic(entry.getLogin(), entry.getPass(), UTF_8);
+            APIService.setCredentials(basicCredentials);
+            listener.onUserAuthenticated();
         }
     }
 
@@ -96,46 +99,34 @@ public class MainStorageImp implements MainStorage {
     public void performAuthentication(final String username, final String password, final AuthenticationListener listener) {
         String basicCredentials = Credentials.basic(username, password, UTF_8);
         APIService.setCredentials(basicCredentials);
+        databaseHelper.writeAuthnetication(new AuthEntry(username, password));
 
-        userHelper = new UserWrapperHelper(username);
+        apiService.authenticated(username)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(LOGTAG, "performAuthentication.onSubscribe " + d.isDisposed());
+                    }
 
-        Observable<UserEntry> createUserEntry = userHelper.createUser();
-        Observer<UserEntry> createUserEntryObserver = new Observer<UserEntry>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "performAuthentication.onSubscribe " + d.isDisposed());
-            }
+                    @Override
+                    public void onComplete() {
+                        Log.d(LOGTAG, "performAuthentication.onComplete");
+                        listener.onUserAuthenticated();
+                    }
 
-            @Override
-            public void onNext(UserEntry userEntry) {
-                Log.d(LOGTAG, "performAuthentication.onNext ");
-                currentUser = userEntry;
-                loadedUsers.put(currentUser.getLogin(), currentUser);
-                databaseHelper.writeAuthnetication(new AuthEntry(username, password));
-                databaseHelper.writeUser(currentUser);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOGTAG, "performAuthentication.onError ");
-                if (e instanceof IOException) {
-                    listener.onNetworkConnectionFailure();
-                    return;
-                }
-                e.printStackTrace();
-                listener.onAuthenticationFailed();
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "performAuthentication.onComplete");
-                listener.onUserAuthenticated();
-            }
-        };
-
-        createUserEntry.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(createUserEntryObserver);
-
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(LOGTAG, "performAuthentication.onError ");
+                        if (e instanceof IOException) {
+                            listener.onNetworkConnectionFailure();
+                            return;
+                        }
+                        e.printStackTrace();
+                        listener.onAuthenticationFailed();
+                    }
+                });
     }
 
     @Override
