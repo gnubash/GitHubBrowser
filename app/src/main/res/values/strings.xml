@@ -2,6 +2,8 @@
     <string name="app_name">GitHub Browser</string>
 
     <!-- Login screen string values-->
+    <string name="login_screen_login_hint">Login name</string>
+    <string name="login_screen_password_hint">Password or personal access token</string>
     <string name="login_screen_login_button_name">Login</string>
     <string name="login_screen_error_message_text">Wrong username or password.\nPlease check your credentials.</string>
     <string name="login_screen_error_msg_network_issue">Cannot connect.\nPlease check your network connection</string>

@@ -447,6 +447,7 @@ public class MainStorageImp implements MainStorage {
                     @Override
                     public void onComplete() {
                         Log.d(LOGTAG, "initiateNewSearch.onComplete");
+                        isLoadingSearchResults = false;
                         lastSearchModel = model;
                     }
                 });
