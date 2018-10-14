@@ -3,6 +3,7 @@ package com.antondevs.apps.githubbrowser.data;
 import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
+import com.antondevs.apps.githubbrowser.ui.search.SearchModel;
 
 import java.util.List;
 
@@ -25,17 +26,11 @@ public interface MainStorage {
 
     void loadMoreStarredRepos(UserListener listener, String loginName);
 
-    void queryUsers(SearchListener listener, String loginName);
+    void queryUsers(SearchListener listener, SearchModel searchModel);
 
     void queryRepo(RepoListener listener, String repoName);
 
-    void queryFollowers(SearchListener listener, String loginName);
-
-    void queryFollowing(SearchListener listener, String loginName);
-
-    void queryContributors(SearchListener listener, String repoName);
-
-    void loadMoreSearchResults(SearchListener listener);
+    void loadMoreSearchResults(SearchListener listener, SearchModel searchModel);
 
     interface AuthenticationListener {
 

@@ -39,6 +39,7 @@ public final class Utils {
         }
 
         String splitHeader = linkHeader.substring(0,linkHeader.indexOf(nextPageRel));
+        Log.d(LOGTAG, "getNextPageFromLinkHeader splitHeader = " + splitHeader);
 
         String searchCriteria = "page=";
         String searchCriteriaPerPage = "&per_page=";
@@ -56,5 +57,20 @@ public final class Utils {
         String substring = splitHeader.substring(splitHeader.lastIndexOf(searchCriteria) + searchCriteria.length());
         Log.d(LOGTAG, "getNextPageFromLinkHeader substring = " + substring);
         return substring;
+    }
+
+    public static String getNextPageRel(String linkHeader) {
+        String nextPageRel = ">; rel=\"next\"";
+        String urlStart = "https";
+
+        if (linkHeader == null || !linkHeader.contains(nextPageRel)) {
+            return "";
+        }
+
+        String linkHeaderSplitted = linkHeader.substring(0, linkHeader.indexOf(nextPageRel));
+        Log.d(LOGTAG, "getNextPageRel linkHeaderSplitted = " + linkHeaderSplitted);
+        String nextPageUrl = linkHeaderSplitted.substring(linkHeaderSplitted.lastIndexOf(urlStart));
+        Log.d(LOGTAG, "getNextPageRel nextPageUrl = " + nextPageUrl);
+        return nextPageUrl;
     }
 }

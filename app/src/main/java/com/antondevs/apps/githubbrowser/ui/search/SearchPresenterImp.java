@@ -4,7 +4,9 @@ import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
+import com.antondevs.apps.githubbrowser.utilities.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,38 +20,46 @@ public class SearchPresenterImp implements SearchContract.Presenter,
     private SearchContract.View view;
     private MainStorage storage;
     private boolean hasMoreResults;
+    private List<UserEntry> currentResults;
+    private SearchModel currentSearchModel;
 
     public SearchPresenterImp(SearchContract.View view, MainStorage storage) {
         this.view = view;
         this.storage = storage;
+        currentResults = new ArrayList<>();
     }
 
     @Override
     public void searchUser(String userName) {
         Log.d(LOGTAG, "searchUser = " + userName);
+        initializeSearchModel(SearchType.USER, userName);
         view.showLoading();
-        storage.queryUsers(this, userName);
+        currentResults = new ArrayList<>();
+        storage.queryUsers(this, currentSearchModel);
     }
 
     @Override
     public void searchContributors(String repoName) {
         Log.d(LOGTAG, "searchContributors = " + repoName);
+        initializeSearchModel(SearchType.CONTRIBUTORS, repoName);
         view.showLoading();
-        storage.queryContributors(this, repoName);
+        storage.queryUsers(this, currentSearchModel);
     }
 
     @Override
     public void searchFollowers(String userName) {
         Log.d(LOGTAG, "searchFollowers = " + userName);
+        initializeSearchModel(SearchType.FOLLOWERS, userName);
         view.showLoading();
-        storage.queryFollowers(this, userName);
+        storage.queryUsers(this, currentSearchModel);
     }
 
     @Override
     public void searchFollowing(String userName) {
         Log.d(LOGTAG, "searchFollowing = " + userName);
+        initializeSearchModel(SearchType.FOLLOWING, userName);
         view.showLoading();
-        storage.queryFollowing(this, userName);
+        storage.queryUsers(this, currentSearchModel);
     }
 
     @Override
@@ -61,8 +71,13 @@ public class SearchPresenterImp implements SearchContract.Presenter,
     @Override
     public void onSearchSuccess(List<UserEntry> userList) {
         Log.d(LOGTAG, "onSearchSuccess");
+        currentResults.addAll(userList);
+        currentSearchModel.incrementResultsCount(userList.size());
         hasMoreResults = true;
-        view.setSearchResult(userList);
+        if (currentResults.size() % Constants.SEARCH_QUERIES_MAX_PER_PAGE != 0) {
+            hasMoreResults = false;
+        }
+        view.setSearchResult(currentResults);
         view.showViews();
     }
 
@@ -78,7 +93,11 @@ public class SearchPresenterImp implements SearchContract.Presenter,
         Log.d(LOGTAG, "userScrollToBottom");
         if (hasMoreResults) {
             view.showLoadingMoreResults();
-            storage.loadMoreSearchResults(this);
+            storage.loadMoreSearchResults(this, currentSearchModel);
         }
+    }
+
+    private void initializeSearchModel(SearchType type, String searchCriteria) {
+        currentSearchModel = new SearchModel(type, searchCriteria);
     }
 }

@@ -10,6 +10,7 @@ import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
 import com.antondevs.apps.githubbrowser.data.remote.ResponsePaging;
 import com.antondevs.apps.githubbrowser.data.remote.UserWrapper;
+import com.antondevs.apps.githubbrowser.ui.search.SearchModel;
 import com.antondevs.apps.githubbrowser.utilities.Constants;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class MainStorageImp implements MainStorage {
 
     private ResponsePaging<List<UserEntry>> userSearchHelper;
 
-    private List<UserEntry> currentSearchResults;
+    private SearchModel lastSearchModel;
 
     private Map<String, UserEntry> loadedUsers;
 
@@ -255,41 +256,9 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryUsers(final SearchListener listener, String loginName) {
+    public void queryUsers(final SearchListener listener, SearchModel model) {
 
-        Map<String, String> queryMap = new HashMap<>();
-        queryMap.put("q", loginName);
-
-        Observable<List<UserEntry>> observable = userSearchHelper.search(Constants.URL_GIT_API_SEARCH, queryMap);
-
-        Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "queryUsers.onSubscribe");
-            }
-
-            @Override
-            public void onNext(List<UserEntry> userEntries) {
-                Log.d(LOGTAG, "queryUsers.onNext");
-                currentSearchResults = userEntries;
-                listener.onSearchSuccess(userEntries);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOGTAG, "queryUsers.onError");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "queryUsers.onComplete");
-            }
-        };
-
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+        initiateNewSearch(listener, model);
     }
 
     @Override
@@ -365,128 +334,22 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public void queryFollowers(final SearchListener listener, String loginName) {
+    public void loadMoreSearchResults(final SearchListener listener, SearchModel model) {
 
-        setCurrentUser(loginName);
-        clearSearchCache();
+        if (isLoadingSearchResults) {
+            return;
+        }
 
-        Observable<List<UserEntry>> observable = userSearchHelper.search(currentUser.getFollowers_url(),
-                new HashMap<String, String>());
+        isLoadingSearchResults = true;
 
-        Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "queryFollowers.onSubscribe");
-            }
+        if (lastSearchModel != null && !(lastSearchModel.equals(model))) {
+            Log.d(LOGTAG, "loadMoreSearchResults.if");
 
-            @Override
-            public void onNext(List<UserEntry> userEntries) {
-                Log.d(LOGTAG, "queryFollowers.onNext");
-                currentSearchResults = userEntries;
-                listener.onSearchSuccess(userEntries);
-            }
+            initiateNewSearch(listener, model);
+            return;
+        }
 
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOGTAG, "queryFollowers.onError");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "queryFollowers.onComplete");
-            }
-        };
-
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    @Override
-    public void queryFollowing(final SearchListener listener, String loginName) {
-
-        setCurrentUser(loginName);
-        clearSearchCache();
-
-        Log.d(LOGTAG, "following_url before replacement " + currentUser.getFollowing_url());
-        String followingUrl = currentUser.getFollowing_url().replace("{/other_user}", "");
-        Log.d(LOGTAG, "following_url after replacement " + followingUrl);
-        Observable<List<UserEntry>> observable = userSearchHelper.search(followingUrl, new HashMap<String, String>());
-
-        Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "queryFollowing.onSubscribe");
-            }
-
-            @Override
-            public void onNext(List<UserEntry> userEntries) {
-                Log.d(LOGTAG, "queryFollowing.onNext");
-                currentSearchResults = userEntries;
-                listener.onSearchSuccess(userEntries);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOGTAG, "queryFollowing.onError");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "queryFollowing.onComplete");
-            }
-        };
-
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    @Override
-    public void queryContributors(final SearchListener listener, String repoName) {
-
-        currentRepo = loadedRepos.get(repoName);
-        clearSearchCache();
-
-        Observable<List<UserEntry>> observable = userSearchHelper.search(currentRepo.getContributors_url(),
-                new HashMap<String, String>());
-
-        Observer<List<UserEntry>> observer = new Observer<List<UserEntry>>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "queryContributors.onSubscribe");
-            }
-
-            @Override
-            public void onNext(List<UserEntry> userEntries) {
-                Log.d(LOGTAG, "queryContributors.onNext");
-                currentSearchResults = userEntries;
-                listener.onSearchSuccess(userEntries);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOGTAG, "queryContributors.onError");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "queryContributors.onComplete");
-            }
-        };
-
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    @Override
-    public void loadMoreSearchResults(final SearchListener listener) {
-        if (userSearchHelper.hasMorePages() && !isLoadingSearchResults) {
-            isLoadingSearchResults = true;
+        if (userSearchHelper.hasMorePages()) {
             userSearchHelper.getNextPage().subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<List<UserEntry>>() {
@@ -498,8 +361,7 @@ public class MainStorageImp implements MainStorage {
                         @Override
                         public void onNext(List<UserEntry> userEntries) {
                             Log.d(LOGTAG, "loadMoreSearchResults.onNext");
-                            currentSearchResults.addAll(userEntries);
-                            listener.onSearchSuccess(currentSearchResults);
+                            listener.onSearchSuccess(userEntries);
                         }
 
                         @Override
@@ -513,7 +375,7 @@ public class MainStorageImp implements MainStorage {
                         public void onComplete() {
                             Log.d(LOGTAG, "loadMoreSearchResults.onComplete");
                             if (!userSearchHelper.hasMorePages()) {
-                                listener.onNoMoreResults();
+                                Log.d(LOGTAG, "loadMoreSearchResults.onComplete.if");
                             }
                             isLoadingSearchResults = false;
                         }
@@ -533,8 +395,58 @@ public class MainStorageImp implements MainStorage {
         }
     }
 
-    private void clearSearchCache() {
-        currentSearchResults = null;
+    private void initiateNewSearch(final SearchListener listener, final SearchModel model) {
+        Log.d(LOGTAG, "initiateNewSearch");
+        Map<String, String> newSearchMap = new HashMap<>();
+        String url = "";
+        switch (model.getSearchType()) {
+            case USER:
+                url = Constants.URL_GIT_API_USER_SEARCH;
+                newSearchMap.put("q", model.getSearchCriteria());
+                break;
+            case FOLLOWERS:
+                url = loadedUsers.get(model.getSearchCriteria()).getFollowers_url();
+                break;
+            case FOLLOWING:
+                url = loadedUsers.get(model.getSearchCriteria()).getFollowing_url();
+                break;
+            case CONTRIBUTORS:
+                url = loadedRepos.get(model.getSearchCriteria()).getContributors_url();
+                break;
+        }
+
+        int nextPage = model.getCurrentResultsCount() / Constants.SEARCH_QUERIES_MAX_PER_PAGE + 1;
+        String requestPageNumber = String.valueOf(nextPage);
+        Log.d(LOGTAG, "initiateNewSearch requestPageNumber = " + requestPageNumber);
+        newSearchMap.put("page", requestPageNumber);
+
+        userSearchHelper.search(url, newSearchMap)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<UserEntry>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(LOGTAG, "initiateNewSearch.onSubscribe");
+                    }
+
+                    @Override
+                    public void onNext(List<UserEntry> userEntries) {
+                        Log.d(LOGTAG, "initiateNewSearch.onNext");
+                        listener.onSearchSuccess(userEntries);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(LOGTAG, "initiateNewSearch.onError");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(LOGTAG, "initiateNewSearch.onComplete");
+                        lastSearchModel = model;
+                    }
+                });
     }
 
 }
