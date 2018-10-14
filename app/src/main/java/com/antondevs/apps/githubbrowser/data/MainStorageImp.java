@@ -342,7 +342,7 @@ public class MainStorageImp implements MainStorage {
 
         isLoadingSearchResults = true;
 
-        if (lastSearchModel != null && !(lastSearchModel.equals(model))) {
+        if (lastSearchModel != null && !(lastSearchModel == model)) {
             Log.d(LOGTAG, "loadMoreSearchResults.if");
 
             initiateNewSearch(listener, model);
@@ -409,6 +409,9 @@ public class MainStorageImp implements MainStorage {
                 break;
             case FOLLOWING:
                 url = loadedUsers.get(model.getSearchCriteria()).getFollowing_url();
+                Log.d(LOGTAG, "following_url before replacement " + url);
+                url = url.replace("{/other_user}", "");
+                Log.d(LOGTAG, "starred_url after replacement " + url);
                 break;
             case CONTRIBUTORS:
                 url = loadedRepos.get(model.getSearchCriteria()).getContributors_url();

@@ -29,15 +29,4 @@ public class SearchModel {
     public void incrementResultsCount(int resultsCount) {
         currentResultsCount += resultsCount;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof SearchModel)) return false;
-
-        SearchModel modelToCompareTo = (SearchModel) obj;
-        return  (searchType == modelToCompareTo.getSearchType() &&
-                searchCriteria.equals(modelToCompareTo.getSearchCriteria()) &&
-                currentResultsCount == modelToCompareTo.getCurrentResultsCount());
-
-    }
 }
