@@ -14,8 +14,6 @@ import android.widget.Toast;
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.MainStorageImp;
-import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
-import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.databinding.ActivityUserBinding;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
@@ -37,9 +35,6 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
     private UserReposPagerAdapter fragmentPagerAdapter;
 
-//    private boolean isLoadingOwned;
-//    private boolean isLoadingStarred;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,10 +52,8 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
             String exra = intent.getStringExtra(LoginActivity.INTENT_EXTRA_USER_LOGIN_KEY);
 
             GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
-            DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
-
             MainStorage storage = MainStorageImp.getInstance();
-            storage.setDatabaseHelper(databaseHelper);
+            storage.setDatabaseHelper(database);
 
             userPresenter = new UserPresenterImp(exra, this, storage);
             if (getSupportActionBar() != null) {
@@ -180,7 +173,6 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         }
     }
 
-    //        @Override
     public void onRepoItemClick(String itemName) {
         Log.d(LOGTAG, "onRepoItemClick " + itemName);
         Toast.makeText(this, itemName, Toast.LENGTH_SHORT).show();

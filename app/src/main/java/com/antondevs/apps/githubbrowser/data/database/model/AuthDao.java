@@ -5,6 +5,9 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import io.reactivex.Maybe;
+import io.reactivex.Single;
+
 /**
  * Created by Anton.
  */
@@ -12,10 +15,10 @@ import android.arch.persistence.room.Query;
 public interface AuthDao {
 
     @Query("SELECT * FROM auth WHERE auth_id = 1")
-    AuthEntry getAuth();
+    Maybe<AuthEntry> getAuth();
 
     @Query("SELECT Count(*) FROM auth")
-    int getNumberOfStoredCredentials();
+    Single<Integer> getNumberOfStoredCredentials();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAuth(AuthEntry entry);

@@ -5,11 +5,15 @@ import android.util.Log;
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+
 
 /**
  * Created by Anton.
  */
-public class UserPresenterImp implements UserContract.UserPresenter, MainStorage.UserListener {
+public class UserPresenterImp implements UserContract.UserPresenter {
 
     private static final String LOGTAG = UserPresenterImp.class.getSimpleName();
 
@@ -33,7 +37,27 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
     @Override
     public void loadPresenter() {
         view.showLoading();
-        storage.queryUser(this, userLoginName);
+        storage.queryUser(userLoginName)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<UserEntry>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(LOGTAG, "loadPresenter.queryUser.onSubscribe");
+                    }
+
+                    @Override
+                    public void onSuccess(UserEntry userEntry) {
+                        Log.d(LOGTAG, "loadPresenter.queryUser.onSuccess");
+                        configureView(userEntry);
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(LOGTAG, "loadPresenter.queryUser.onError");
+                        e.printStackTrace();
+                    }
+                });
 
     }
 
@@ -41,7 +65,26 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
     public void scrollOwnedToBottom() {
         if (!isLoadingOwned) {
             isLoadingOwned = true;
-            storage.loadMoreOwnedRepos(this, currentUserEntry.getLogin());
+            Log.d(LOGTAG, "scrollOwnedToBottom");
+            storage.loadMoreOwnedRepos(currentUserEntry.getLogin())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<UserEntry>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Log.d(LOGTAG, "scrollOwnedToBottom.onSubscribe");
+                        }
+
+                        @Override
+                        public void onSuccess(UserEntry userEntry) {
+                            Log.d(LOGTAG, "scrollOwnedToBottom.onSuccess");
+                            configureView(userEntry);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d(LOGTAG, "scrollOwnedToBottom.onError");
+                        }
+                    });
         }
     }
 
@@ -49,7 +92,26 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
     public void scrollStarredToBottom() {
         if (!isLoadingStarred) {
             isLoadingStarred = true;
-            storage.loadMoreStarredRepos(this, currentUserEntry.getLogin());
+            Log.d(LOGTAG, "scrollStarredToBottom");
+            storage.loadMoreStarredRepos(currentUserEntry.getLogin())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<UserEntry>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Log.d(LOGTAG, "scrollStarredToBottom.onSubscribe");
+                        }
+
+                        @Override
+                        public void onSuccess(UserEntry userEntry) {
+                            Log.d(LOGTAG, "scrollStarredToBottom.onSuccess");
+                            configureView(userEntry);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d(LOGTAG, "scrollStarredToBottom.onError");
+                        }
+                    });
         }
     }
 
@@ -58,10 +120,8 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
         return currentUserEntry.getLogin();
     }
 
-    @Override
-    public void onUserLoaded(UserEntry userEntry) {
-
-        Log.d(LOGTAG, "onUserLoaded" + userEntry.toString());
+    private void configureView(UserEntry userEntry) {
+        Log.d(LOGTAG, "configureView" + userEntry.toString());
 
         currentUserEntry = userEntry;
 
@@ -75,10 +135,5 @@ public class UserPresenterImp implements UserContract.UserPresenter, MainStorage
 
         isLoadingOwned = false;
         isLoadingStarred = false;
-    }
-
-    @Override
-    public void onLoadFailed() {
-        
     }
 }

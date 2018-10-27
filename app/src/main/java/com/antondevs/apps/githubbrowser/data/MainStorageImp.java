@@ -2,35 +2,37 @@ package com.antondevs.apps.githubbrowser.data;
 
 import android.util.Log;
 
+import com.antondevs.apps.githubbrowser.data.cache.CacheStorage;
+import com.antondevs.apps.githubbrowser.data.cache.LocalCache;
+import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.data.database.model.AuthEntry;
-import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
 import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.data.remote.APIService;
 import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
-import com.antondevs.apps.githubbrowser.data.remote.ResponsePaging;
+import com.antondevs.apps.githubbrowser.data.remote.RepoBuilder;
 import com.antondevs.apps.githubbrowser.data.remote.UserWrapper;
+import com.antondevs.apps.githubbrowser.data.remote.UserWrapperHelper;
+import com.antondevs.apps.githubbrowser.data.remote.ResponsePaging;
+import com.antondevs.apps.githubbrowser.data.remote.UserSearchPagingHelper;
 import com.antondevs.apps.githubbrowser.ui.search.SearchModel;
+import com.antondevs.apps.githubbrowser.ui.search.SearchType;
 import com.antondevs.apps.githubbrowser.utilities.Constants;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import io.reactivex.CompletableObserver;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function4;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Function5;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Credentials;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Created by Anton.
@@ -38,419 +40,292 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class MainStorageImp implements MainStorage {
 
     private static final String LOGTAG = MainStorageImp.class.getSimpleName();
+    private static final MainStorage instance = new MainStorageImp();
 
-    private static final MainStorage mainStorageUniqueInstance = new MainStorageImp();
-
-    private RemoteAPIService apiService;
-
-    private DatabaseHelper databaseHelper;
-
-    private UserEntry currentUser;
-
-    private RepoEntry currentRepo;
-
+    private GitHubBrowserDatabase database;
     private ResponsePaging<List<UserEntry>> userSearchHelper;
 
-    private SearchModel lastSearchModel;
-
-    private Map<String, UserEntry> loadedUsers;
-
-    private Map<String, RepoEntry> loadedRepos;
-
-    private UserWrapper userHelper;
-
-    private boolean isLoadingSearchResults;
+    private RemoteAPIService apiService;
+    private LocalCache cache;
 
     private MainStorageImp() {
+        Log.d(LOGTAG, "MainStorageImp");
         apiService = APIService.getService();
-        loadedRepos = new HashMap<>();
         userSearchHelper = new UserSearchPagingHelper();
-        loadedUsers = new HashMap<>();
+        cache = CacheStorage.getInstance();
     }
 
     public static MainStorage getInstance() {
-        return mainStorageUniqueInstance;
+        return instance;
     }
 
     @Override
-    public String getLoggedUser() {
-        return databaseHelper.getAuthentication().getLogin();
+    public void setDatabaseHelper(GitHubBrowserDatabase appDatabase) {
+        Log.d(LOGTAG, "setDatabaseHelper");
+        database = appDatabase;
+
     }
 
     @Override
-    public void setDatabaseHelper(DatabaseHelper databaseHelper) {
-        this.databaseHelper = databaseHelper;
-    }
+    public Single<UserEntry> logIn() {
 
-    @Override
-    public void checkCredentials(AuthenticationListener listener) {
-        if (databaseHelper.getStoredAuth() != 1) {
-            Log.d(LOGTAG, "databaseHelper.getStoredAuth = " + databaseHelper.getStoredAuth());
-            listener.onAuthenticationRequered();
-        }
-        else {
-            AuthEntry entry = databaseHelper.getAuthentication();
-            String basicCredentials = Credentials.basic(entry.getLogin(), entry.getPass(), UTF_8);
-            APIService.setCredentials(basicCredentials);
-            listener.onUserAuthenticated();
-        }
-    }
-
-    @Override
-    public void performAuthentication(final String username, final String password, final AuthenticationListener listener) {
-        String basicCredentials = Credentials.basic(username, password, UTF_8);
-        APIService.setCredentials(basicCredentials);
-        databaseHelper.writeAuthnetication(new AuthEntry(username, password));
-
-        apiService.authenticated(username)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
+        return database.authDao().getAuth().subscribeOn(Schedulers.computation())
+                .flatMapSingle(new Function<AuthEntry, SingleSource<? extends UserEntry>>() {
+            @Override
+            public SingleSource<? extends UserEntry> apply(AuthEntry authEntry) throws Exception {
+                Log.d(LOGTAG, "logIn.flatMap");
+                APIService.setCredentials(Credentials.basic(authEntry.getLogin(), authEntry.getPass()));
+                UserWrapper userWrapper = new UserWrapperHelper(authEntry.getLogin());
+                return userWrapper.createUser()
+                        .subscribeOn(Schedulers.io())
+                        .toSingle()
+                        .onErrorResumeNext(database.userDao()
+                                .queryUser(authEntry.getLogin())
+                                .subscribeOn(Schedulers.computation()));
+            }
+        })
+                .doOnSuccess(new Consumer<UserEntry>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(LOGTAG, "performAuthentication.onSubscribe " + d.isDisposed());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(LOGTAG, "performAuthentication.onComplete");
-                        listener.onUserAuthenticated();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(LOGTAG, "performAuthentication.onError ");
-                        if (e instanceof IOException) {
-                            listener.onNetworkConnectionFailure();
-                            return;
-                        }
-                        e.printStackTrace();
-                        listener.onAuthenticationFailed();
+                    public void accept(UserEntry userEntry) throws Exception {
+                        Log.d(LOGTAG, "logIn.doOnNext");
+                        cache.addUser(userEntry);
+                        writeUserInDB(userEntry);
                     }
                 });
     }
 
     @Override
-    public void queryUser(final UserListener listener, final String loginName) {
+    public Single<UserEntry> performAuthentication(final String username, final String password) {
+        APIService.setCredentials(Credentials.basic(username, password));
 
-        userHelper = new UserWrapperHelper(loginName);
+        UserWrapper userWrapper = new UserWrapperHelper(username);
 
-        Observable<UserEntry> userEntryObservable = userHelper.createUser();
+        Maybe<UserEntry> networkObservableUserWithWrite = userWrapper.createUser()
+                .doOnSuccess(new Consumer<UserEntry>() {
+                    @Override
+                    public void accept(UserEntry userEntry) throws Exception {
+                        Log.d(LOGTAG, "performAuthentication.doOnSuccess");
+                        writeAuthInDB(new AuthEntry(username, password));
+                        writeUserInDB(userEntry);
+                        cache.addUser(userEntry);
+                    }
+                });
 
-        Observer<UserEntry> userEntryObserver = new Observer<UserEntry>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "queryUser.onSubscribe " + d.isDisposed());
-            }
-
-            @Override
-            public void onNext(UserEntry userEntry) {
-                Log.d(LOGTAG, "queryUser.onNext");
-                currentUser = userEntry;
-                loadedUsers.put(userEntry.getLogin(), userEntry);
-                databaseHelper.writeUser(userEntry);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOGTAG, "queryUser.onError");
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "queryUser.onComplete");
-                listener.onUserLoaded(currentUser);
-            }
-        };
-
-        userEntryObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(userEntryObserver);
-
+        return networkObservableUserWithWrite.toSingle();
     }
 
     @Override
-    public void loadMoreOwnedRepos(final UserListener listener, String loginName) {
+    public Single<UserEntry> queryUser(String loginName) {
 
-        if (!loginName.equals(currentUser.getLogin())) {
-            setCurrentUser(loginName);
-            userHelper = new UserWrapperHelper(currentUser);
-        }
+        UserWrapper userWrapper = new UserWrapperHelper(loginName);
 
-        Observable<UserEntry> userEntryObservable = userHelper.loadMoreOwnedRepos();
+        Maybe<UserEntry> cacheObservableUser = cache.getUser(loginName);
+        Maybe<UserEntry> networkObservableUser = userWrapper.createUser();
 
-        Observer<UserEntry> userEntryObserver = new Observer<UserEntry>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "loadMoreOwnedRepos.onSubscribe " + d.isDisposed());
-            }
+        Maybe<UserEntry> dbObservableUser = database.userDao()
+                .queryUser(loginName)
+                .subscribeOn(Schedulers.computation())
+                .toMaybe();
 
-            @Override
-            public void onNext(UserEntry userEntry) {
-                Log.d(LOGTAG, "loadMoreOwnedRepos.onNext");
-                currentUser = userEntry;
-                Log.d(LOGTAG, "loadMoreOwnedRepos.onNext " + userEntry.toString());
-                loadedUsers.put(userEntry.getLogin(), userEntry);
-                databaseHelper.writeUser(userEntry);
-            }
+        Single<UserEntry> resultObservable =
+                Maybe.concat(cacheObservableUser, networkObservableUser.onErrorResumeNext(dbObservableUser))
+                        .firstElement()
+                        .doOnSuccess(new Consumer<UserEntry>() {
+                            @Override
+                            public void accept(UserEntry userEntry) throws Exception {
+                                Log.d(LOGTAG, "queryUser.doOnSuccess");
+                                writeUserInDB(userEntry);
+                                cache.addUser(userEntry);
+                            }
+                        })
+                        .toSingle();
 
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOGTAG, "loadMoreOwnedRepos.onError");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "loadMoreOwnedRepos.onComplete");
-                listener.onUserLoaded(currentUser);
-            }
-        };
-
-        userEntryObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(userEntryObserver);
+        return resultObservable;
     }
 
     @Override
-    public void loadMoreStarredRepos(final UserListener listener, String loginName) {
+    public Single<UserEntry> loadMoreOwnedRepos(String loginName) {
 
-        if (!loginName.equals(currentUser.getLogin())) {
-            setCurrentUser(loginName);
-            userHelper = new UserWrapperHelper(currentUser);
-        }
-
-        Observable<UserEntry> userEntryObservable = userHelper.loadMoreStarredRepos();
-
-        Observer<UserEntry> userEntryObserver = new Observer<UserEntry>() {
+        return cache.getUser(loginName).flatMapSingle(new Function<UserEntry, SingleSource<? extends UserEntry>>() {
             @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "loadMoreStarredRepos.onSubscribe " + d.isDisposed());
-            }
-
-            @Override
-            public void onNext(UserEntry userEntry) {
-                Log.d(LOGTAG, "loadMoreStarredRepos.onNext");
-                currentUser = userEntry;
-                Log.d(LOGTAG, "loadMoreStarredRepos.onNext " + userEntry.toString());
-                loadedUsers.put(userEntry.getLogin(), userEntry);
-                databaseHelper.writeUser(userEntry);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOGTAG, "loadMoreStarredRepos.onError");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(LOGTAG, "loadMoreStarredRepos.onComplete");
-                listener.onUserLoaded(currentUser);
-            }
-        };
-
-        userEntryObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(userEntryObserver);
-    }
-
-    @Override
-    public void queryUsers(final SearchListener listener, SearchModel model) {
-
-        initiateNewSearch(listener, model);
-    }
-
-    @Override
-    public void queryRepo(final RepoListener listener, final String repoFullName) {
-
-        Log.d(LOGTAG, "queryRepo()");
-
-        if (loadedRepos.containsKey(repoFullName)) {
-            currentRepo = loadedRepos.get(repoFullName);
-            listener.onRepoLoaded(currentRepo);
-            return;
-        }
-
-        Observable<RepoEntry> repoEntryObservable = apiService.queryRepo(repoFullName);
-
-        Observable<Integer> contributors = RepoBuilder.getRepoContributorsCount(apiService, repoFullName);
-        Observable<Integer> commits = RepoBuilder.getRepoCommitsCount(apiService, repoFullName);
-        Observable<Integer> releases = RepoBuilder.getRepoReleasesCount(apiService, repoFullName);
-        Observable<Integer> branches = RepoBuilder.getRepoBranchesCount(apiService, repoFullName);
-
-        final Observable<RepoEntry> zippedObservable = Observable.zip(contributors, commits, releases, branches,
-                new Function4<Integer, Integer, Integer, Integer, RepoEntry>() {
-            @Override
-            public RepoEntry apply(Integer integer, Integer integer2, Integer integer3, Integer integer4) throws Exception {
-                Log.d(LOGTAG, "queryRepo().Function4().apply()");
-                currentRepo.setContributors_count(integer);
-                currentRepo.setCommits_count(integer2);
-                currentRepo.setReleases_count(integer3);
-                currentRepo.setBranches_count(integer4);
-                loadedRepos.put(currentRepo.getFull_name(), currentRepo);
-                return currentRepo;
+            public SingleSource<? extends UserEntry> apply(UserEntry userEntry) throws Exception {
+                UserWrapper userWrapper = new UserWrapperHelper(userEntry);
+                return userWrapper.loadMoreOwnedRepos().subscribeOn(Schedulers.io());
             }
         });
-
-        Observer<RepoEntry> observer = new Observer<RepoEntry>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(LOGTAG, "queryRepo.onSubscribe");
-            }
-
-            @Override
-            public void onNext(RepoEntry repoEntry) {
-                Log.d(LOGTAG, "queryRepo.onNext");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOGTAG, "queryRepo.onError");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onComplete() {
-                listener.onRepoLoaded(currentRepo);
-                Log.d(LOGTAG, "queryRepo.onComplete");
-            }
-        };
-
-        repoEntryObservable.doOnNext(new Consumer<RepoEntry>() {
-            @Override
-            public void accept(RepoEntry repoEntry) throws Exception {
-                currentRepo = repoEntry;
-            }
-        }).concatWith(Observable.defer(new Callable<ObservableSource<? extends RepoEntry>>() {
-            @Override
-            public ObservableSource<? extends RepoEntry> call() throws Exception {
-                return zippedObservable;
-            }
-        })).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-
     }
 
     @Override
-    public void loadMoreSearchResults(final SearchListener listener, SearchModel model) {
-
-        if (isLoadingSearchResults) {
-            return;
-        }
-
-        isLoadingSearchResults = true;
-
-        if (lastSearchModel != null && !(lastSearchModel == model)) {
-            Log.d(LOGTAG, "loadMoreSearchResults.if");
-
-            initiateNewSearch(listener, model);
-            return;
-        }
-
-        if (userSearchHelper.hasMorePages()) {
-            userSearchHelper.getNextPage().subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<List<UserEntry>>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-                            Log.d(LOGTAG, "loadMoreSearchResults.onSubscribe");
-                        }
-
-                        @Override
-                        public void onNext(List<UserEntry> userEntries) {
-                            Log.d(LOGTAG, "loadMoreSearchResults.onNext");
-                            listener.onSearchSuccess(userEntries);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.d(LOGTAG, "loadMoreSearchResults.onError");
-                            isLoadingSearchResults = false;
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            Log.d(LOGTAG, "loadMoreSearchResults.onComplete");
-                            if (!userSearchHelper.hasMorePages()) {
-                                Log.d(LOGTAG, "loadMoreSearchResults.onComplete.if");
-                            }
-                            isLoadingSearchResults = false;
-                        }
-                    });
-        }
-
+    public Single<UserEntry> loadMoreStarredRepos(String loginName) {
+        return cache.getUser(loginName).flatMapSingle(new Function<UserEntry, SingleSource<? extends UserEntry>>() {
+            @Override
+            public SingleSource<? extends UserEntry> apply(UserEntry userEntry) throws Exception {
+                UserWrapper userWrapper = new UserWrapperHelper(userEntry);
+                return userWrapper.loadMoreStarredRepos().subscribeOn(Schedulers.io());
+            }
+        });
     }
 
-    private void setCurrentUser(String loginName) {
-        if (currentUser == null) {
-            return;
-        }
-
-        if (!currentUser.getLogin().equals(loginName) && loadedUsers.containsKey(loginName)) {
-            Log.d(LOGTAG, "setCurrentUser.if");
-            currentUser = loadedUsers.get(loginName);
-        }
-    }
-
-    private void initiateNewSearch(final SearchListener listener, final SearchModel model) {
-        Log.d(LOGTAG, "initiateNewSearch");
-        Map<String, String> newSearchMap = new HashMap<>();
-        String url = "";
-        switch (model.getSearchType()) {
-            case USER:
-                url = Constants.URL_GIT_API_USER_SEARCH;
-                newSearchMap.put("q", model.getSearchCriteria());
+    @Override
+    public Single<List<UserEntry>> queryUsers(SearchModel searchModel) {
+        ResponsePaging<List<UserEntry>> userSearchPaging = new UserSearchPagingHelper();
+        Map<String, String> searchMap = new HashMap<>();
+        String searchUrl = "";
+        switch (searchModel.getSearchType()) {
+            case CONTRIBUTORS:
+                Log.d(LOGTAG, "queryUsers case " + searchModel.getSearchType());
+                searchUrl = cache.getRepoContributorsUrl(searchModel.getSearchCriteria());
                 break;
-            case FOLLOWERS:
-                url = loadedUsers.get(model.getSearchCriteria()).getFollowers_url();
+            case USER:
+                Log.d(LOGTAG, "queryUsers case " + searchModel.getSearchType());
+                searchUrl = Constants.URL_GIT_API_USER_SEARCH;
+                searchMap.put("q", searchModel.getSearchCriteria());
                 break;
             case FOLLOWING:
-                url = loadedUsers.get(model.getSearchCriteria()).getFollowing_url();
-                Log.d(LOGTAG, "following_url before replacement " + url);
-                url = url.replace("{/other_user}", "");
-                Log.d(LOGTAG, "starred_url after replacement " + url);
+                Log.d(LOGTAG, "queryUsers case " + searchModel.getSearchType());
+                searchUrl = cache.getUserFollowingUrl(searchModel.getSearchCriteria());
+                searchUrl = searchUrl.replace("{/other_user}", "");
                 break;
-            case CONTRIBUTORS:
-                url = loadedRepos.get(model.getSearchCriteria()).getContributors_url();
+            case FOLLOWERS:
+                Log.d(LOGTAG, "queryUsers case " + searchModel.getSearchType());
+                searchUrl = cache.getUserFollowersUrl(searchModel.getSearchCriteria());
                 break;
+            default:
+                Log.d(LOGTAG, "queryUsers case 'default'");
         }
 
-        int nextPage = model.getCurrentResultsCount() / Constants.SEARCH_QUERIES_MAX_PER_PAGE + 1;
-        String requestPageNumber = String.valueOf(nextPage);
-        Log.d(LOGTAG, "initiateNewSearch requestPageNumber = " + requestPageNumber);
-        newSearchMap.put("page", requestPageNumber);
+        Single<List<UserEntry>> networkSearchObs =
+                userSearchPaging.search(searchUrl, searchMap);
+        if (searchModel.getSearchType() == SearchType.USER) {
+            Log.d(LOGTAG, "searchModel.getSearchType() == SearchType.USER");
+            return networkSearchObs
+                    .subscribeOn(Schedulers.io())
+                    .onErrorResumeNext(database.userDao().queryUsers(searchModel.getSearchCriteria()));
+        }
+        return networkSearchObs.subscribeOn(Schedulers.io());
+    }
 
-        userSearchHelper.search(url, newSearchMap)
+    @Override
+    public Single<RepoEntry> queryRepo(String repoName) {
+        Single<RepoEntry> queryRepoObs = apiService.queryRepo(repoName);
+        Single<Integer> queryRepoContrObs = RepoBuilder.getRepoContributorsCount(apiService, repoName);
+        Single<Integer> queryRepoCommitsObs = RepoBuilder.getRepoCommitsCount(apiService, repoName);
+        Single<Integer> queryRepoBranchesObs = RepoBuilder.getRepoBranchesCount(apiService, repoName);
+        Single<Integer> queryRepoReleasesObs = RepoBuilder.getRepoReleasesCount(apiService, repoName);
+
+        Maybe<RepoEntry> combinedNetworkObs = Single.zip(queryRepoObs, queryRepoContrObs, queryRepoCommitsObs,
+                queryRepoBranchesObs, queryRepoReleasesObs, new Function5<RepoEntry, Integer, Integer, Integer, Integer, RepoEntry>() {
+                    @Override
+                    public RepoEntry apply(RepoEntry repoEntry, Integer integer, Integer integer2, Integer integer3, Integer integer4) throws Exception {
+                        repoEntry.setCommits_count(integer2);
+                        repoEntry.setContributors_count(integer);
+                        repoEntry.setBranches_count(integer3);
+                        repoEntry.setReleases_count(integer4);
+                        return repoEntry;
+                    }
+                })
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<UserEntry>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.d(LOGTAG, "initiateNewSearch.onSubscribe");
-                    }
+                .toMaybe();
 
-                    @Override
-                    public void onNext(List<UserEntry> userEntries) {
-                        Log.d(LOGTAG, "initiateNewSearch.onNext");
-                        listener.onSearchSuccess(userEntries);
-                    }
+        Maybe<RepoEntry> cacheObs = cache.getRepo(repoName);
+        Maybe<RepoEntry> dbObs = database.repoDao().queryRepo(repoName);
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d(LOGTAG, "initiateNewSearch.onError");
-                        e.printStackTrace();
-                    }
+        Single<RepoEntry> finalObs = Maybe.concat(cacheObs, combinedNetworkObs.onErrorResumeNext(dbObs))
+                .firstElement()
+                .toSingle();
 
+
+        return finalObs
+                .doOnSuccess(new Consumer<RepoEntry>() {
                     @Override
-                    public void onComplete() {
-                        Log.d(LOGTAG, "initiateNewSearch.onComplete");
-                        isLoadingSearchResults = false;
-                        lastSearchModel = model;
+                    public void accept(RepoEntry repoEntry) throws Exception {
+                        Log.d(LOGTAG, "queryRepo.finalObs.doOnSuccess.accept");
+                        cache.addRepo(repoEntry);
+                        writeRepoInDB(repoEntry);
+                    }
+                })
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.d(LOGTAG, "queryRepo.finalObs.doOnError.accept");
+                        throwable.printStackTrace();
                     }
                 });
+    }
+
+    @Override
+    public Single<List<UserEntry>> loadMoreSearchResults(SearchModel searchModel) {
+
+        ResponsePaging<List<UserEntry>> userSearchPaging = new UserSearchPagingHelper();
+        Map<String, String> searchMap = new HashMap<>();
+        String searchUrl = "";
+        switch (searchModel.getSearchType()) {
+            case CONTRIBUTORS:
+                Log.d(LOGTAG, "queryUsers case " + searchModel.getSearchType());
+                searchUrl = cache.getRepoContributorsUrl(searchModel.getSearchCriteria());
+                break;
+            case USER:
+                Log.d(LOGTAG, "queryUsers case " + searchModel.getSearchType());
+                searchUrl = Constants.URL_GIT_API_USER_SEARCH;
+                searchMap.put("q", searchModel.getSearchCriteria());
+                break;
+            case FOLLOWING:
+                Log.d(LOGTAG, "queryUsers case " + searchModel.getSearchType());
+                searchUrl = cache.getUserFollowingUrl(searchModel.getSearchCriteria());
+                searchUrl = searchUrl.replace("{/other_user}", "");
+                break;
+            case FOLLOWERS:
+                Log.d(LOGTAG, "queryUsers case " + searchModel.getSearchType());
+                searchUrl = cache.getUserFollowersUrl(searchModel.getSearchCriteria());
+                break;
+            default:
+                Log.d(LOGTAG, "queryUsers case 'default'");
+        }
+
+        String page = String.valueOf(searchModel.getCurrentResultsCount() / Constants.SEARCH_QUERIES_MAX_PER_PAGE + 1);
+        searchMap.put("page", page);
+
+        Single<List<UserEntry>> networkSearchObs =
+                userSearchPaging.search(searchUrl, searchMap)
+                        .subscribeOn(Schedulers.io());
+        return networkSearchObs;
+    }
+
+    private void writeUserInDB(final UserEntry userEntry) {
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.submit(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(LOGTAG, "writeUserInDB.run");
+                database.userDao().insertUser(userEntry);
+            }
+        });
+    }
+
+    private void writeRepoInDB(final RepoEntry repoEntry) {
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.submit(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(LOGTAG, "writeRepoInDB.run");
+                database.repoDao().insertRepo(repoEntry);
+            }
+        });
+    }
+
+    private void writeAuthInDB(final AuthEntry authEntry) {
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.submit(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(LOGTAG, "writeAuthInDB.run");
+                database.authDao().insertAuth(authEntry);
+            }
+        });
+    }
+
+    private void queryUsersByRepo() {
+
     }
 
 }

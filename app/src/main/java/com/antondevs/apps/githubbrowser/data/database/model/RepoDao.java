@@ -9,6 +9,8 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+
 /**
  * Created by Anton.
  */
@@ -16,10 +18,10 @@ import java.util.List;
 public interface RepoDao {
 
     @Query("SELECT * FROM repos ORDER BY repos_id")
-    List<RepoEntry> queryAllRepos();
+    Maybe<List<RepoEntry>> queryAllRepos();
 
     @Query("SELECT * FROM repos WHERE full_name LIKE :repoName")
-    RepoEntry queryRepo(String repoName);
+    Maybe<RepoEntry> queryRepo(String repoName);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRepo(RepoEntry repo);

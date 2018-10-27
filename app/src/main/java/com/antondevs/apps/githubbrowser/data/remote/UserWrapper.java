@@ -1,20 +1,19 @@
 package com.antondevs.apps.githubbrowser.data.remote;
 
-import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
-import java.util.List;
-
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 /**
  * Created by Anton.
  */
 public interface UserWrapper {
 
-    Observable<UserEntry> createUser();
+    Maybe<UserEntry> createUser();
 
-    Observable<UserEntry> loadMoreOwnedRepos();
+    Single<UserEntry> loadMoreOwnedRepos();
 
-    Observable<UserEntry> loadMoreStarredRepos();
+    Single<UserEntry> loadMoreStarredRepos();
 }

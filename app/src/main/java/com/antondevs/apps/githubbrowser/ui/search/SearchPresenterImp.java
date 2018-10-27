@@ -9,11 +9,14 @@ import com.antondevs.apps.githubbrowser.utilities.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+
 /**
  * Created by Anton.
  */
-public class SearchPresenterImp implements SearchContract.Presenter,
-        MainStorage.SearchListener {
+public class SearchPresenterImp implements SearchContract.Presenter{
 
     private static final String LOGTAG = SearchPresenterImp.class.getSimpleName();
 
@@ -22,6 +25,7 @@ public class SearchPresenterImp implements SearchContract.Presenter,
     private boolean hasMoreResults;
     private List<UserEntry> currentResults;
     private SearchModel currentSearchModel;
+    private boolean isLoading;
 
     public SearchPresenterImp(SearchContract.View view, MainStorage storage) {
         this.view = view;
@@ -35,7 +39,7 @@ public class SearchPresenterImp implements SearchContract.Presenter,
         initializeSearchModel(SearchType.USER, userName);
         view.showLoading();
         currentResults = new ArrayList<>();
-        storage.queryUsers(this, currentSearchModel);
+        searchUser();
     }
 
     @Override
@@ -43,7 +47,7 @@ public class SearchPresenterImp implements SearchContract.Presenter,
         Log.d(LOGTAG, "searchContributors = " + repoName);
         initializeSearchModel(SearchType.CONTRIBUTORS, repoName);
         view.showLoading();
-        storage.queryUsers(this, currentSearchModel);
+        searchUser();
     }
 
     @Override
@@ -51,7 +55,7 @@ public class SearchPresenterImp implements SearchContract.Presenter,
         Log.d(LOGTAG, "searchFollowers = " + userName);
         initializeSearchModel(SearchType.FOLLOWERS, userName);
         view.showLoading();
-        storage.queryUsers(this, currentSearchModel);
+        searchUser();
     }
 
     @Override
@@ -59,45 +63,81 @@ public class SearchPresenterImp implements SearchContract.Presenter,
         Log.d(LOGTAG, "searchFollowing = " + userName);
         initializeSearchModel(SearchType.FOLLOWING, userName);
         view.showLoading();
-        storage.queryUsers(this, currentSearchModel);
-    }
-
-    @Override
-    public void onNoResultsFound() {
-        view.showViews();
-        view.showNoResultsView();
-    }
-
-    @Override
-    public void onSearchSuccess(List<UserEntry> userList) {
-        Log.d(LOGTAG, "onSearchSuccess");
-        currentResults.addAll(userList);
-        currentSearchModel.incrementResultsCount(userList.size());
-        hasMoreResults = true;
-        if (currentResults.size() % Constants.SEARCH_QUERIES_MAX_PER_PAGE != 0) {
-            hasMoreResults = false;
-        }
-        view.setSearchResult(currentResults);
-        view.showViews();
-    }
-
-    @Override
-    public void onNoMoreResults() {
-        Log.d(LOGTAG, "onNoMoreResults");
-        hasMoreResults = false;
-        view.showNoMoreSearchResults();
+        searchUser();
     }
 
     @Override
     public void userScrollToBottom() {
         Log.d(LOGTAG, "userScrollToBottom");
-        if (hasMoreResults) {
+        if (hasMoreResults && !isLoading) {
             view.showLoadingMoreResults();
-            storage.loadMoreSearchResults(this, currentSearchModel);
+            storage.loadMoreSearchResults(currentSearchModel)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<List<UserEntry>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Log.d(LOGTAG, "userScrollToBottom.doOnSubscribe");
+                            isLoading = true;
+                        }
+
+                        @Override
+                        public void onSuccess(List<UserEntry> userEntries) {
+                            Log.d(LOGTAG, "userScrollToBottom.onSuccess");
+                            currentResults.addAll(userEntries);
+                            currentSearchModel.incrementResultsCount(userEntries.size());
+                            hasMoreResults = true;
+                            if (currentResults.size() % Constants.SEARCH_QUERIES_MAX_PER_PAGE != 0) {
+                                hasMoreResults = false;
+                            }
+                            view.setSearchResult(currentResults);
+                            view.showViews();
+                            isLoading = false;
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d(LOGTAG, "userScrollToBottom.onError");
+                            e.printStackTrace();
+                        }
+                    });
         }
     }
 
     private void initializeSearchModel(SearchType type, String searchCriteria) {
+        Log.d(LOGTAG, "initializeSearchModel type = " + type + " criteria = " + searchCriteria);
         currentSearchModel = new SearchModel(type, searchCriteria);
     }
+
+    private void searchUser() {
+        storage.queryUsers(currentSearchModel)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<UserEntry>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(LOGTAG, "searchUser.onSubscribe");
+                    }
+
+                    @Override
+                    public void onSuccess(List<UserEntry> userEntries) {
+                        Log.d(LOGTAG, "searchUser.onSuccess userEntries " + userEntries.toString());
+                        currentResults.addAll(userEntries);
+                        currentSearchModel.incrementResultsCount(userEntries.size());
+                        hasMoreResults = true;
+                        if (currentResults.size() % Constants.SEARCH_QUERIES_MAX_PER_PAGE != 0) {
+                            hasMoreResults = false;
+                        }
+                        view.setSearchResult(currentResults);
+                        view.showViews();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(LOGTAG, "searchUser.onError");
+                        hasMoreResults = false;
+                        view.showNoResultsView();
+                        e.printStackTrace();
+                    }
+                });
+    }
+
 }

@@ -10,8 +10,6 @@ import android.view.View;
 import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.MainStorageImp;
-import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
-import com.antondevs.apps.githubbrowser.data.database.DatabaseHelperImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.databinding.ActivityLoginBinding;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
@@ -36,11 +34,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Lo
 
         GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
 
-        DatabaseHelper databaseHelper = new DatabaseHelperImp(database);
-
         MainStorage storage = MainStorageImp.getInstance();
 
-        storage.setDatabaseHelper(databaseHelper);
+        storage.setDatabaseHelper(database);
 
         presenter = new LoginPresenterImp(this, storage);
 

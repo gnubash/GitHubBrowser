@@ -5,10 +5,14 @@ import android.util.Log;
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+
 /**
  * Created by Anton.
  */
-public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.RepoListener {
+public class RepoPresenterImp implements RepoContract.Presenter{
 
     private static final String LOGTAG = RepoPresenterImp.class.getSimpleName();
 
@@ -28,7 +32,26 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
     @Override
     public void loadPresenter() {
         view.showLoading();
-        storage.queryRepo(this, repoName);
+        storage.queryRepo(repoName)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<RepoEntry>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(LOGTAG, "loadPresenter.onSubscribe");
+                    }
+
+                    @Override
+                    public void onSuccess(RepoEntry repoEntry) {
+                        Log.d(LOGTAG, "loadPresenter.onSuccess");
+                        configureView(repoEntry);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(LOGTAG, "loadPresenter.onError");
+                        e.printStackTrace();
+                    }
+                });
     }
 
     @Override
@@ -41,8 +64,8 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
         return repoName;
     }
 
-    @Override
-    public void onRepoLoaded(RepoEntry repoEntry) {
+    private void configureView(RepoEntry repoEntry) {
+        Log.d(LOGTAG, "configureView " + repoEntry.toString());
         String [] repoOwnerAndName = repoEntry.getFull_name().split("/");
         view.setOwnerName(repoOwnerAndName[0]);
         view.setRepoName(repoOwnerAndName[1]);
@@ -53,11 +76,6 @@ public class RepoPresenterImp implements RepoContract.Presenter, MainStorage.Rep
         view.setBranches(String.valueOf(repoEntry.getBranches_count()));
         view.setReleases(String.valueOf(repoEntry.getReleases_count()));
         view.showViews();
-    }
-
-    @Override
-    public void onLoadFailed() {
-
     }
 
 }

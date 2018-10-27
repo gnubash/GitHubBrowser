@@ -1,11 +1,8 @@
-package com.antondevs.apps.githubbrowser.data;
+package com.antondevs.apps.githubbrowser.data.remote;
 
 import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
-import com.antondevs.apps.githubbrowser.data.remote.APIService;
-import com.antondevs.apps.githubbrowser.data.remote.RemoteAPIService;
-import com.antondevs.apps.githubbrowser.data.remote.ResponsePaging;
 import com.antondevs.apps.githubbrowser.utilities.Utils;
 
 import java.util.List;
@@ -14,6 +11,8 @@ import java.util.NoSuchElementException;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
 import io.reactivex.functions.Function;
 import retrofit2.Response;
 
@@ -37,7 +36,7 @@ public class RepoResponsePaging implements ResponsePaging<List<RepoEntry>> {
     }
 
     @Override
-    public Observable<List<RepoEntry>> search(String url, Map<String, String> queryMap) {
+    public Single<List<RepoEntry>> search(String url, Map<String, String> queryMap) {
 
         Log.d(LOGTAG, "searchUsers " + url + " " + queryMap.toString());
 
@@ -46,9 +45,9 @@ public class RepoResponsePaging implements ResponsePaging<List<RepoEntry>> {
         nextPage = "";
         pagesCount = "";
         return service.queryUserRepos(searchUrl, currentQueryMap)
-                .flatMap(new Function<Response<List<RepoEntry>>, ObservableSource<? extends List<RepoEntry>>>() {
+                .flatMap(new Function<Response<List<RepoEntry>>, SingleSource<? extends List<RepoEntry>>>() {
             @Override
-            public ObservableSource<? extends List<RepoEntry>> apply(Response<List<RepoEntry>> listResponse) throws Exception {
+            public SingleSource<? extends List<RepoEntry>> apply(Response<List<RepoEntry>> listResponse) throws Exception {
 
                 Log.d(LOGTAG, "queryUserRepos.apply " + listResponse.toString());
 
@@ -60,19 +59,20 @@ public class RepoResponsePaging implements ResponsePaging<List<RepoEntry>> {
                             " currentQueryMap = " + currentQueryMap);
                 }
 
-                return Observable.just(listResponse.body());
+                return Single.just(listResponse.body());
             }
         });
+
     }
 
     @Override
-    public Observable<List<RepoEntry>> getNextPage() {
+    public Single<List<RepoEntry>> getNextPage() {
 
         if (hasMorePages()) {
             return service.queryUserRepos(searchUrl, currentQueryMap)
-                    .flatMap(new Function<Response<List<RepoEntry>>, ObservableSource<? extends List<RepoEntry>>>() {
+                    .flatMap(new Function<Response<List<RepoEntry>>, SingleSource<? extends List<RepoEntry>>>() {
                         @Override
-                        public ObservableSource<? extends List<RepoEntry>> apply(Response<List<RepoEntry>> listResponse)
+                        public SingleSource<? extends List<RepoEntry>> apply(Response<List<RepoEntry>> listResponse)
                                 throws Exception {
 
                             Log.d(LOGTAG, "getNextPageRepos.apply");
@@ -81,7 +81,7 @@ public class RepoResponsePaging implements ResponsePaging<List<RepoEntry>> {
                             currentQueryMap.put("page", nextPage);
                             Log.d(LOGTAG, "getNextPageRepos.apply nextPage = " + nextPage +
                                     " currentQueryMap = " + currentQueryMap);
-                            return Observable.just(listResponse.body());
+                            return Single.just(listResponse.body());
                         }
                     });
         }

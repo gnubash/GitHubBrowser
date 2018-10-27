@@ -1,71 +1,35 @@
 package com.antondevs.apps.githubbrowser.data;
 
-import com.antondevs.apps.githubbrowser.data.database.DatabaseHelper;
+import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.ui.search.SearchModel;
 
 import java.util.List;
 
+import io.reactivex.Single;
+
 /**
  * Created by Anton.
  */
 public interface MainStorage {
 
-    String getLoggedUser();
+    void setDatabaseHelper(GitHubBrowserDatabase appDatabase);
 
-    void setDatabaseHelper(DatabaseHelper databaseHelper);
+    Single<UserEntry> logIn();
 
-    void checkCredentials(AuthenticationListener listener);
+    Single<UserEntry> performAuthentication(String username, String password);
 
-    void performAuthentication(String username, String password, AuthenticationListener listener);
+    Single<UserEntry> queryUser(String loginName);
 
-    void queryUser(UserListener listener, String loginName);
+    Single<UserEntry> loadMoreOwnedRepos(String loginName);
 
-    void loadMoreOwnedRepos(UserListener listener, String loginName);
+    Single<UserEntry> loadMoreStarredRepos(String loginName);
 
-    void loadMoreStarredRepos(UserListener listener, String loginName);
+    Single<List<UserEntry>> queryUsers(SearchModel searchModel);
 
-    void queryUsers(SearchListener listener, SearchModel searchModel);
+    Single<RepoEntry> queryRepo(String repoName);
 
-    void queryRepo(RepoListener listener, String repoName);
-
-    void loadMoreSearchResults(SearchListener listener, SearchModel searchModel);
-
-    interface AuthenticationListener {
-
-        void onUserAuthenticated();
-
-        void onAuthenticationRequered();
-
-        void onAuthenticationFailed();
-
-        void onNetworkConnectionFailure();
-
-    }
-
-    interface SearchListener {
-
-        void onNoResultsFound();
-
-        void onSearchSuccess(List<UserEntry> userList);
-
-        void onNoMoreResults();
-
-    }
-
-    interface RepoListener {
-
-        void onRepoLoaded(RepoEntry repoEntry);
-
-        void onLoadFailed();
-    }
-
-    interface UserListener {
-
-        void onUserLoaded(UserEntry userEntry);
-
-        void onLoadFailed();
-    }
+    Single<List<UserEntry>> loadMoreSearchResults(SearchModel searchModel);
 
 }

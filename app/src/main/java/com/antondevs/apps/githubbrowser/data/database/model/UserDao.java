@@ -9,17 +9,19 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import io.reactivex.Single;
+
 /**
  * Created by Anton.
  */
 @Dao
 public interface UserDao {
 
-    @Query(("SELECT * FROM users ORDER BY users_id"))
-    List<UserEntry> queryAllUsers();
+    @Query("SELECT * FROM users WHERE login = :user")
+    Single<UserEntry> queryUser(String user);
 
-    @Query("SELECT * FROM users WHERE login LIKE :user")
-    UserEntry queryUser(String user);
+    @Query("SELECT * FROM users WHERE login LIKE '%' || :user || '%'")
+    Single<List<UserEntry>> queryUsers(String user);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUser(UserEntry userEntry);
