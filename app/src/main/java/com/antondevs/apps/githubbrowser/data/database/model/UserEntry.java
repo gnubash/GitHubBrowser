@@ -1,6 +1,8 @@
 package com.antondevs.apps.githubbrowser.data.database.model;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
@@ -9,12 +11,13 @@ import java.util.List;
 /**
  * Created by Anton.
  */
-@Entity(tableName = "users")
+@Entity(tableName = "users", indices = {@Index(value = {"id"}, unique = true)})
 public class UserEntry {
 
     @PrimaryKey(autoGenerate = true)
     private int users_id;
 
+    @ColumnInfo(name = "id")
     private int id;
 
     private String login;

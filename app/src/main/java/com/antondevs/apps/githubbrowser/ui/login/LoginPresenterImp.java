@@ -6,6 +6,7 @@ import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -83,6 +84,9 @@ public class LoginPresenterImp implements LoginContract.LoginPresenter {
                         Log.d(LOGTAG, "loginWithStoredCredentials.onError");
                         if (e instanceof IOException) {
                             Log.d(LOGTAG, "loginWithStoredCredentials.onError.IOException");
+                        }
+                        else if (e instanceof NoSuchElementException) {
+                            view.requestAuthentication();
                         }
                         else {
                             e.printStackTrace();

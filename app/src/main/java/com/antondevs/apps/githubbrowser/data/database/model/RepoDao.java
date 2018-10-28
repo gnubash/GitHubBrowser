@@ -26,9 +26,4 @@ public interface RepoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRepo(RepoEntry repo);
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateRepo(RepoEntry repo);
-
-    @Delete
-    void removeRepo(RepoEntry repo);
 }

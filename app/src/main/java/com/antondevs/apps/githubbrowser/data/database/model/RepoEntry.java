@@ -1,16 +1,20 @@
 package com.antondevs.apps.githubbrowser.data.database.model;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 /**
  * Created by Anton.
  */
-@Entity(tableName = "repos")
+@Entity(tableName = "repos", indices = {@Index(value = {"id"}, unique = true)})
 public class RepoEntry {
 
     @PrimaryKey(autoGenerate = true)
     private int repos_id;
+
+    @ColumnInfo(name = "id")
     private long id;
 
     private String full_name;
