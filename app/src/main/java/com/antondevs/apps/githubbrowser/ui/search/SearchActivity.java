@@ -41,6 +41,8 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     private SearchContract.Presenter presenter;
 
+    private boolean requestFocus;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,7 +144,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         menuInflater.inflate(R.menu.menu_search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.menu_action_search_search_screen);
-        final SearchView searchView = (SearchView) searchItem.getActionView();
+        SearchView searchView = (SearchView) searchItem.getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -156,6 +158,11 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
                 return false;
             }
         });
+
+        if (requestFocus) {
+            searchView.setIconified(false);
+            searchView.requestFocus();
+        }
 
         return true;
     }
@@ -182,16 +189,22 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     private void checkIntent() {
-        Log.d(LOGTAG, "checkIntent");
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_SEARCH_USER_FOLLOWERS)) {
+            Log.d(LOGTAG, "checkIntent " + EXTRA_SEARCH_USER_FOLLOWERS);
             presenter.searchFollowers(intent.getStringExtra(EXTRA_SEARCH_USER_FOLLOWERS));
         }
         else if (intent.hasExtra(EXTRA_SEARCH_USER_FOLLOWING)) {
+            Log.d(LOGTAG, "checkIntent " + EXTRA_SEARCH_USER_FOLLOWING);
             presenter.searchFollowing(intent.getStringExtra(EXTRA_SEARCH_USER_FOLLOWING));
         }
         else if (intent.hasExtra(EXTRA_SEARCH_REPO_CONTRIBUTORS)) {
+            Log.d(LOGTAG, "checkIntent " + EXTRA_SEARCH_REPO_CONTRIBUTORS);
             presenter.searchContributors(intent.getStringExtra(EXTRA_SEARCH_REPO_CONTRIBUTORS));
+        }
+        else {
+            Log.d(LOGTAG, "checkIntent 'default'");
+            requestFocus = true;
         }
     }
 }

@@ -50,6 +50,7 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
         Intent intent = getIntent();
         if (intent != null) {
             String exra = intent.getStringExtra(LoginActivity.INTENT_EXTRA_USER_LOGIN_KEY);
+            Log.d(LOGTAG, "onCreate() intent != null " + exra);
 
             GitHubBrowserDatabase database = GitHubBrowserDatabase.getDatabaseInstance(this);
             MainStorage storage = MainStorageImp.getInstance();
