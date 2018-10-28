@@ -6,7 +6,6 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import io.reactivex.Maybe;
-import io.reactivex.Single;
 
 /**
  * Created by Anton.
@@ -15,7 +14,7 @@ import io.reactivex.Single;
 public interface AuthDao {
 
     @Query("SELECT * FROM auth WHERE auth_id = 1")
-    Maybe<AuthEntry> getAuth()
+    Maybe<AuthEntry> getAuth();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAuth(AuthEntry entry);

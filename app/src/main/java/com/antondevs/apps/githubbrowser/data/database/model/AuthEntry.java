@@ -3,8 +3,6 @@ package com.antondevs.apps.githubbrowser.data.database.model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import okhttp3.Credentials;
-
 /**
  * Created by Anton.
  */
