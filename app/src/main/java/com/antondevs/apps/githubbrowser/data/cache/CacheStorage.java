@@ -7,6 +7,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
@@ -18,6 +19,9 @@ import io.reactivex.Single;
 public class CacheStorage implements LocalCache{
 
     private static final String LOGTAG = CacheStorage.class.getSimpleName();
+
+    private long observableDelay = 100L;
+    private TimeUnit timeUnitMillis = TimeUnit.MILLISECONDS;
 
     private Map<String, UserEntry> userCache;
     private Map<String, RepoEntry> repoCache;
@@ -36,13 +40,15 @@ public class CacheStorage implements LocalCache{
     @Override
     public Maybe<UserEntry> getUser(String loginName) {
         Log.d(LOGTAG, "CacheStorage.getUser");
-        return (userCache.containsKey(loginName)) ? Maybe.just(userCache.get(loginName)) : Maybe.<UserEntry>empty();
+        return (userCache.containsKey(loginName))
+                ? Maybe.just(userCache.get(loginName)).delay(observableDelay, timeUnitMillis) : Maybe.<UserEntry>empty();
     }
 
     @Override
     public Maybe<RepoEntry> getRepo(String repoFullName) {
         Log.d(LOGTAG, "CacheStorage.getRepo");
-        return (repoCache.containsKey(repoFullName)) ? Maybe.just(repoCache.get(repoFullName)) : Maybe.<RepoEntry>empty();
+        return (repoCache.containsKey(repoFullName))
+                ? Maybe.just(repoCache.get(repoFullName)).delay(observableDelay, timeUnitMillis) : Maybe.<RepoEntry>empty();
     }
 
     @Override
