@@ -50,6 +50,7 @@ public class RepoPresenterImp implements RepoContract.Presenter{
                     public void onError(Throwable e) {
                         Log.d(LOGTAG, "loadPresenter.onError");
                         e.printStackTrace();
+                        view.showNoData();
                     }
                 });
     }

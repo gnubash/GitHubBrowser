@@ -48,6 +48,8 @@ public class MainStorageImp implements MainStorage {
     private RemoteAPIService apiService;
     private LocalCache cache;
 
+    private String loggedUser;
+
     private MainStorageImp() {
         Log.d(LOGTAG, "MainStorageImp");
         apiService = APIService.getService();
@@ -64,6 +66,11 @@ public class MainStorageImp implements MainStorage {
         Log.d(LOGTAG, "setDatabaseHelper");
         database = appDatabase;
 
+    }
+
+    @Override
+    public String getLoggedUser() {
+        return loggedUser;
     }
 
     @Override
@@ -90,6 +97,7 @@ public class MainStorageImp implements MainStorage {
                         Log.d(LOGTAG, "logIn.doOnNext");
                         cache.addUser(userEntry);
                         writeUserInDB(userEntry);
+                        loggedUser = userEntry.getLogin();
                     }
                 });
     }
@@ -108,6 +116,7 @@ public class MainStorageImp implements MainStorage {
                         writeAuthInDB(new AuthEntry(username, password));
                         writeUserInDB(userEntry);
                         cache.addUser(userEntry);
+                        loggedUser = userEntry.getLogin();
                     }
                 });
 
@@ -200,7 +209,8 @@ public class MainStorageImp implements MainStorage {
             Log.d(LOGTAG, "searchModel.getSearchType() == SearchType.USER");
             return networkSearchObs
                     .subscribeOn(Schedulers.io())
-                    .onErrorResumeNext(database.userDao().queryUsers(searchModel.getSearchCriteria()));
+                    .onErrorResumeNext(database.userDao().queryUsers(
+                            searchModel.getSearchCriteria()).subscribeOn(Schedulers.computation()));
         }
         return networkSearchObs.subscribeOn(Schedulers.io());
     }

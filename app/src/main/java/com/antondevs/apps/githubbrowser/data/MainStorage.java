@@ -16,6 +16,8 @@ public interface MainStorage {
 
     void setDatabaseHelper(GitHubBrowserDatabase appDatabase);
 
+    String getLoggedUser();
+
     Single<UserEntry> logIn();
 
     Single<UserEntry> performAuthentication(String username, String password);

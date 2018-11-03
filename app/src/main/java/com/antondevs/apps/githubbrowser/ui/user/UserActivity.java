@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
@@ -152,6 +153,7 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
     @Override
     public void showViews() {
+        binding.errorView.errorTvRoot.setVisibility(View.GONE);
         binding.userViewContainer.setVisibility(View.VISIBLE);
         binding.progressBarFrame.setVisibility(View.GONE);
     }
@@ -172,6 +174,14 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
             Log.d(LOGTAG, "onScrollToBottom " + UserReposPagerAdapter.TAB_2_TITLE);
             userPresenter.scrollStarredToBottom();
         }
+    }
+
+    @Override
+    public void showNoData() {
+        binding.userViewContainer.setVisibility(View.INVISIBLE);
+        binding.progressBarFrame.setVisibility(View.INVISIBLE);
+        binding.errorView.errorTv.setText(getString(R.string.no_data_available_with_network));
+        binding.errorView.errorTvRoot.setVisibility(View.VISIBLE);
     }
 
     public void onRepoItemClick(String itemName) {

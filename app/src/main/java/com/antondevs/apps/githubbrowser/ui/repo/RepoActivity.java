@@ -122,12 +122,22 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
     public void showLoading() {
         binding.repoViewContainer.setVisibility(View.INVISIBLE);
         binding.progressBarFrame.setVisibility(View.VISIBLE);
+        binding.errorView.errorTvRoot.setVisibility(View.GONE);
     }
 
     @Override
     public void showViews() {
         binding.repoViewContainer.setVisibility(View.VISIBLE);
         binding.progressBarFrame.setVisibility(View.GONE);
+        binding.errorView.errorTvRoot.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showNoData() {
+        binding.repoViewContainer.setVisibility(View.GONE);
+        binding.progressBarFrame.setVisibility(View.GONE);
+        binding.errorView.errorTv.setText(getString(R.string.no_data_available_with_network));
+        binding.errorView.errorTvRoot.setVisibility(View.VISIBLE);
     }
 
     @Override

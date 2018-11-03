@@ -101,5 +101,8 @@
     <include layout="@layout/progress_bar_overlay"
         android:id="@+id/progress_bar_frame"/>
 
+    <include layout="@layout/error_view_overlay"
+        android:id="@+id/error_view" />
+
 </FrameLayout>
 </layout>

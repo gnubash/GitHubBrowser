@@ -24,9 +24,15 @@
     <string name="repos_star">Star: </string>
     <string name="repos_forks">Forks: </string>
 
+    <!--Search screen view string values-->
+    <string name="search_title">search</string>
+
     <!-- Menu string values-->
     <string name="menu_action_logout_title">Logout</string>
     <string name="menu_action_search_title">Search</string>
     <string name="menu_action_star_title">Star</string>
     <string name="menu_action_home_title">Home</string>
+
+    <!-- Error string resources -->
+    <string name="no_data_available_with_network">Resource was not found. Check if you have Internet connection.</string>
 </resources>

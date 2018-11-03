@@ -56,6 +56,7 @@ public class UserPresenterImp implements UserContract.UserPresenter {
                     public void onError(Throwable e) {
                         Log.d(LOGTAG, "loadPresenter.queryUser.onError");
                         e.printStackTrace();
+                        view.showNoData();
                     }
                 });
 

@@ -26,6 +26,7 @@ public class SearchPresenterImp implements SearchContract.Presenter{
     private List<UserEntry> currentResults;
     private SearchModel currentSearchModel;
     private boolean isLoading;
+    private boolean userNotified;
 
     public SearchPresenterImp(SearchContract.View view, MainStorage storage) {
         this.view = view;
@@ -98,8 +99,15 @@ public class SearchPresenterImp implements SearchContract.Presenter{
                         public void onError(Throwable e) {
                             Log.d(LOGTAG, "userScrollToBottom.onError");
                             e.printStackTrace();
+                            hasMoreResults = false;
+                            isLoading = false;
+                            view.showNoMoreSearchResults();
                         }
                     });
+        }
+        if (!hasMoreResults && !userNotified) {
+            userNotified = true;
+            view.showNoMoreSearchResults();
         }
     }
 
@@ -120,6 +128,10 @@ public class SearchPresenterImp implements SearchContract.Presenter{
                     @Override
                     public void onSuccess(List<UserEntry> userEntries) {
                         Log.d(LOGTAG, "searchUser.onSuccess userEntries " + userEntries.toString());
+                        if (userEntries.size() == 0) {
+                            view.showNoResultsView();
+                            return;
+                        }
                         currentResults.addAll(userEntries);
                         currentSearchModel.incrementResultsCount(userEntries.size());
                         hasMoreResults = true;

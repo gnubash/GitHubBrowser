@@ -25,6 +25,8 @@ public interface RepoContract {
 
         void setFork(String forkNumber);
 
+        void showNoData();
+
     }
 
     interface Presenter {

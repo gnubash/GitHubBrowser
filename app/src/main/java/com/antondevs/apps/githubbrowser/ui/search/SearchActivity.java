@@ -52,6 +52,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(getString(R.string.search_title));
         }
 
         binding.searchUserRecyclerView.setHasFixedSize(true);
@@ -69,6 +70,12 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         binding.searchUserRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                boolean reachedBottom = recyclerView.canScrollVertically(1);
+                if (!reachedBottom) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    return;
+                }
 
                 if (layoutManager.findLastVisibleItemPosition() == layoutManager.getItemCount() - 1) {
                     Log.d(LOGTAG, "onScrolled lastVisible = " +
@@ -100,6 +107,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         if (!(adapter == null)) {
             binding.searchUserRecyclerView.setAdapter(null);
         }
+        binding.loginProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -130,6 +138,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     public void showNoMoreSearchResults() {
         Log.d(LOGTAG, "showNoMoreSearchResults");
         binding.loadingMoreProgressBar.setVisibility(View.GONE);
+        Toast.makeText(this, "No more results", Toast.LENGTH_SHORT).show();
     }
 
     @Override

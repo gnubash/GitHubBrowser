@@ -21,6 +21,8 @@ public interface UserContract {
 
         void setStarredReposList(List<String> repoEntryList);
 
+        void showNoData();
+
     }
 
 
