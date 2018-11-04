@@ -58,6 +58,7 @@ public class UserActivity extends AbsGitHubActivity implements UserContract.User
 
             userPresenter = new UserPresenterImp(exra, this, storage);
             if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setTitle(exra);
             }
             userPresenter.loadPresenter();
@@ -128,6 +129,9 @@ public class UserActivity extends AbsGitHubActivity implements UserContract.User
         int itemId = item.getItemId();
 
         switch (itemId) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.id.menu_action_search:
                 Intent searchActivityIntent = new Intent(UserActivity.this, SearchActivity.class);
                 startActivity(searchActivityIntent);

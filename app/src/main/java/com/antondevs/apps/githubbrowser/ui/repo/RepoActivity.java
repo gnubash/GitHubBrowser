@@ -50,6 +50,7 @@ public class RepoActivity extends AbsGitHubActivity implements RepoContract.View
         }
 
         if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(repoName);
         }
 
@@ -152,6 +153,8 @@ public class RepoActivity extends AbsGitHubActivity implements RepoContract.View
         int itemId = item.getItemId();
 
         switch (itemId) {
+            case android.R.id.home:
+                onBackPressed();
             case R.id.menu_action_star:
                 //  Star the current repository
                 return true;
