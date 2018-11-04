@@ -22,6 +22,7 @@ import com.antondevs.apps.githubbrowser.utilities.Constants;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,6 +45,7 @@ public class MainStorageImp implements MainStorage {
 
     private GitHubBrowserDatabase database;
     private ResponsePaging<List<UserEntry>> userSearchHelper;
+    private SearchModel lastSearch;
 
     private RemoteAPIService apiService;
     private LocalCache cache;
@@ -129,24 +131,31 @@ public class MainStorageImp implements MainStorage {
         UserWrapper userWrapper = new UserWrapperHelper(loginName);
 
         Maybe<UserEntry> cacheObservableUser = cache.getUser(loginName);
-        Maybe<UserEntry> networkObservableUser = userWrapper.createUser();
+        Maybe<UserEntry> networkObservableUser = userWrapper.createUser()
+                .doOnSuccess(new Consumer<UserEntry>() {
+                    @Override
+                    public void accept(UserEntry userEntry) throws Exception {
+                        Log.d(LOGTAG, "queryUser.networkObservableUser.doOnSuccess");
+                        writeUserInDB(userEntry);
+                        cache.addUser(userEntry);
+                    }
+                });
 
         Maybe<UserEntry> dbObservableUser = database.userDao()
                 .queryUser(loginName)
                 .subscribeOn(Schedulers.computation())
+                .doOnSuccess(new Consumer<UserEntry>() {
+                    @Override
+                    public void accept(UserEntry userEntry) throws Exception {
+                        Log.d(LOGTAG, "queryUser.dbObservableUser.doOnSuccess");
+                        cache.addUser(userEntry);
+                    }
+                })
                 .toMaybe();
 
         Single<UserEntry> resultObservable =
                 Maybe.concat(cacheObservableUser, networkObservableUser.onErrorResumeNext(dbObservableUser))
                         .firstElement()
-                        .doOnSuccess(new Consumer<UserEntry>() {
-                            @Override
-                            public void accept(UserEntry userEntry) throws Exception {
-                                Log.d(LOGTAG, "queryUser.doOnSuccess");
-                                writeUserInDB(userEntry);
-                                cache.addUser(userEntry);
-                            }
-                        })
                         .toSingle();
 
         return resultObservable;
@@ -177,7 +186,8 @@ public class MainStorageImp implements MainStorage {
 
     @Override
     public Single<List<UserEntry>> queryUsers(SearchModel searchModel) {
-        ResponsePaging<List<UserEntry>> userSearchPaging = new UserSearchPagingHelper();
+        lastSearch = searchModel;
+        userSearchHelper = new UserSearchPagingHelper();
         Map<String, String> searchMap = new HashMap<>();
         String searchUrl = "";
         switch (searchModel.getSearchType()) {
@@ -204,7 +214,7 @@ public class MainStorageImp implements MainStorage {
         }
 
         Single<List<UserEntry>> networkSearchObs =
-                userSearchPaging.search(searchUrl, searchMap);
+                userSearchHelper.search(searchUrl, searchMap);
         if (searchModel.getSearchType() == SearchType.USER) {
             Log.d(LOGTAG, "searchModel.getSearchType() == SearchType.USER");
             return networkSearchObs
@@ -235,29 +245,36 @@ public class MainStorageImp implements MainStorage {
                     }
                 })
                 .subscribeOn(Schedulers.io())
+                .doOnSuccess(new Consumer<RepoEntry>() {
+                    @Override
+                    public void accept(RepoEntry repoEntry) throws Exception {
+                        Log.d(LOGTAG, "queryRepo.combinedNetworkObs.doOnSuccess");
+                        cache.addRepo(repoEntry);
+                        writeRepoInDB(repoEntry);
+                    }
+                })
                 .toMaybe();
 
         Maybe<RepoEntry> cacheObs = cache.getRepo(repoName);
-        Maybe<RepoEntry> dbObs = database.repoDao().queryRepo(repoName);
+        Maybe<RepoEntry> dbObs = database.repoDao().queryRepo(repoName)
+                .subscribeOn(Schedulers.computation())
+                .doOnSuccess(new Consumer<RepoEntry>() {
+                    @Override
+                    public void accept(RepoEntry repoEntry) throws Exception {
+                        Log.d(LOGTAG, "queryRepo.dbObs.doOnSuccess");
+                        cache.addRepo(repoEntry);
+                    }
+                });
 
         Single<RepoEntry> finalObs = Maybe.concat(cacheObs, combinedNetworkObs.onErrorResumeNext(dbObs))
                 .firstElement()
                 .toSingle();
 
-
         return finalObs
-                .doOnSuccess(new Consumer<RepoEntry>() {
-                    @Override
-                    public void accept(RepoEntry repoEntry) throws Exception {
-                        Log.d(LOGTAG, "queryRepo.finalObs.doOnSuccess.accept");
-                        cache.addRepo(repoEntry);
-                        writeRepoInDB(repoEntry);
-                    }
-                })
                 .doOnError(new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.d(LOGTAG, "queryRepo.finalObs.doOnError.accept");
+                        Log.d(LOGTAG, "queryRepo.finalObs.doOnError");
                         throwable.printStackTrace();
                     }
                 });
@@ -266,7 +283,12 @@ public class MainStorageImp implements MainStorage {
     @Override
     public Single<List<UserEntry>> loadMoreSearchResults(SearchModel searchModel) {
 
-        ResponsePaging<List<UserEntry>> userSearchPaging = new UserSearchPagingHelper();
+        if (compareSearchModels(searchModel)) {
+            Single<List<UserEntry>> result = loadMoreResults().subscribeOn(Schedulers.io());
+            return result;
+        }
+
+        userSearchHelper = new UserSearchPagingHelper();
         Map<String, String> searchMap = new HashMap<>();
         String searchUrl = "";
         switch (searchModel.getSearchType()) {
@@ -296,7 +318,7 @@ public class MainStorageImp implements MainStorage {
         searchMap.put("page", page);
 
         Single<List<UserEntry>> networkSearchObs =
-                userSearchPaging.search(searchUrl, searchMap)
+                userSearchHelper.search(searchUrl, searchMap)
                         .subscribeOn(Schedulers.io());
         return networkSearchObs;
     }
@@ -334,8 +356,20 @@ public class MainStorageImp implements MainStorage {
         });
     }
 
-    private void queryUsersByRepo() {
+    private boolean compareSearchModels(SearchModel newModel) {
+        boolean isTypeEqual = lastSearch.getSearchType() == newModel.getSearchType();
+        boolean isCriteriaEqual = lastSearch.getSearchCriteria().equals(newModel.getSearchCriteria());
+        boolean resultsEqual = lastSearch.getCurrentResultsCount() == newModel.getCurrentResultsCount();
+        return  (isTypeEqual && isCriteriaEqual && resultsEqual);
+    }
 
+    private Single<List<UserEntry>> loadMoreResults() {
+        if (userSearchHelper.hasMorePages()) {
+            return userSearchHelper.getNextPage();
+        }
+        else {
+            return Single.error(new NoSuchElementException("No more pages."));
+        }
     }
 
 }
