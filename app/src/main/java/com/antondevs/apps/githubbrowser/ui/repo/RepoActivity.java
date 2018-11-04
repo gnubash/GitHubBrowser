@@ -2,7 +2,6 @@ package com.antondevs.apps.githubbrowser.ui.repo;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,11 +14,12 @@ import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.MainStorageImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.databinding.ActivityRepoBinding;
+import com.antondevs.apps.githubbrowser.ui.AbsGitHubActivity;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
-public class RepoActivity extends AppCompatActivity implements RepoContract.View {
+public class RepoActivity extends AbsGitHubActivity implements RepoContract.View {
 
     private static final String LOGTAG = RepoActivity.class.getSimpleName();
 
@@ -156,10 +156,10 @@ public class RepoActivity extends AppCompatActivity implements RepoContract.View
                 //  Star the current repository
                 return true;
             case R.id.menu_action_logout:
-                //  Should call presenter to logout(finish activity directly after setting logged out status
+                presenter.logout();
                 return true;
             case R.id.menu_action_home:
-                //  Go to logged user
+                presenter.home();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

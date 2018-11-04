@@ -7,6 +7,7 @@ import com.antondevs.apps.githubbrowser.ui.search.SearchModel;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 /**
@@ -19,6 +20,8 @@ public interface MainStorage {
     String getLoggedUser();
 
     Single<UserEntry> logIn();
+
+    Completable logoutUser();
 
     Single<UserEntry> performAuthentication(String username, String password);
 

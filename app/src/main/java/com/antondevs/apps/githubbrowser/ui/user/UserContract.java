@@ -1,6 +1,8 @@
 package com.antondevs.apps.githubbrowser.ui.user;
 
+import com.antondevs.apps.githubbrowser.ui.BasePresenter;
 import com.antondevs.apps.githubbrowser.ui.BaseView;
+import com.antondevs.apps.githubbrowser.ui.CommonViewBehavior;
 
 import java.util.List;
 
@@ -9,7 +11,7 @@ import java.util.List;
  */
 public interface UserContract {
 
-    interface UserView extends BaseView{
+    interface UserView extends BaseView, CommonViewBehavior {
 
         void setUserName(String name);
 
@@ -26,7 +28,7 @@ public interface UserContract {
     }
 
 
-    interface UserPresenter {
+    interface UserPresenter extends BasePresenter {
 
         void loadPresenter();
 

@@ -2,14 +2,12 @@ package com.antondevs.apps.githubbrowser.ui.user;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.antondevs.apps.githubbrowser.R;
@@ -17,13 +15,14 @@ import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.MainStorageImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.databinding.ActivityUserBinding;
+import com.antondevs.apps.githubbrowser.ui.AbsGitHubActivity;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.repo.RepoActivity;
 import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
 
 import java.util.List;
 
-public class UserActivity extends AppCompatActivity implements UserContract.UserView,
+public class UserActivity extends AbsGitHubActivity implements UserContract.UserView,
         UserReposFragment.UserReposClickListener, UserReposFragment.ReposListScrollListener {
 
     private static final String LOGTAG = UserActivity.class.getSimpleName();
@@ -130,15 +129,14 @@ public class UserActivity extends AppCompatActivity implements UserContract.User
 
         switch (itemId) {
             case R.id.menu_action_search:
-                // Start Search View when this is selected
                 Intent searchActivityIntent = new Intent(UserActivity.this, SearchActivity.class);
                 startActivity(searchActivityIntent);
                 return true;
             case R.id.menu_action_logout:
-                //  Should call presenter to logout(finish activity directly after setting logged out status
+                userPresenter.logout();
                 return true;
             case R.id.menu_action_home:
-                //  Go to logged user
+                userPresenter.home();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

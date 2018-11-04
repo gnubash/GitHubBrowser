@@ -1,7 +1,9 @@
 package com.antondevs.apps.githubbrowser.ui.search;
 
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
+import com.antondevs.apps.githubbrowser.ui.BasePresenter;
 import com.antondevs.apps.githubbrowser.ui.BaseView;
+import com.antondevs.apps.githubbrowser.ui.CommonViewBehavior;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ import java.util.List;
  */
 public interface SearchContract {
 
-    interface View extends BaseView{
+    interface View extends BaseView, CommonViewBehavior {
 
         void setSearchResult(List<UserEntry> userList);
 
@@ -22,7 +24,7 @@ public interface SearchContract {
 
     }
 
-    interface Presenter {
+    interface Presenter extends BasePresenter {
 
         void searchUser(String userName);
 

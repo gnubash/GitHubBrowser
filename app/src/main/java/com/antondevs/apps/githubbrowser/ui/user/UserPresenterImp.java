@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
+import com.antondevs.apps.githubbrowser.ui.AbsGitHubPresenter;
 
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -13,7 +14,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Created by Anton.
  */
-public class UserPresenterImp implements UserContract.UserPresenter {
+public class UserPresenterImp extends AbsGitHubPresenter implements UserContract.UserPresenter {
 
     private static final String LOGTAG = UserPresenterImp.class.getSimpleName();
 
@@ -23,15 +24,16 @@ public class UserPresenterImp implements UserContract.UserPresenter {
 
     private final UserContract.UserView view;
 
-    private MainStorage storage;
+//    private MainStorage storage;
 
     private boolean isLoadingOwned;
     private boolean isLoadingStarred;
 
     public UserPresenterImp(String userLoginName, UserContract.UserView view, MainStorage storage) {
+        super(view, storage);
         this.userLoginName = userLoginName;
         this.view = view;
-        this.storage = storage;
+//        this.storage = storage;
     }
 
     @Override
@@ -119,6 +121,14 @@ public class UserPresenterImp implements UserContract.UserPresenter {
     @Override
     public String getUserLoginName() {
         return currentUserEntry.getLogin();
+    }
+
+    @Override
+    public void home() {
+        if (userLoginName.equals(storage.getLoggedUser())) {
+            return;
+        }
+        view.goToUser(storage.getLoggedUser());
     }
 
     private void configureView(UserEntry userEntry) {

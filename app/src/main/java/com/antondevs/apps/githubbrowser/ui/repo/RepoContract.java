@@ -1,13 +1,15 @@
 package com.antondevs.apps.githubbrowser.ui.repo;
 
+import com.antondevs.apps.githubbrowser.ui.BasePresenter;
 import com.antondevs.apps.githubbrowser.ui.BaseView;
+import com.antondevs.apps.githubbrowser.ui.CommonViewBehavior;
 
 /**
  * Created by Anton.
  */
 public interface RepoContract {
 
-    interface View extends BaseView{
+    interface View extends BaseView, CommonViewBehavior {
 
         void setOwnerName(String ownerName);
 
@@ -29,7 +31,7 @@ public interface RepoContract {
 
     }
 
-    interface Presenter {
+    interface Presenter extends BasePresenter {
 
         void loadPresenter();
 

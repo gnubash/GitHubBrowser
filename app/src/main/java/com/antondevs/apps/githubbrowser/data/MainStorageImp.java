@@ -26,9 +26,11 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Function5;
@@ -102,6 +104,16 @@ public class MainStorageImp implements MainStorage {
                         loggedUser = userEntry.getLogin();
                     }
                 });
+    }
+
+    @Override
+    public Completable logoutUser() {
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+                database.authDao().deleteAllAuth();
+            }
+        }).subscribeOn(Schedulers.computation());
     }
 
     @Override

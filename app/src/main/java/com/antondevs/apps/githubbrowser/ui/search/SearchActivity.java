@@ -2,7 +2,6 @@ package com.antondevs.apps.githubbrowser.ui.search;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,13 +19,14 @@ import com.antondevs.apps.githubbrowser.data.MainStorageImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.databinding.ActivitySearchBinding;
+import com.antondevs.apps.githubbrowser.ui.AbsGitHubActivity;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements SearchContract.View,
+public class SearchActivity extends AbsGitHubActivity implements SearchContract.View,
         UserSearchAdapter.UserSearchAdapterClickListener {
 
     private static final String LOGTAG = SearchActivity.class.getSimpleName();
@@ -186,11 +186,11 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             case R.id.menu_action_search:
                 //  Start Search View when this is selected
                 return true;
-            case R.id.menu_action_logout:
-                //  Should call presenter to logout(finish activity directly after setting logged out status
+            case R.id.menu_action_logout_search_screen:
+                presenter.logout();
                 return true;
-            case R.id.menu_action_home:
-                //  Go to logged user
+            case R.id.menu_action_home_search_screen:
+                presenter.home();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
+import com.antondevs.apps.githubbrowser.ui.AbsGitHubPresenter;
 import com.antondevs.apps.githubbrowser.utilities.Constants;
 
 import java.util.ArrayList;
@@ -16,12 +17,11 @@ import io.reactivex.disposables.Disposable;
 /**
  * Created by Anton.
  */
-public class SearchPresenterImp implements SearchContract.Presenter{
+public class SearchPresenterImp extends AbsGitHubPresenter implements SearchContract.Presenter{
 
     private static final String LOGTAG = SearchPresenterImp.class.getSimpleName();
 
     private SearchContract.View view;
-    private MainStorage storage;
     private boolean hasMoreResults;
     private List<UserEntry> currentResults;
     private SearchModel currentSearchModel;
@@ -29,6 +29,7 @@ public class SearchPresenterImp implements SearchContract.Presenter{
     private boolean userNotified;
 
     public SearchPresenterImp(SearchContract.View view, MainStorage storage) {
+        super(view, storage);
         this.view = view;
         this.storage = storage;
         currentResults = new ArrayList<>();

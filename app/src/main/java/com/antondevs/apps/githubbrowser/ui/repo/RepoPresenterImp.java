@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
+import com.antondevs.apps.githubbrowser.ui.AbsGitHubPresenter;
 
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -12,7 +13,7 @@ import io.reactivex.disposables.Disposable;
 /**
  * Created by Anton.
  */
-public class RepoPresenterImp implements RepoContract.Presenter{
+public class RepoPresenterImp extends AbsGitHubPresenter implements RepoContract.Presenter{
 
     private static final String LOGTAG = RepoPresenterImp.class.getSimpleName();
 
@@ -20,9 +21,8 @@ public class RepoPresenterImp implements RepoContract.Presenter{
 
     private RepoContract.View view;
 
-    private MainStorage storage;
-
     public RepoPresenterImp(String repoName, RepoContract.View view, MainStorage storage) {
+        super(view, storage);
         Log.d(LOGTAG, "RepoPresenterImp()");
         this.repoName = repoName;
         this.view = view;
