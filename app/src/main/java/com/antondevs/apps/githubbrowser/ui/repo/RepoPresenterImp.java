@@ -68,6 +68,11 @@ public class RepoPresenterImp extends AbsGitHubPresenter implements RepoContract
     private void configureView(RepoEntry repoEntry) {
         Log.d(LOGTAG, "configureView " + repoEntry.toString());
         String [] repoOwnerAndName = repoEntry.getFull_name().split("/");
+
+        if (repoEntry.getRepoOwnerImage() != null) {
+            view.setOwnerImage(repoEntry.getRepoOwnerImage());
+        }
+
         view.setOwnerName(repoOwnerAndName[0]);
         view.setRepoName(repoOwnerAndName[1]);
         view.setFork(String.valueOf(repoEntry.getForks()));

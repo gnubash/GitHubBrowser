@@ -26,6 +26,9 @@ public class UserEntry {
     private int followers;
     private String following_url;
     private int following;
+    private String avatar_url;
+
+    private byte [] userImage;
 
     @TypeConverters(ReposListConverter.class)
     private List<String> ownedRepos;
@@ -92,6 +95,22 @@ public class UserEntry {
 
     public void setFollowing(int following) {
         this.following = following;
+    }
+
+    public String getAvatar_url() {
+        return avatar_url;
+    }
+
+    public void setAvatar_url(String avatar_url) {
+        this.avatar_url = avatar_url;
+    }
+
+    public byte [] getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(byte [] userImage) {
+        this.userImage = userImage;
     }
 
     public List<String> getOwnedRepos() {

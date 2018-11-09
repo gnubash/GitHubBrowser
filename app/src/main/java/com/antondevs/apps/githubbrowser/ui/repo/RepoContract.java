@@ -11,6 +11,8 @@ public interface RepoContract {
 
     interface View extends BaseView, CommonViewBehavior {
 
+        void setOwnerImage(byte [] imageAsByteArray);
+
         void setOwnerName(String ownerName);
 
         void setRepoName(String repoName);

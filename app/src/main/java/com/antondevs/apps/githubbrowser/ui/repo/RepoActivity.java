@@ -2,6 +2,8 @@ package com.antondevs.apps.githubbrowser.ui.repo;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -75,6 +77,12 @@ public class RepoActivity extends AbsGitHubActivity implements RepoContract.View
             }
         });
 
+    }
+
+    @Override
+    public void setOwnerImage(byte[] imageAsByteArray) {
+        Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsByteArray, 0, imageAsByteArray.length);
+        binding.repoOwnerImageView.setImageBitmap(bitmap);
     }
 
     @Override

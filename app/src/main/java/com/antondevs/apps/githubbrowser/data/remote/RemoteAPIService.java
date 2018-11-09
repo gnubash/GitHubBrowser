@@ -9,9 +9,7 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Completable;
 import io.reactivex.Maybe;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.Response;
 import retrofit2.http.GET;
@@ -42,9 +40,10 @@ public interface RemoteAPIService {
     Single<Response<okhttp3.ResponseBody>> searchUsers(@Url String url,
                                                            @QueryMap(encoded = true) Map<String, String> queryMap);
 
-//    @GET
-//    Observable<Response<okhttp3.ResponseBody>> searchUsers(@Url String url,
-//                                                           @QueryMap(encoded = true) Map<String, String> queryMap);
+    // Images
+    @GET
+    Single<okhttp3.ResponseBody> getImage(@Url String url);
+
 
     // Utils required to form full RepoEntry
 

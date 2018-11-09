@@ -142,6 +142,10 @@ public class UserPresenterImp extends AbsGitHubPresenter implements UserContract
         view.setOwnedReposList(userEntry.getOwnedRepos());
         view.setStarredReposList(userEntry.getStarredRepos());
 
+        if (userEntry.getUserImage() != null) {
+            view.setUserImage(userEntry.getUserImage());
+        }
+
         view.showViews();
 
         isLoadingOwned = false;

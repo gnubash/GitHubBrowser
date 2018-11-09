@@ -2,6 +2,8 @@ package com.antondevs.apps.githubbrowser.ui.user;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -85,6 +87,12 @@ public class UserActivity extends AbsGitHubActivity implements UserContract.User
             }
         });
 
+    }
+
+    @Override
+    public void setUserImage(byte [] imageAsByteArray) {
+        Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsByteArray, 0, imageAsByteArray.length);
+        binding.userImageView.setImageBitmap(bitmap);
     }
 
     @Override

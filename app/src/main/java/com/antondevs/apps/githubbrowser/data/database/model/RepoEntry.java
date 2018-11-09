@@ -2,6 +2,7 @@ package com.antondevs.apps.githubbrowser.data.database.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -17,7 +18,13 @@ public class RepoEntry {
     @ColumnInfo(name = "id")
     private long id;
 
+    private String name;
     private String full_name;
+
+    @Ignore
+    private UserEntry owner;
+
+    private byte [] repoOwnerImage;
 
     private String contributors_url;
 
@@ -49,12 +56,37 @@ public class RepoEntry {
         this.id = id;
     }
 
+    public byte[] getRepoOwnerImage() {
+        return repoOwnerImage;
+    }
+
+    public void setRepoOwnerImage(byte[] repoOwnerImage) {
+        this.repoOwnerImage = repoOwnerImage;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getFull_name() {
         return full_name;
     }
 
     public void setFull_name(String full_name) {
         this.full_name = full_name;
+    }
+
+    public UserEntry getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserEntry owner) {
+        this.owner = owner;
     }
 
     public String getContributors_url() {

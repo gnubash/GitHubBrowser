@@ -22,6 +22,7 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 /**
  * Created by Anton.
@@ -258,6 +259,22 @@ public class UserWrapperHelper implements UserWrapper {
                                 return Completable.complete();
                             }
                         });
+                    }
+                }))
+                .andThen(Completable.defer(new Callable<CompletableSource>() {
+                    @Override
+                    public CompletableSource call() throws Exception {
+                        return service.getImage(currentUser.getAvatar_url())
+                                .doOnSuccess(new Consumer<ResponseBody>() {
+                            @Override
+                            public void accept(ResponseBody responseBody) throws Exception {
+                                if (responseBody != null) {
+                                    Log.d(LOGTAG, "createUserFromRemoteSource Avatar loading Completable");
+                                    byte [] userImageAsArray = responseBody.bytes();
+                                    currentUser.setUserImage(userImageAsArray);
+                                }
+                            }
+                        }).ignoreElement();
                     }
                 }))
                 .doOnError(new Consumer<Throwable>() {

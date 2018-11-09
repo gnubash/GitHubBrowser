@@ -36,6 +36,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.functions.Function5;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Credentials;
+import okhttp3.ResponseBody;
 
 /**
  * Created by Anton.
@@ -238,8 +239,23 @@ public class MainStorageImp implements MainStorage {
     }
 
     @Override
-    public Single<RepoEntry> queryRepo(String repoName) {
-        Single<RepoEntry> queryRepoObs = apiService.queryRepo(repoName);
+    public Single<RepoEntry> queryRepo(final String repoName) {
+        Single<RepoEntry> queryRepoObs = apiService.queryRepo(repoName)
+                .flatMap(new Function<RepoEntry, SingleSource<? extends RepoEntry>>() {
+                    @Override
+                    public SingleSource<? extends RepoEntry> apply(final RepoEntry repoEntry) throws Exception {
+                        return apiService.getImage(repoEntry.getOwner().getAvatar_url())
+                                .flatMap(new Function<ResponseBody, SingleSource<? extends RepoEntry>>() {
+                                    @Override
+                                    public SingleSource<? extends RepoEntry> apply(ResponseBody responseBody) throws Exception {
+                                        if (responseBody != null) {
+                                            repoEntry.setRepoOwnerImage(responseBody.bytes());
+                                        }
+                                        return Single.just(repoEntry);
+                                    }
+                                });
+                    }
+                });
         Single<Integer> queryRepoContrObs = RepoBuilder.getRepoContributorsCount(apiService, repoName);
         Single<Integer> queryRepoCommitsObs = RepoBuilder.getRepoCommitsCount(apiService, repoName);
         Single<Integer> queryRepoBranchesObs = RepoBuilder.getRepoBranchesCount(apiService, repoName);
