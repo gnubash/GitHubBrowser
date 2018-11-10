@@ -91,7 +91,7 @@ public class SearchPresenterImp extends AbsGitHubPresenter implements SearchCont
                             if (currentResults.size() % Constants.SEARCH_QUERIES_MAX_PER_PAGE != 0) {
                                 hasMoreResults = false;
                             }
-                            view.setSearchResult(currentResults);
+                            view.resultsLoaded();
                             view.showViews();
                             isLoading = false;
                         }
@@ -139,7 +139,7 @@ public class SearchPresenterImp extends AbsGitHubPresenter implements SearchCont
                         if (currentResults.size() % Constants.SEARCH_QUERIES_MAX_PER_PAGE != 0) {
                             hasMoreResults = false;
                         }
-                        view.setSearchResult(currentResults);
+                        view.resultsLoaded();
                         view.showViews();
                     }
 
@@ -153,4 +153,15 @@ public class SearchPresenterImp extends AbsGitHubPresenter implements SearchCont
                 });
     }
 
+    @Override
+    public void bindViewToPosition(int position, SearchContract.ViewSearchResultItem viewSearchResultItem) {
+        Log.d(LOGTAG, "bindViewToPosition");
+        viewSearchResultItem.setLoginName(currentResults.get(position).getLogin());
+    }
+
+    @Override
+    public int getItemsCount() {
+        Log.d(LOGTAG, "getItemsCount");
+        return currentResults.size();
+    }
 }

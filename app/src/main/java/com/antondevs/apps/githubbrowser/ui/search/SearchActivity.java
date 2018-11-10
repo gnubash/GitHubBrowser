@@ -17,14 +17,10 @@ import com.antondevs.apps.githubbrowser.R;
 import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.MainStorageImp;
 import com.antondevs.apps.githubbrowser.data.database.GitHubBrowserDatabase;
-import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import com.antondevs.apps.githubbrowser.databinding.ActivitySearchBinding;
 import com.antondevs.apps.githubbrowser.ui.AbsGitHubActivity;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SearchActivity extends AbsGitHubActivity implements SearchContract.View,
         UserSearchAdapter.UserSearchAdapterClickListener {
@@ -90,14 +86,16 @@ public class SearchActivity extends AbsGitHubActivity implements SearchContract.
     }
 
     @Override
-    public void setSearchResult(List<UserEntry> userList) {
-        Log.d(LOGTAG, "setSearchResult");
+    public void resultsLoaded() {
+        Log.d(LOGTAG, "resultsLoaded");
         if (adapter == null) {
-            adapter = new UserSearchAdapter((ArrayList<UserEntry>) userList, this);
+            Log.d(LOGTAG, "resultsLoaded adapter == null");
+            adapter = new UserSearchAdapter(presenter, this);
             binding.searchUserRecyclerView.setAdapter(adapter);
         }
         else {
-            adapter.swapUserList((ArrayList<UserEntry>) userList);
+            Log.d(LOGTAG, "resultsLoaded adapter != null");
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -184,7 +182,6 @@ public class SearchActivity extends AbsGitHubActivity implements SearchContract.
             case android.R.id.home:
                 onBackPressed();
             case R.id.menu_action_search:
-                //  Start Search View when this is selected
                 return true;
             case R.id.menu_action_logout_search_screen:
                 presenter.logout();

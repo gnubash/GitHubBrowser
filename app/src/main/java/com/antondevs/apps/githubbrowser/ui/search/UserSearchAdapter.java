@@ -9,9 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.antondevs.apps.githubbrowser.R;
-import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
-
-import java.util.ArrayList;
 
 /**
  * Created by Anton.
@@ -27,17 +24,18 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
 
     private UserSearchAdapter.UserSearchAdapterClickListener clickListener;
 
-    private ArrayList<UserEntry> userList;
+    private SearchContract.PresenterSearchResults presenterSearchResults;
 
-    public UserSearchAdapter(ArrayList<UserEntry> userList, UserSearchAdapter.UserSearchAdapterClickListener clickListener) {
-        this.userList = userList;
+    public UserSearchAdapter(SearchContract.PresenterSearchResults presenterSearchResults, UserSearchAdapter.UserSearchAdapterClickListener clickListener) {
+        Log.d(LOGTAG, "UserSearchAdapter");
+        this.presenterSearchResults = presenterSearchResults;
         this.clickListener = clickListener;
     }
 
     @NonNull
     @Override
     public UserSearchAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
+        Log.d(LOGTAG, "onCreateViewHolder");
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         View itemView = inflater.inflate(R.layout.item_view_user_search,
@@ -48,36 +46,46 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull UserSearchAdapter.ViewHolder holder, int position) {
+        Log.d(LOGTAG, "onBindViewHolder");
 
-        holder.itemTextView.setText(userList.get(position).getLogin());
+        presenterSearchResults.bindViewToPosition(position, holder);
 
     }
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        Log.d(LOGTAG, "getItemCount");
+        return presenterSearchResults.getItemsCount();
     }
 
-    public void swapUserList(ArrayList<UserEntry> newUserList) {
-        userList = newUserList;
-        notifyDataSetChanged();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+            SearchContract.ViewSearchResultItem {
 
         TextView itemTextView;
 
         public ViewHolder(View view) {
             super(view);
+            Log.d(LOGTAG, "ViewHolder");
             view.setOnClickListener(this);
             itemTextView = view.findViewById(R.id.item_view_user_login_tv);
 
         }
 
         @Override
+        public void setLoginName(String loginName) {
+            Log.d(LOGTAG, "ViewHolder.setLoginName " + loginName);
+            itemTextView.setText(loginName);
+        }
+
+        @Override
+        public void setImageUrl(String imageUrl) {
+            Log.d(LOGTAG, "ViewHolder.setImageUrl " + imageUrl);
+        }
+
+        @Override
         public void onClick(View view) {
-            Log.d(LOGTAG, "ViewHolder.onClick()");
-            clickListener.onUserItemCLick(userList.get(getAdapterPosition()).getLogin());
+            Log.d(LOGTAG, "ViewHolder.onClick");
+            clickListener.onUserItemCLick(itemTextView.getText().toString());
         }
 
     }
