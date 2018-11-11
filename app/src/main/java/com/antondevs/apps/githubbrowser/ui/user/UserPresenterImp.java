@@ -24,8 +24,6 @@ public class UserPresenterImp extends AbsGitHubPresenter implements UserContract
 
     private final UserContract.UserView view;
 
-//    private MainStorage storage;
-
     private boolean isLoadingOwned;
     private boolean isLoadingStarred;
 
@@ -33,7 +31,6 @@ public class UserPresenterImp extends AbsGitHubPresenter implements UserContract
         super(view, storage);
         this.userLoginName = userLoginName;
         this.view = view;
-//        this.storage = storage;
     }
 
     @Override

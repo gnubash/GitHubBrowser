@@ -27,7 +27,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.reactivex.Completable;
+import io.reactivex.CompletableSource;
 import io.reactivex.Maybe;
+import io.reactivex.MaybeSource;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.functions.Action;
@@ -143,7 +145,16 @@ public class MainStorageImp implements MainStorage {
 
         UserWrapper userWrapper = new UserWrapperHelper(loginName);
 
-        Maybe<UserEntry> cacheObservableUser = cache.getUser(loginName);
+        Maybe<UserEntry> cacheObservableUser = cache.getUser(loginName)
+                .doOnSuccess(new Consumer<UserEntry>() {
+                    @Override
+                    public void accept(UserEntry userEntry) throws Exception {
+                        Log.d(LOGTAG, "queryUser.cacheObservableUser.doOnSuccess");
+                        writeUserInDB(userEntry);
+                        cache.addUser(userEntry);
+                    }
+                });
+
         Maybe<UserEntry> networkObservableUser = userWrapper.createUser()
                 .doOnSuccess(new Consumer<UserEntry>() {
                     @Override
@@ -350,6 +361,72 @@ public class MainStorageImp implements MainStorage {
                         .subscribeOn(Schedulers.io());
         return networkSearchObs;
     }
+
+    @Override
+    public Completable starRepo(final String repoFullName) {
+        Completable writeIfSuccessful = cache.getUser(loggedUser)
+                .flatMap(new Function<UserEntry, MaybeSource<?>>() {
+                    @Override
+                    public MaybeSource<?> apply(UserEntry userEntry) throws Exception {
+                        Log.d(LOGTAG, "unststarRepoarRepo.writeIfSuccessful");
+                        userEntry.getStarredRepos().add(repoFullName);
+                        writeUserInDB(userEntry);
+                        return Maybe.just(userEntry);
+                    }
+                }).ignoreElement();
+
+
+
+        return apiService.starRepo(repoFullName)
+                .andThen(writeIfSuccessful)
+                .subscribeOn(Schedulers.io());
+    }
+
+    @Override
+    public Completable unstarRepo(final String repoFullName) {
+
+        Completable writeIfSuccessful = cache.getUser(loggedUser)
+                .flatMap(new Function<UserEntry, MaybeSource<?>>() {
+                    @Override
+                    public MaybeSource<?> apply(UserEntry userEntry) throws Exception {
+                        Log.d(LOGTAG, "unstarRepo.writeIfSuccessful");
+                        userEntry.getStarredRepos().remove(repoFullName);
+                        writeUserInDB(userEntry);
+                        return Maybe.just(userEntry);
+                    }
+                }).ignoreElement();
+
+        return apiService.unstarRepo(repoFullName)
+                .andThen(writeIfSuccessful)
+                .subscribeOn(Schedulers.io());
+    }
+
+    @Override
+    public Completable isStarredByLoggedUser(final String repoFullName) {
+        final Completable checkIfStarredLocalSource = cache.getUser(loggedUser)
+                .flatMap(new Function<UserEntry, MaybeSource<?>>() {
+                    @Override
+                    public MaybeSource<?> apply(UserEntry userEntry) throws Exception {
+                        Log.d(LOGTAG, "isStarredByLoggedUser.checkIfStarredLocalSource");
+                        if (userEntry.getStarredRepos().contains(repoFullName)) {
+                            return Maybe.just(userEntry);
+                        }
+                        return Maybe.error(new NoSuchElementException());
+                    }
+                })
+                .ignoreElement();
+
+        return apiService.checkIfRepoIsStarred(repoFullName)
+                .onErrorResumeNext(new Function<Throwable, CompletableSource>() {
+                    @Override
+                    public CompletableSource apply(Throwable throwable) throws Exception {
+                        Log.d(LOGTAG, "isStarredByLoggedUser.checkIfRepoIsStarred.onErrorResumeNext");
+                        return checkIfStarredLocalSource;
+                    }
+                })
+                .subscribeOn(Schedulers.io());
+    }
+
 
     private void writeUserInDB(final UserEntry userEntry) {
         ExecutorService service = Executors.newSingleThreadExecutor();

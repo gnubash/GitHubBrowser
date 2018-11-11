@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +33,7 @@ public class RepoActivity extends AbsGitHubActivity implements RepoContract.View
 
     private RepoContract.Presenter presenter;
 
+    private boolean starred;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +155,34 @@ public class RepoActivity extends AbsGitHubActivity implements RepoContract.View
     }
 
     @Override
+    public void setStarredStatus(boolean isStarred) {
+        starred = isStarred;
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (starred) {
+            MenuItem menuItem = menu.findItem(R.id.menu_action_star);
+            BitmapDrawable icon = (BitmapDrawable) menuItem.getIcon();
+            int color = ContextCompat.getColor(this, R.color.colorAccent);
+            int alpha = icon.getAlpha();
+            icon.setTint(color);
+            icon.setTintMode(PorterDuff.Mode.MULTIPLY);
+            icon.setAlpha(alpha);
+        }
+        if(!starred) {
+            MenuItem menuItem = menu.findItem(R.id.menu_action_star);
+            BitmapDrawable icon = (BitmapDrawable) menuItem.getIcon();
+            int alpha = icon.getAlpha();
+            icon.setTint(Color.WHITE);
+            icon.setTintMode(PorterDuff.Mode.MULTIPLY);
+            icon.setAlpha(alpha);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_repo_view, menu);
@@ -163,8 +196,9 @@ public class RepoActivity extends AbsGitHubActivity implements RepoContract.View
         switch (itemId) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
             case R.id.menu_action_star:
-                //  Star the current repository
+                presenter.starRepo();
                 return true;
             case R.id.menu_action_logout:
                 presenter.logout();

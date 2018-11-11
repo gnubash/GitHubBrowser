@@ -9,10 +9,15 @@ import com.antondevs.apps.githubbrowser.data.database.model.UserEntry;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
@@ -43,6 +48,20 @@ public interface RemoteAPIService {
     // Images
     @GET
     Single<okhttp3.ResponseBody> getImage(@Url String url);
+
+    // Check if repository by logged user
+    @GET("/user/starred/{full_repo_name}")
+    Completable checkIfRepoIsStarred(@Path(value = "full_repo_name", encoded = true) String full_repo_name);
+
+    // Star repository
+    @Headers("Content-Length: 0")
+    @PUT("/user/starred/{full_repo_name}")
+    Completable starRepo(@Path(value = "full_repo_name", encoded = true) String full_repo_name);
+
+    // Unstar repo
+    @Headers("Content-Length: 0")
+    @DELETE("/user/starred/{full_repo_name}")
+    Completable unstarRepo(@Path(value = "full_repo_name", encoded = true) String full_repo_name);
 
 
     // Utils required to form full RepoEntry

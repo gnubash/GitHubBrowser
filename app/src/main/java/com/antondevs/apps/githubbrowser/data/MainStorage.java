@@ -37,4 +37,10 @@ public interface MainStorage {
 
     Single<List<UserEntry>> loadMoreSearchResults(SearchModel searchModel);
 
+    Completable starRepo(String repoFullName);
+
+    Completable unstarRepo(String repoFullName);
+
+    Completable isStarredByLoggedUser(String repoFullName);
+
 }

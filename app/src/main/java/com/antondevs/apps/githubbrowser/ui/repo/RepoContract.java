@@ -31,6 +31,8 @@ public interface RepoContract {
 
         void showNoData();
 
+        void setStarredStatus(boolean isStarred);
+
     }
 
     interface Presenter extends BasePresenter {

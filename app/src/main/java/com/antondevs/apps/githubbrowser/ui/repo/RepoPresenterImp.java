@@ -6,6 +6,9 @@ import com.antondevs.apps.githubbrowser.data.MainStorage;
 import com.antondevs.apps.githubbrowser.data.database.model.RepoEntry;
 import com.antondevs.apps.githubbrowser.ui.AbsGitHubPresenter;
 
+import java.io.IOException;
+
+import io.reactivex.CompletableObserver;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -20,6 +23,10 @@ public class RepoPresenterImp extends AbsGitHubPresenter implements RepoContract
     private String repoName;
 
     private RepoContract.View view;
+
+    private boolean isStarred;
+
+    private boolean starringInProgress;
 
     public RepoPresenterImp(String repoName, RepoContract.View view, MainStorage storage) {
         super(view, storage);
@@ -53,11 +60,89 @@ public class RepoPresenterImp extends AbsGitHubPresenter implements RepoContract
                         view.showNoData();
                     }
                 });
+        storage.isStarredByLoggedUser(repoName)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.d(LOGTAG, "loadPresenter.isStarredByLoggedUser.onSubscribe");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d(LOGTAG, "loadPresenter.isStarredByLoggedUser.onComplete");
+                        isStarred = true;
+                        view.setStarredStatus(true);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(LOGTAG, "loadPresenter.isStarredByLoggedUser.onError");
+                        isStarred = false;
+                        view.setStarredStatus(false);
+                        e.printStackTrace();
+                    }
+                });
     }
 
     @Override
     public void starRepo() {
+        if (!starringInProgress && !isStarred) {
+            starringInProgress = true;
+            storage.starRepo(repoName).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new CompletableObserver() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Log.d(LOGTAG, "loadPresenter.starRepo.onSubscribe");
+                        }
 
+                        @Override
+                        public void onComplete() {
+                            Log.d(LOGTAG, "loadPresenter.starRepo.doOnComplete");
+                            isStarred = true;
+                            view.setStarredStatus(true);
+                            starringInProgress = false;
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d(LOGTAG, "loadPresenter.starRepo.onError");
+                            if (e instanceof IOException) {
+                                Log.d(LOGTAG, "loadPresenter.starRepo.onError IOException");
+                            }
+                            starringInProgress = false;
+                            e.printStackTrace();
+                        }
+                    });
+        }
+        if (!starringInProgress && isStarred) {
+            starringInProgress = true;
+            storage.unstarRepo(repoName).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new CompletableObserver() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                            Log.d(LOGTAG, "loadPresenter.starRepo.onSubscribe");
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            Log.d(LOGTAG, "loadPresenter.starRepo.doOnComplete");
+                            isStarred = false;
+                            view.setStarredStatus(false);
+                            starringInProgress = false;
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d(LOGTAG, "loadPresenter.starRepo.onError");
+                            if (e instanceof IOException) {
+                                Log.d(LOGTAG, "loadPresenter.starRepo.onError IOException");
+                            }
+                            starringInProgress = false;
+                            e.printStackTrace();
+                        }
+                    });
+        }
     }
 
     @Override
