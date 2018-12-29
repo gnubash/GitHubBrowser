@@ -1,14 +1,17 @@
 package com.antondevs.apps.githubbrowser.ui.search;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.antondevs.apps.githubbrowser.R;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by Anton.
@@ -58,17 +61,24 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
         return presenterSearchResults.getItemsCount();
     }
 
+    @Override
+    public void onViewRecycled(@NonNull ViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.cancelOngoingRequest();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             SearchContract.ViewSearchResultItem {
 
         TextView itemTextView;
+        ImageView userImage;
 
         public ViewHolder(View view) {
             super(view);
             Log.d(LOGTAG, "ViewHolder");
             view.setOnClickListener(this);
             itemTextView = view.findViewById(R.id.item_view_user_login_tv);
-
+            userImage = view.findViewById(R.id.item_view_user_image_iv);
         }
 
         @Override
@@ -78,14 +88,19 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
         }
 
         @Override
-        public void setImageUrl(String imageUrl) {
-            Log.d(LOGTAG, "ViewHolder.setImageUrl " + imageUrl);
+        public void setImageUri(Uri uri) {
+            Picasso.get().load(uri).into(userImage);
         }
 
         @Override
         public void onClick(View view) {
             Log.d(LOGTAG, "ViewHolder.onClick");
             clickListener.onUserItemCLick(itemTextView.getText().toString());
+        }
+
+        void cancelOngoingRequest() {
+            Picasso.get().cancelRequest(userImage);
+            userImage.setImageDrawable(null);
         }
 
     }

@@ -1,5 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.repo;
 
+import android.net.Uri;
+
 import com.antondevs.apps.githubbrowser.ui.BasePresenter;
 import com.antondevs.apps.githubbrowser.ui.BaseView;
 import com.antondevs.apps.githubbrowser.ui.CommonViewBehavior;
@@ -11,7 +13,7 @@ public interface RepoContract {
 
     interface View extends BaseView, CommonViewBehavior {
 
-        void setOwnerImage(byte [] imageAsByteArray);
+        void setOwnerImageUri(Uri uri);
 
         void setOwnerName(String ownerName);
 

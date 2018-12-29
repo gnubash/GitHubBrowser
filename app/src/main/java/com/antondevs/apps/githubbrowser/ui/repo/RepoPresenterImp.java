@@ -1,5 +1,6 @@
 package com.antondevs.apps.githubbrowser.ui.repo;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
@@ -154,8 +155,9 @@ public class RepoPresenterImp extends AbsGitHubPresenter implements RepoContract
         Log.d(LOGTAG, "configureView " + repoEntry.toString());
         String [] repoOwnerAndName = repoEntry.getFull_name().split("/");
 
-        if (repoEntry.getRepoOwnerImage() != null) {
-            view.setOwnerImage(repoEntry.getRepoOwnerImage());
+        // Check is mandatory until Owner is added to repo when reading from database
+        if (repoEntry.getOwner() != null) {
+            view.setOwnerImageUri(Uri.parse(repoEntry.getOwner().getAvatar_url()));
         }
 
         view.setOwnerName(repoOwnerAndName[0]);

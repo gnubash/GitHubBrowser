@@ -1,5 +1,6 @@
 package com.antondevs.apps.githubbrowser.ui.search;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.antondevs.apps.githubbrowser.data.MainStorage;
@@ -157,6 +158,7 @@ public class SearchPresenterImp extends AbsGitHubPresenter implements SearchCont
     public void bindViewToPosition(int position, SearchContract.ViewSearchResultItem viewSearchResultItem) {
         Log.d(LOGTAG, "bindViewToPosition");
         viewSearchResultItem.setLoginName(currentResults.get(position).getLogin());
+        viewSearchResultItem.setImageUri(Uri.parse(currentResults.get(position).getAvatar_url()));
     }
 
     @Override

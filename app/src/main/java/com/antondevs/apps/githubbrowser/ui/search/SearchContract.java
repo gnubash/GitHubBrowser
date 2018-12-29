@@ -1,5 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.search;
 
+import android.net.Uri;
+
 import com.antondevs.apps.githubbrowser.ui.BasePresenter;
 import com.antondevs.apps.githubbrowser.ui.BaseView;
 import com.antondevs.apps.githubbrowser.ui.CommonViewBehavior;
@@ -39,7 +41,7 @@ public interface SearchContract {
 
         void setLoginName(String loginName);
 
-        void setImageUrl(String imageUrl);
+        void setImageUri(Uri uri);
     }
 
     interface PresenterSearchResults {

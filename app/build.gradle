@@ -52,6 +52,9 @@ dependencies {
     // guava
     api 'com.google.guava:guava:26.0-android'
 
+    // picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
     // test
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

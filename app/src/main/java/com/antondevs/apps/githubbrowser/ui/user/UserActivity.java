@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import com.antondevs.apps.githubbrowser.ui.AbsGitHubActivity;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.repo.RepoActivity;
 import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -90,9 +92,8 @@ public class UserActivity extends AbsGitHubActivity implements UserContract.User
     }
 
     @Override
-    public void setUserImage(byte [] imageAsByteArray) {
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsByteArray, 0, imageAsByteArray.length);
-        binding.userImageView.setImageBitmap(bitmap);
+    public void setUserImageUri(Uri uri) {
+        Picasso.get().load(uri).into(binding.userImageView);
     }
 
     @Override

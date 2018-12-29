@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.antondevs.apps.githubbrowser.ui.AbsGitHubActivity;
 import com.antondevs.apps.githubbrowser.ui.login.LoginActivity;
 import com.antondevs.apps.githubbrowser.ui.search.SearchActivity;
 import com.antondevs.apps.githubbrowser.ui.user.UserActivity;
+import com.squareup.picasso.Picasso;
 
 public class RepoActivity extends AbsGitHubActivity implements RepoContract.View {
 
@@ -85,9 +87,8 @@ public class RepoActivity extends AbsGitHubActivity implements RepoContract.View
     }
 
     @Override
-    public void setOwnerImage(byte[] imageAsByteArray) {
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imageAsByteArray, 0, imageAsByteArray.length);
-        binding.repoOwnerImageView.setImageBitmap(bitmap);
+    public void setOwnerImageUri(Uri uri) {
+        Picasso.get().load(uri).into(binding.repoOwnerImageView);
     }
 
     @Override

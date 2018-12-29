@@ -1,6 +1,7 @@
 package com.antondevs.apps.githubbrowser.ui.user;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.antondevs.apps.githubbrowser.ui.BasePresenter;
 import com.antondevs.apps.githubbrowser.ui.BaseView;
@@ -15,7 +16,7 @@ public interface UserContract {
 
     interface UserView extends BaseView, CommonViewBehavior {
 
-        void setUserImage(byte [] imageAsByteArray);
+        void setUserImageUri(Uri uri);
 
         void setUserName(String name);
 
